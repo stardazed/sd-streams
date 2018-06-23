@@ -9,16 +9,39 @@ import * as rs from "./readable-internals";
 import { ReadableStreamDefaultController } from "./readable-stream-default-controller";
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 
+interface RSInternalConstructorOptions {
+	startAlgorithm: rs.StartAlgorithm;
+	pullAlgorithm: rs.PullAlgorithm;
+	cancelAlgorithm: rs.CancelAlgorithm;
+	highWaterMark?: number;
+	sizeAlgorithm?: rs.SizeAlgorithm;
+}
+
 export class ReadableStream implements rs.ReadableStream {
 	[rs.state_]: rs.ReadableStreamState;
 	[rs.reader_]: rs.ReadableStreamReader | undefined;
 	[rs.storedError_]: any;
 	[rs.readableStreamController_]: rs.ReadableStreamController;
 
-	constructor(source: rs.ReadableStreamSource = {}, strategy: rs.ReadableStreamStrategy = {}) {
+	constructor(source: rs.ReadableStreamSource = {}, strategy: rs.ReadableStreamStrategy = {}, _1?: never, _2?: never, internalCtor?: RSInternalConstructorOptions) {
 		this[rs.state_] = "readable";
 		this[rs.reader_] = undefined;
 		this[rs.storedError_] = undefined;
+
+		// allow for internal constructor parameters to be passed in 5th parameter
+		// ignores other parameters
+		if (arguments.length === 5 && typeof internalCtor === "object" && internalCtor !== null) {
+			// CreateReadableStream algorithm (§3.3.3)
+			if (internalCtor.highWaterMark === undefined) {
+				internalCtor.highWaterMark = 1;
+			}
+			if (internalCtor.sizeAlgorithm === undefined) {
+				internalCtor.sizeAlgorithm = function() { return 1; };
+			}
+			// Assert: IsNonNegativeNumber(highWaterMark) is true
+			new ReadableStreamDefaultController(this, internalCtor.startAlgorithm, internalCtor.pullAlgorithm, internalCtor.cancelAlgorithm, internalCtor.highWaterMark, internalCtor.sizeAlgorithm);
+			return;
+		}
 
 		const sourceType = source.type;
 		if (sourceType === undefined) {
