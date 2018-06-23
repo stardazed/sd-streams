@@ -44,11 +44,10 @@ export class ReadableStream implements rs.ReadableStream {
 
 		const sourceType = source.type;
 		if (sourceType === undefined) {
-			const pullAlgorithm = rs.createAlgorithmFromUnderlyingMethod(source, "pull", [this]);
 			const cancelAlgorithm = rs.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
 			const sizeAlgorithm = rs.makeSizeAlgorithmFromSizeFunction(strategy.size);
 			const highWaterMark = rs.validateAndNormalizeHighWaterMark(strategy.highWaterMark === undefined ? 1 : strategy.highWaterMark);
-			new ReadableStreamDefaultController(this, source.start && source.start.bind(source), pullAlgorithm, cancelAlgorithm, highWaterMark, sizeAlgorithm);
+			new ReadableStreamDefaultController(this, source.start && source.start.bind(source), source.pull && source.pull.bind(source), cancelAlgorithm, highWaterMark, sizeAlgorithm);
 		}
 		else if (sourceType === "bytes") {
 			throw new RangeError("Sources of type 'bytes' not implemented yet.");

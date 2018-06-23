@@ -18,9 +18,9 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 
 	[rs.state_]: rs.ReadableStreamControllerState;
 
-	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullAlgorithm: rs.PullAlgorithm, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, sizeAlgorithm: rs.SizeAlgorithm) {
+	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullFunction: rs.PullFunction | undefined, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, sizeAlgorithm: rs.SizeAlgorithm) {
 		this[rs.controlledReadableStream_] = stream;
-		rs.resetQueue(this);
+		q.resetQueue(this);
 
 		this[rs.started_] = false;
 		this[rs.closeRequested_] = false;
@@ -30,7 +30,7 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 		this[rs.strategySizeAlgorithm_] = sizeAlgorithm;
 		this[rs.strategyHWM_] = highWaterMark;
 
-		this[rs.pullAlgorithm_] = pullAlgorithm;
+		this[rs.pullAlgorithm_] = rs.createAlgorithmFromFunction(pullFunction, [this]);
 		this[rs.cancelAlgorithm_] = cancelAlgorithm;
 
 		stream[rs.readableStreamController_] = this;
