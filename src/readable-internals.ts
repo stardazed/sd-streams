@@ -148,10 +148,10 @@ export declare class ReadableStream {
 	readonly locked: boolean;
 	cancel(reason?: any): Promise<void>;
 	getReader(options?: ReadableStreamReaderOptions): ReadableStreamReader;
+	tee(): ReadableStream[];
 
 	// pipeThrough({ writable, readable }, options);
 	// pipeTo(dest, { preventClose, preventAbort, preventCancel } = {});
-	// tee(): { }
 
 	[state_]: ReadableStreamState;
 	[reader_]: ReadableStreamReader | undefined;
