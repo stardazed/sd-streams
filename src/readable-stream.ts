@@ -49,7 +49,7 @@ export class ReadableStream implements rs.ReadableStream {
 		throw RangeError("mode option must be undefined or `byob`");
 	}
 
-	cancel(reason: string): Promise<void> {
+	cancel(reason: any): Promise<void> {
 		if (rs.isReadableStreamLocked(this)) {
 			return Promise.reject(new TypeError("Cannot cancel a locked stream"));
 		}

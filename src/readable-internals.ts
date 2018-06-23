@@ -38,7 +38,7 @@ export interface ReadableStreamSource {
 	type?: "bytes" | undefined;
 	start?(controller: ReadableStreamController): void;
 	pull?(controller: ReadableStreamController): void;
-	cancel?(reason?: string): void;
+	cancel?(reason?: any): void;
 }
 
 // ----
@@ -61,7 +61,7 @@ export interface ReadableStreamController {
 	enqueue(chunk?: any): void;
 	error(e?: any): void;
 
-	[cancelSteps_](reason: string): Promise<void>;
+	[cancelSteps_](reason: any): Promise<void>;
 	[pullSteps_](): Promise<IteratorResult<any>>;
 }
 
@@ -90,7 +90,7 @@ export interface ReadableStreamReaderOptions {
 
 export interface ReadableStreamReader {
 	readonly closed: Promise<void>;
-	cancel(reason: string): Promise<void>;
+	cancel(reason: any): Promise<void>;
 	releaseLock(): void;
 
 	[ownerReadableStream_]: ReadableStream | undefined;
@@ -108,7 +108,7 @@ export declare class ReadableStreamDefaultReader implements ReadableStreamReader
 	constructor(stream: ReadableStream);
 
 	readonly closed: Promise<void>;
-	cancel(reason: string): Promise<void>;
+	cancel(reason: any): Promise<void>;
 	releaseLock(): void;
 	read(): Promise<IteratorResult<any>>;
 
@@ -124,7 +124,7 @@ export declare class ReadableStreamBYOBReader implements ReadableStreamReader {
 	constructor(stream: ReadableStream);
 
 	readonly closed: Promise<void>;
-	cancel(reason: string): Promise<void>;
+	cancel(reason: any): Promise<void>;
 	releaseLock(): void;
 	read(view: ArrayBuffer): Promise<IteratorResult<any>>;
 
@@ -144,7 +144,7 @@ export declare class ReadableStream {
 	constructor(source: ReadableStreamSource, strategy: ReadableStreamStrategy);
 
 	readonly locked: boolean;
-	cancel(reason?: string): Promise<void>;
+	cancel(reason?: any): Promise<void>;
 	getReader(options?: ReadableStreamReaderOptions): ReadableStreamReader;
 
 	// pipeThrough({ writable, readable }, options);
@@ -274,7 +274,7 @@ export function readableStreamAddReadRequest(stream: ReadableStream) {
 	return promise;
 }
 
-export function readableStreamCancel(stream: ReadableStream, reason: string) {
+export function readableStreamCancel(stream: ReadableStream, reason: any) {
 	if (stream[state_] === "closed") {
 		return Promise.resolve(undefined);
 	}

@@ -68,7 +68,7 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 		rs.readableStreamDefaultControllerError(this, e);
 	}
 
-	[rs.cancelSteps_](reason: string) {
+	[rs.cancelSteps_](reason: any) {
 		rs.resetQueue(this);
 		return this[rs.cancelAlgorithm_](reason);
 	}

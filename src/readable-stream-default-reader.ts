@@ -13,7 +13,7 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 		return this[rs.closedPromise_];
 	}
 
-	cancel(reason: string) {
+	cancel(reason: any) {
 		const stream = this[rs.ownerReadableStream_];
 		if (stream === undefined) {
 			throw new TypeError("Reader is not associated with a stream");
@@ -52,7 +52,7 @@ export class ReadableStreamBYOBReader implements rs.ReadableStreamReader {
 	constructor(stream: rs.ReadableStream);
 
 	readonly closed: boolean;
-	cancel(reason: string): void;
+	cancel(reason: any): void;
 	releaseLock(): void;
 	read(view: ArrayBuffer): Promise<void>;
 
