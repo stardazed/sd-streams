@@ -1,4 +1,5 @@
 import { SizeAlgorithm, StreamStrategy, createIterResultObject, state_ } from "./shared-internals";
+import { QueueContainer, enqueueValueWithSize, resetQueue, queue_, queueTotalSize_ } from "./queue-mixin";
 export * from "./shared-internals";
 
 export const controlledReadableStream_ = Symbol("controlledReadableStream_");
@@ -6,8 +7,6 @@ export const pullAlgorithm_ = Symbol("pullAlgorithm_");
 export const cancelAlgorithm_ = Symbol("cancelAlgorithm_");
 export const strategySizeAlgorithm_ = Symbol("strategySizeAlgorithm_");
 export const strategyHWM_ = Symbol("strategyHWM_");
-export const queue_ = Symbol("queue_");
-export const queueTotalSize_ = Symbol("queueTotalSize_");
 export const started_ = Symbol("started_");
 export const closeRequested_ = Symbol("closeRequested_");
 export const pullAgain_ = Symbol("pullAgain_");
@@ -31,18 +30,6 @@ export type StartAlgorithm = () => Promise<void> | void;
 export type PullFunction = (controller: ReadableStreamController) => void | Promise<void>;
 export type PullAlgorithm = (controller: ReadableStreamController) => Promise<void>;
 export type CancelAlgorithm = (reason?: any) => Promise<void>;
-
-// ----
-
-interface QueueElement<V> {
-	value: V;
-	size: number;
-}
-
-interface QueueContainer<V> {
-	[queue_]: QueueElement<V>[];
-	[queueTotalSize_]: number;
-}
 
 // ----
 

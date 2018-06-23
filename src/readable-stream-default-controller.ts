@@ -1,4 +1,5 @@
 import * as rs from "./readable-internals";
+import * as q from "./queue-mixin";
 
 export class ReadableStreamDefaultController implements rs.ReadableStreamDefaultController {
 	[rs.controlledReadableStream_]: rs.ReadableStream;
@@ -7,8 +8,8 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	[rs.strategySizeAlgorithm_]: rs.SizeAlgorithm;
 	[rs.strategyHWM_]: number;
 
-	[rs.queue_]!: any[];
-	[rs.queueTotalSize_]!: number;
+	[q.queue_]!: any[];
+	[q.queueTotalSize_]!: number;
 
 	[rs.started_]: boolean;
 	[rs.closeRequested_]: boolean;
@@ -69,18 +70,18 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	}
 
 	[rs.cancelSteps_](reason: any) {
-		rs.resetQueue(this);
+		q.resetQueue(this);
 		return this[rs.cancelAlgorithm_](reason);
 	}
 
 	[rs.pullSteps_]() {
 		// Let stream be this.[[controlledReadableStream]].
 		const stream = this[rs.controlledReadableStream_];
-		if (this[rs.queue_].length > 0) {
+		if (this[q.queue_].length > 0) {
 			//   Let chunk be! DequeueValue(this).
-			const chunk = rs.dequeueValue(this);
+			const chunk = q.dequeueValue(this);
 			//   If this.[[closeRequested]] is true and this.[[queue]] is empty, perform! ReadableStreamClose(stream).
-			if (this[rs.closeRequested_] && this[rs.queue_].length === 0) {
+			if (this[rs.closeRequested_] && this[q.queue_].length === 0) {
 				rs.readableStreamClose(stream);
 			}
 			else {
