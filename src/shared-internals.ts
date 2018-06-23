@@ -1,3 +1,8 @@
+export interface ControlledPromise<V> {
+	resolve(value: V): void;
+	reject(error: any): void;
+}
+
 export type SizeAlgorithm = (this: void, chunk?: any) => number;
 
 export interface StreamStrategy {

@@ -1,4 +1,4 @@
-import { SizeAlgorithm, StreamStrategy, createIterResultObject, state_ } from "./shared-internals";
+import { ControlledPromise, SizeAlgorithm, StreamStrategy, createIterResultObject, state_ } from "./shared-internals";
 import { QueueContainer, enqueueValueWithSize, resetQueue, queue_, queueTotalSize_ } from "./queue-mixin";
 export * from "./shared-internals";
 
@@ -75,11 +75,6 @@ export interface ReadableStreamReader {
 	[closedPromise_]: Promise<void>;
 	[closedPromiseResolve_]?: (value?: any) => void;
 	[closedPromiseReject_]?: (error: any) => void;
-}
-
-export interface ControlledPromise<V> {
-	resolve(value: V): void;
-	reject(error: any): void;
 }
 
 export declare class ReadableStreamDefaultReader implements ReadableStreamReader {
