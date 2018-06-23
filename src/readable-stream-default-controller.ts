@@ -17,7 +17,7 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 
 	[rs.state_]: rs.ReadableStreamControllerState;
 
-	constructor(stream: rs.ReadableStream, source: rs.ReadableStreamSource, highWaterMark: number, sizeAlgorithm: rs.SizeAlgorithm) {
+	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullAlgorithm: rs.PullAlgorithm, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, sizeAlgorithm: rs.SizeAlgorithm) {
 		this[rs.controlledReadableStream_] = stream;
 		rs.resetQueue(this);
 
@@ -29,12 +29,12 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 		this[rs.strategySizeAlgorithm_] = sizeAlgorithm;
 		this[rs.strategyHWM_] = highWaterMark;
 
-		this[rs.pullAlgorithm_] = rs.createAlgorithmFromUnderlyingMethod(source, "pull", [this]);
-		this[rs.cancelAlgorithm_] = rs.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
+		this[rs.pullAlgorithm_] = pullAlgorithm;
+		this[rs.cancelAlgorithm_] = cancelAlgorithm;
 
 		stream[rs.readableStreamController_] = this;
 
-		const startResult = source.start ? source.start(this) : undefined;
+		const startResult = startFunction === undefined ? undefined : startFunction(this);
 		Promise.resolve(startResult).then(
 			_ => {
 				this[rs.started_] = true;

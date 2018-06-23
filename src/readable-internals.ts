@@ -25,6 +25,8 @@ export const reader_ = Symbol("reader_");
 export const readableStreamController_ = Symbol("readableStreamController_");
 export const storedError_ = Symbol("storedError_");
 
+export type StartFunction = (controller: ReadableStreamController) => void | Promise<void>;
+export type StartAlgorithm = () => Promise<void> | void;
 export type SizeAlgorithm = (this: void, chunk?: any) => number;
 export type PullAlgorithm = (controller: ReadableStreamController) => Promise<void>;
 export type CancelAlgorithm = (reason?: any) => Promise<void>;
@@ -36,7 +38,7 @@ export interface ReadableStreamStrategy {
 
 export interface ReadableStreamSource {
 	type?: "bytes" | undefined;
-	start?(controller: ReadableStreamController): void;
+	start?: StartFunction;
 	pull?(controller: ReadableStreamController): void;
 	cancel?(reason?: any): void;
 }
