@@ -26,7 +26,7 @@ export const readableStreamController_ = Symbol("readableStreamController_");
 export const storedError_ = Symbol("storedError_");
 
 export type SizeAlgorithm = (this: void, chunk?: any) => number;
-export type PullAlgorithm = (controller: ReadableStreamController) => Promise<IteratorResult<any>>;
+export type PullAlgorithm = (controller: ReadableStreamController) => Promise<void>;
 export type CancelAlgorithm = (reason?: any) => Promise<void>;
 
 export interface ReadableStreamStrategy {
