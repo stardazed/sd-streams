@@ -5,6 +5,8 @@
  */
 
 import * as ws from "./writable-internals";
+import { WritableStreamDefaultController } from "./writable-stream-controller";
+import { WritableStreamDefaultWriter } from "./writable-stream-writer";
 
 export class WritableStream {
 	[ws.state_]: ws.WritableStreamState;
@@ -16,7 +18,7 @@ export class WritableStream {
 	[ws.storedError_]: any;
 	[ws.writableStreamController_]: ws.WritableStreamController | undefined;
 	[ws.writer_]: ws.WritableStreamWriter | undefined;
-	[ws.writeRequests_]: any[];
+	[ws.writeRequests_]: ws.ControlledPromise<any>[];
 
 	constructor(sink: ws.WritableStreamSink = {}, strategy: ws.StreamStrategy = {}) {
 		this[ws.state_] = "writable";
@@ -36,18 +38,27 @@ export class WritableStream {
 
 		const sizeAlgorithm = ws.makeSizeAlgorithmFromSizeFunction(strategy.size);
 		const highWaterMark = ws.validateAndNormalizeHighWaterMark(strategy.highWaterMark === undefined ? 1 : strategy.highWaterMark);
-		const writeAlgorithm = ws.createAlgorithmFromUnderlyingMethod(sink, "write", [])
+
+		const startFunction = sink.start && sink.start.bind(sink);
+		const writeFunction = sink.write && sink.write.bind(sink);
+		const closeAlgorithm = ws.createAlgorithmFromUnderlyingMethod(sink, "close", []);
+		const abortAlgorithm = ws.createAlgorithmFromUnderlyingMethod(sink, "abort", []);
+
+		new WritableStreamDefaultController(this, startFunction, writeFunction, closeAlgorithm, abortAlgorithm, highWaterMark, sizeAlgorithm);
 	}
 
-	get locked() {
+	get locked(): boolean {
 		return false;
 	}
 
 	abort(reason?: any) {
-		return Promise.resolve(reason);
+		if (ws.writableStreamIsLocked(this)) {
+			return Promise.reject(new TypeError("Cannot abort a locked stream"));
+		}
+		return ws.writableStreamAbort(this, reason);
 	}
 
-	getWriter() {
-
+	getWriter(): ws.WritableStreamWriter {
+		return new WritableStreamDefaultWriter();
 	}
 }
