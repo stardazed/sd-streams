@@ -32,6 +32,8 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 		this[rs.pullAlgorithm_] = rs.createAlgorithmFromUnderlyingMethod(source, "pull", [this]);
 		this[rs.cancelAlgorithm_] = rs.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
 
+		stream[rs.readableStreamController_] = this;
+
 		const startResult = source.start ? source.start(this) : undefined;
 		Promise.resolve(startResult).then(
 			_ => {
@@ -44,23 +46,51 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 		);
 	}
 
-	get desiredSize() {
-		return 0;
+	get desiredSize(): number | null {
+		return rs.readableStreamDefaultControllerGetDesiredSize(this);
 	}
 
 	close() {
 		if (! rs.readableStreamDefaultControllerCanCloseOrEnqueue(this)) {
 			throw new TypeError("Cannot close, the stream is already closing or not readable");
 		}
+		rs.readableStreamDefaultControllerClose(this);
 	}
 
 	enqueue(chunk?: any) {
 		if (!rs.readableStreamDefaultControllerCanCloseOrEnqueue(this)) {
 			throw new TypeError("Cannot enqueue, the stream is closing or not readable");
 		}
-
+		rs.readableStreamDefaultControllerEnqueue(this, chunk);
 	}
-	error(e?: any) {
 
+	error(e?: any) {
+		rs.readableStreamDefaultControllerError(this, e);
+	}
+
+	[rs.cancelSteps_](reason: string) {
+		rs.resetQueue(this);
+		return this[rs.cancelAlgorithm_](reason);
+	}
+
+	[rs.pullSteps_]() {
+		// Let stream be this.[[controlledReadableStream]].
+		const stream = this[rs.controlledReadableStream_];
+		if (this[rs.queue_].length > 0) {
+			//   Let chunk be! DequeueValue(this).
+			const chunk = rs.dequeueValue(this);
+			//   If this.[[closeRequested]] is true and this.[[queue]] is empty, perform! ReadableStreamClose(stream).
+			if (this[rs.closeRequested_] && this[rs.queue_].length === 0) {
+				rs.readableStreamClose(stream);
+			}
+			else {
+				rs.readableStreamDefaultControllerCallPullIfNeeded(this);
+			}
+			return Promise.resolve(rs.createIterResultObject(chunk, false));
+		}
+
+		const pendingPromise = rs.readableStreamAddReadRequest(stream);
+		rs.readableStreamDefaultControllerCallPullIfNeeded(this);
+		return pendingPromise;
 	}
 }
