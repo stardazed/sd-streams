@@ -1,8 +1,7 @@
 /**
  * streams/readable-stream - ReadableStream implementation
- * Part of Stardazed
- * (c) 2015-Present by Arthur Langereis - @zenmumbler
- * https://github.com/stardazed/stardazed
+ * (c) 2018 by Arthur Langereis - @zenmumbler
+ * https://github.com/stardazed/sd-streams
  */
 
 import * as rs from "./readable-internals";
@@ -23,7 +22,7 @@ export class ReadableStream implements rs.ReadableStream {
 	[rs.storedError_]: any;
 	[rs.readableStreamController_]: rs.ReadableStreamController;
 
-	constructor(source: rs.ReadableStreamSource = {}, strategy: rs.ReadableStreamStrategy = {}, _1?: never, _2?: never, internalCtor?: RSInternalConstructorOptions) {
+	constructor(source: rs.ReadableStreamSource = {}, strategy: rs.StreamStrategy = {}, _1?: never, _2?: never, internalCtor?: RSInternalConstructorOptions) {
 		this[rs.state_] = "readable";
 		this[rs.reader_] = undefined;
 		this[rs.storedError_] = undefined;

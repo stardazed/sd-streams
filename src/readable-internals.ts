@@ -1,4 +1,5 @@
-export const state_ = Symbol("state_");
+import { SizeAlgorithm, StreamStrategy, createIterResultObject, state_ } from "./shared-internals";
+export * from "./shared-internals";
 
 export const controlledReadableStream_ = Symbol("controlledReadableStream_");
 export const pullAlgorithm_ = Symbol("pullAlgorithm_");
@@ -27,21 +28,9 @@ export const storedError_ = Symbol("storedError_");
 
 export type StartFunction = (controller: ReadableStreamController) => void | Promise<void>;
 export type StartAlgorithm = () => Promise<void> | void;
-export type SizeAlgorithm = (this: void, chunk?: any) => number;
+export type PullFunction = (controller: ReadableStreamController) => void | Promise<void>;
 export type PullAlgorithm = (controller: ReadableStreamController) => Promise<void>;
 export type CancelAlgorithm = (reason?: any) => Promise<void>;
-
-export interface ReadableStreamStrategy {
-	size?: SizeAlgorithm; // change type to unknown in TS3
-	highWaterMark?: number;
-}
-
-export interface ReadableStreamSource {
-	type?: "bytes" | undefined;
-	start?: StartFunction;
-	pull?(controller: ReadableStreamController): void;
-	cancel?(reason?: any): void;
-}
 
 // ----
 
@@ -140,10 +129,17 @@ export declare class ReadableStreamBYOBReader implements ReadableStreamReader {
 
 // ----
 
+export interface ReadableStreamSource {
+	type?: "bytes" | undefined;
+	start?: StartFunction;
+	pull?: PullFunction;
+	cancel?(reason?: any): void;
+}
+
 export type ReadableStreamState = "readable" | "closed" | "errored";
 
 export declare class ReadableStream {
-	constructor(source: ReadableStreamSource, strategy: ReadableStreamStrategy);
+	constructor(source: ReadableStreamSource, strategy: StreamStrategy);
 
 	readonly locked: boolean;
 	cancel(reason?: any): Promise<void>;
@@ -158,98 +154,6 @@ export declare class ReadableStream {
 	[readableStreamController_]: ReadableStreamController;
 	[storedError_]: any;
 }
-
-// ----------------------
-
-export function invokeOrNoop<O extends object, P extends keyof O>(o: O, p: P, args: any[]) {
-	// Assert: O is not undefined.
-	// Assert: IsPropertyKey(P) is true.
-	// Assert: args is a List.
-	// Let method be ? GetV(O, P).
-	const method: Function | undefined = (o as any)[p]; // tslint:disable-line:ban-types
-	// If method is undefined, return undefined.
-	if (method === undefined) {
-		return undefined;
-	}
-	return method.apply(o, args);
-}
-
-export function promiseCall<F extends Function>(f: F, v: object, args: any[]) { // tslint:disable-line:ban-types
-	try {
-		const result = f.apply(v, args);
-		return Promise.resolve(result);
-	}
-	catch (err) {
-		return Promise.reject(err);
-	}
-}
-
-export function createAlgorithmFromUnderlyingMethod<O extends object, K extends keyof O>(obj: O, methodName: K, extraArgs: any[]) {
-	const method = obj[methodName];
-	if (method === undefined) {
-		return () => Promise.resolve(undefined);
-	}
-	if (typeof method !== "function") {
-		throw new TypeError(`Field "${methodName}" is not a function.`);
-	}
-	return function(...fnArgs: any[]) {
-		return promiseCall(method, obj, fnArgs.concat(extraArgs));
-	};
-}
-
-export function createIterResultObject(value: any, done: boolean) {
-	return { value, done };
-}
-
-export function validateAndNormalizeHighWaterMark(value: any) {
-	const highWaterMark = parseInt(value, 10);
-	if (isNaN(highWaterMark) || highWaterMark < 0) {
-		throw new RangeError("highWaterMark must be a valid, positive integer.");
-	}
-	return highWaterMark;
-}
-
-export function makeSizeAlgorithmFromSizeFunction(sizeFn: undefined | ((chunk: any) => number)): SizeAlgorithm {
-	return function(chunk: any) {
-		if (typeof sizeFn === "function") {
-			return sizeFn(chunk);
-		}
-		return 1;
-	};
-}
-
-
-// ---- Queue containers
-
-export function dequeueValue<V>(container: QueueContainer<V>) {
-	// Assert: container has[[queue]] and[[queueTotalSize]] internal slots.
-	// Assert: container.[[queue]] is not empty.
-	const pair = container[queue_].shift()!;
-	const newTotalSize = container[queueTotalSize_] - pair.size;
-	container[queueTotalSize_] = Math.max(0, newTotalSize); // < 0 can occur due to rounding errors.
-	return pair.value;
-}
-
-export function enqueueValueWithSize<V>(container: QueueContainer<V>, value: V, size: number) {
-	// Assert: container has[[queue]] and[[queueTotalSize]] internal slots.
-	if (! (isFinite(size) && size > 0)) {
-		throw new RangeError("Chunk sizes must be positive, finite numbers");
-	}
-	container[queue_].push({ value, size });
-	container[queueTotalSize_] += size;
-}
-
-export function peekQueueValue<V>(container: QueueContainer<V>) {
-	// Assert: container has[[queue]] and[[queueTotalSize]] internal slots.
-	// Assert: container.[[queue]] is not empty.
-	return container[queue_][0].value;
-}
-
-export function resetQueue<V>(container: QueueContainer<V>) {
-	container[queue_] = [];
-	container[queueTotalSize_] = 0;
-}
-
 
 // ---- Stream
 
