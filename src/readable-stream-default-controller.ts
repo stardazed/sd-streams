@@ -8,8 +8,8 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	[rs.strategySizeAlgorithm_]: rs.SizeAlgorithm;
 	[rs.strategyHWM_]: number;
 
-	[q.queue_]!: any[];
-	[q.queueTotalSize_]!: number;
+	[q.queue_]: q.QueueElement<any>[];
+	[q.queueTotalSize_]: number;
 
 	[rs.started_]: boolean;
 	[rs.closeRequested_]: boolean;
