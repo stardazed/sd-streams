@@ -159,6 +159,19 @@ export declare class ReadableStream {
 
 // ----------------------
 
+export function invokeOrNoop<O extends object, P extends keyof O>(o: O, p: P, args: any[]) {
+	// Assert: O is not undefined.
+	// Assert: IsPropertyKey(P) is true.
+	// Assert: args is a List.
+	// Let method be ? GetV(O, P).
+	const method: Function | undefined = (o as any)[p]; // tslint:disable-line:ban-types
+	// If method is undefined, return undefined.
+	if (method === undefined) {
+		return undefined;
+	}
+	return method.apply(o, args);
+}
+
 export function promiseCall<F extends Function>(f: F, v: object, args: any[]) { // tslint:disable-line:ban-types
 	try {
 		const result = f.apply(v, args);
