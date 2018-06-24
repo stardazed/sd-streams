@@ -14,8 +14,13 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 	[q.queueTotalSize_]: number;
 
 	constructor(stream: ws.WritableStream, startFunction: ws.StartFunction | undefined, writeFunction: ws.WriteFunction | undefined, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark: number, sizeAlgorithm: ws.SizeAlgorithm) {
-		// Assert: !IsWritableStream(stream) is true.
-		// Assert: stream.[[writableStreamController]] is undefined.
+		if (! ws.isWritableStream(stream)) {
+			throw new TypeError();
+		}
+		if (stream[ws.writableStreamController_] !== undefined) {
+			throw new TypeError("Cannot reuse a stream");
+		}
+
 		this[ws.controlledWritableStream_] = stream;
 		stream[ws.writableStreamController_] = this;
 		q.resetQueue(this);
@@ -45,6 +50,9 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 	}
 
 	error(e?: any) {
+		if (! ws.isWritableStreamDefaultController(this)) {
+			throw new TypeError();
+		}
 		const state = this[ws.controlledWritableStream_][ws.state_];
 		if (state !== "writable") {
 			return;

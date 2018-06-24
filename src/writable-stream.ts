@@ -32,26 +32,35 @@ export class WritableStream {
 		this[ws.writeRequests_] = [];
 		this[ws.backpressure_] = false;
 
+		const sizeAlgorithm = ws.makeSizeAlgorithmFromSizeFunction(strategy.size);
+		const hwm = strategy.highWaterMark;
+		const highWaterMark = ws.validateAndNormalizeHighWaterMark(hwm === undefined ? 1 : hwm);
+
 		if (sink.type !== undefined) {
 			throw new RangeError("The type of an underlying sink must be undefined");
 		}
 
-		const sizeAlgorithm = ws.makeSizeAlgorithmFromSizeFunction(strategy.size);
-		const highWaterMark = ws.validateAndNormalizeHighWaterMark(strategy.highWaterMark === undefined ? 1 : strategy.highWaterMark);
-
-		const startFunction = sink.start && sink.start.bind(sink);
-		const writeFunction = sink.write && sink.write.bind(sink);
+		const sinkWrite = sink.write; // avoid double access, in case it's a property
+		const writeFunction = sinkWrite && sinkWrite.bind(sink);
 		const closeAlgorithm = ws.createAlgorithmFromUnderlyingMethod(sink, "close", []);
 		const abortAlgorithm = ws.createAlgorithmFromUnderlyingMethod(sink, "abort", []);
+		const sinkStart = sink.start; // avoid double access, in case it's a property
+		const startFunction = sinkStart && sinkStart.bind(sink);
 
 		new WritableStreamDefaultController(this, startFunction, writeFunction, closeAlgorithm, abortAlgorithm, highWaterMark, sizeAlgorithm);
 	}
 
 	get locked(): boolean {
+		if (! ws.isWritableStream(this)) {
+			throw new TypeError();
+		}
 		return ws.isWritableStreamLocked(this);
 	}
 
 	abort(reason?: any): Promise<void> {
+		if (! ws.isWritableStream(this)) {
+			return Promise.reject(new TypeError());
+		}
 		if (ws.isWritableStreamLocked(this)) {
 			return Promise.reject(new TypeError("Cannot abort a locked stream"));
 		}
@@ -59,6 +68,9 @@ export class WritableStream {
 	}
 
 	getWriter(): ws.WritableStreamWriter {
+		if (! ws.isWritableStream(this)) {
+			throw new TypeError();
+		}
 		return new WritableStreamDefaultWriter(this);
 	}
 }

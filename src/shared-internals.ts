@@ -19,12 +19,12 @@ export function invokeOrNoop<O extends object, P extends keyof O>(o: O, p: P, ar
 	if (method === undefined) {
 		return undefined;
 	}
-	return method.apply(o, args);
+	return Function.prototype.apply.call(method, o, args);
 }
 
 export function promiseCall<F extends Function>(f: F, v: object | undefined, args: any[]) { // tslint:disable-line:ban-types
 	try {
-		const result = f.apply(v, args);
+		const result = Function.prototype.apply.call(f, v, args);
 		return Promise.resolve(result);
 	}
 	catch (err) {
@@ -66,6 +66,9 @@ export function validateAndNormalizeHighWaterMark(hwm: any) {
 }
 
 export function makeSizeAlgorithmFromSizeFunction(sizeFn: undefined | ((chunk: any) => number)): SizeAlgorithm {
+	if (typeof sizeFn !== "function" && typeof sizeFn !== "undefined") {
+		throw new TypeError("size function must be undefined or a function");
+	}
 	return function(chunk: any) {
 		if (typeof sizeFn === "function") {
 			return sizeFn(chunk);

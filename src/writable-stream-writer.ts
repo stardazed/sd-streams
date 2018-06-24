@@ -6,7 +6,9 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 	[ws.closedPromise_]: ws.ControlledPromise<void>;
 
 	constructor(stream: ws.WritableStream) {
-		// If! IsWritableStream(stream) is false, throw a TypeError exception.
+		if (! ws.isWritableStream(stream)) {
+			throw new TypeError();
+		}
 		if (ws.isWritableStreamLocked(stream)) {
 			throw new TypeError("Stream is already locked");
 		}
@@ -45,6 +47,9 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 	}
 
 	abort(reason: any): Promise<void> {
+		if (! ws.isWritableStreamDefaultWriter(this)) {
+			return Promise.reject(new TypeError());
+		}
 		if (this[ws.ownerWritableStream_] === undefined) {
 			return Promise.reject(new TypeError("Writer is not connected to a stream"));
 		}
@@ -52,6 +57,9 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 	}
 
 	close(): Promise<void> {
+		if (! ws.isWritableStreamDefaultWriter(this)) {
+			return Promise.reject(new TypeError());
+		}
 		const stream = this[ws.ownerWritableStream_];
 		if (stream === undefined) {
 			return Promise.reject(new TypeError("Writer is not connected to a stream"));
@@ -72,6 +80,9 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 	}
 
 	write(chunk: any): Promise<void> {
+		if (! ws.isWritableStreamDefaultWriter(this)) {
+			return Promise.reject(new TypeError());
+		}
 		if (this[ws.ownerWritableStream_] === undefined) {
 			return Promise.reject(new TypeError("Writer is not connected to a stream"));
 		}
@@ -79,10 +90,16 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 	}
 
 	get closed(): Promise<void> {
+		if (! ws.isWritableStreamDefaultWriter(this)) {
+			return Promise.reject(new TypeError());
+		}
 		return this[ws.closedPromise_].promise;
 	}
 
 	get desiredSize(): number | null {
+		if (! ws.isWritableStreamDefaultWriter(this)) {
+			throw new TypeError();
+		}
 		if (this[ws.ownerWritableStream_] === undefined) {
 			throw new TypeError("Writer is not connected to stream");
 		}
@@ -90,6 +107,9 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 	}
 
 	get ready(): Promise<void> {
+		if (! ws.isWritableStreamDefaultWriter(this)) {
+			return Promise.reject(new TypeError());
+		}
 		return this[ws.readyPromise_].promise;
 	}
 }

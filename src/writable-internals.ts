@@ -153,6 +153,7 @@ export function writableStreamAbort(stream: WritableStream, reason: any) {
 		pending!.resolve = resolve;
 		pending!.reject = reject;
 	});
+	pending.promise = promise;
 	stream[pendingAbortRequest_] = pending;
 	if (! wasAlreadyErroring) {
 		writableStreamStartErroring(stream, reason);
@@ -428,7 +429,9 @@ export function writableStreamDefaultWriterWrite(writer: WritableStreamDefaultWr
 	// Assert: stream is not undefined.
 	const controller = stream[writableStreamController_]!;
 	const chunkSize = writableStreamDefaultControllerGetChunkSize(controller, chunk);
-	// If stream is not equal to writer.[[ownerWritableStream]], return a promise rejected with a TypeError exception.
+	if (writer[ownerWritableStream_] !== stream) {
+		return Promise.reject(new TypeError());
+	}
 	const state = stream[state_];
 	if (state === "errored") {
 		return Promise.reject(stream[storedError_]);

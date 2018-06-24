@@ -25,7 +25,7 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 		}
 		const stream = this[rs.ownerReadableStream_];
 		if (stream === undefined) {
-			throw new TypeError("Reader is not associated with a stream");
+			return Promise.reject(new TypeError("Reader is not associated with a stream"));
 		}
 		return rs.readableStreamCancel(stream, reason);
 	}
