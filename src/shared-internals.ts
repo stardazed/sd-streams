@@ -58,12 +58,11 @@ export function createIterResultObject(value: any, done: boolean) {
 	return { value, done };
 }
 
-export function validateAndNormalizeHighWaterMark(value: any) {
-	const highWaterMark = parseInt(value, 10);
-	if (isNaN(highWaterMark) || highWaterMark < 0) {
-		throw new RangeError("highWaterMark must be a valid, positive integer.");
+export function validateAndNormalizeHighWaterMark(hwm: any) {
+	if (typeof hwm !== "number" || isNaN(hwm) || hwm < 0) {
+		throw new RangeError("highWaterMark must be a valid, non-negative integer.");
 	}
-	return highWaterMark;
+	return hwm;
 }
 
 export function makeSizeAlgorithmFromSizeFunction(sizeFn: undefined | ((chunk: any) => number)): SizeAlgorithm {

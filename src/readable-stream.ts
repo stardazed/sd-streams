@@ -27,6 +27,7 @@ export class ReadableStream implements rs.ReadableStream {
 		this[rs.state_] = "readable";
 		this[rs.reader_] = undefined;
 		this[rs.storedError_] = undefined;
+		(this as any)[rs.readableStreamController_] = undefined;
 
 		// allow for internal constructor parameters to be passed in 5th parameter
 		// ignores other parameters
@@ -44,13 +45,15 @@ export class ReadableStream implements rs.ReadableStream {
 		}
 
 		const sourceType = source.type;
+		const sourcePull = source.pull;
+		const sourceStart = source.start;
 		if (sourceType === undefined) {
 			const cancelAlgorithm = rs.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
 			const sizeAlgorithm = rs.makeSizeAlgorithmFromSizeFunction(strategy.size);
 			const highWaterMark = rs.validateAndNormalizeHighWaterMark(strategy.highWaterMark === undefined ? 1 : strategy.highWaterMark);
-			new ReadableStreamDefaultController(this, source.start && source.start.bind(source), source.pull && source.pull.bind(source), cancelAlgorithm, highWaterMark, sizeAlgorithm);
+			new ReadableStreamDefaultController(this, sourceStart && sourceStart.bind(source), sourcePull && sourcePull.bind(source), cancelAlgorithm, highWaterMark, sizeAlgorithm);
 		}
-		else if (sourceType === "bytes") {
+		else if (String(sourceType) === "bytes") {
 			throw new RangeError("Sources of type 'bytes' not implemented yet.");
 		}
 		else {
@@ -63,17 +66,23 @@ export class ReadableStream implements rs.ReadableStream {
 	}
 
 	getReader(options: rs.ReadableStreamReaderOptions = {}): rs.ReadableStreamReader {
+		if (! rs.isReadableStream(this)) {
+			throw new TypeError();
+		}
 		const { mode } = options;
 		if (mode === undefined) {
 			return new ReadableStreamDefaultReader(this);
 		}
-		else if (mode === "byob") {
+		else if (String(mode) === "byob") {
 			throw RangeError("byob reader mode not implemented yet");
 		}
 		throw RangeError("mode option must be undefined or `byob`");
 	}
 
 	cancel(reason: any): Promise<void> {
+		if (! rs.isReadableStream(this)) {
+			return Promise.reject(new TypeError());
+		}
 		if (rs.isReadableStreamLocked(this)) {
 			return Promise.reject(new TypeError("Cannot cancel a locked stream"));
 		}
@@ -81,7 +90,9 @@ export class ReadableStream implements rs.ReadableStream {
 	}
 
 	tee(): ReadableStream[] {
-		// Assert: !IsReadableStream(stream) is true.
+		if (! rs.isReadableStream(this)) {
+			throw new TypeError();
+		}
 		// Assert: Type(cloneForBranch2) is Boolean.
 
 		const reader = new ReadableStreamDefaultReader(this);
@@ -156,7 +167,7 @@ export class ReadableStream implements rs.ReadableStream {
 		return [branch1, branch2];
 	}
 
-	pipeThrough(transform: rs.StreamTransform, options: rs.PipeToOptions): ReadableStream {
+	pipeThrough(transform: rs.StreamTransform, options?: rs.PipeToOptions): ReadableStream {
 		const { readable, writable } = transform;
 		if (readable === undefined || writable === undefined) {
 			throw new TypeError("Both a readable and writable stream must be provided");

@@ -19,6 +19,13 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	[rs.state_]: rs.ReadableStreamControllerState;
 
 	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullFunction: rs.PullFunction | undefined, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, sizeAlgorithm: rs.SizeAlgorithm) {
+		if (! rs.isReadableStream(stream)) {
+			throw new TypeError();
+		}
+		if (stream[rs.readableStreamController_] !== undefined) {
+			throw new TypeError("Cannot reuse a stream");
+		}
+
 		this[rs.controlledReadableStream_] = stream;
 		q.resetQueue(this);
 
@@ -52,6 +59,9 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	}
 
 	close() {
+		if (! rs.isReadableStreamDefaultController(this)) {
+			throw new TypeError();
+		}
 		if (! rs.readableStreamDefaultControllerCanCloseOrEnqueue(this)) {
 			throw new TypeError("Cannot close, the stream is already closing or not readable");
 		}
@@ -59,6 +69,9 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	}
 
 	enqueue(chunk?: any) {
+		if (! rs.isReadableStreamDefaultController(this)) {
+			throw new TypeError();
+		}
 		if (!rs.readableStreamDefaultControllerCanCloseOrEnqueue(this)) {
 			throw new TypeError("Cannot enqueue, the stream is closing or not readable");
 		}
@@ -66,6 +79,9 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	}
 
 	error(e?: any) {
+		if (! rs.isReadableStreamDefaultController(this)) {
+			throw new TypeError();
+		}
 		rs.readableStreamDefaultControllerError(this, e);
 	}
 
@@ -75,12 +91,9 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	}
 
 	[rs.pullSteps_]() {
-		// Let stream be this.[[controlledReadableStream]].
 		const stream = this[rs.controlledReadableStream_];
 		if (this[q.queue_].length > 0) {
-			//   Let chunk be! DequeueValue(this).
 			const chunk = q.dequeueValue(this);
-			//   If this.[[closeRequested]] is true and this.[[queue]] is empty, perform! ReadableStreamClose(stream).
 			if (this[rs.closeRequested_] && this[q.queue_].length === 0) {
 				rs.readableStreamClose(stream);
 			}

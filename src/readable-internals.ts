@@ -142,6 +142,13 @@ export declare class ReadableStream {
 
 // ---- Stream
 
+export function isReadableStream(value: any): value is ReadableStream {
+	if (value == null || typeof value !== "object") {
+		return false;
+	}
+	return readableStreamController_ in value;
+}
+
 export function isReadableStreamLocked(stream: ReadableStream) {
 	return stream[reader_] !== undefined;
 }
@@ -300,6 +307,13 @@ export function readableStreamFulfillReadRequest(stream: ReadableStream, chunk: 
 }
 
 // ---- Controller
+
+export function isReadableStreamDefaultController(value: any): value is ReadableStreamDefaultController {
+	if (value == null || typeof value !== "object") {
+		return false;
+	}
+	return controlledReadableStream_ in value;
+}
 
 export function readableStreamDefaultControllerCanCloseOrEnqueue(rsdc: ReadableStreamDefaultController) {
 	const state = rsdc[controlledReadableStream_][state_];

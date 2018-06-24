@@ -2,6 +2,9 @@ import * as rs from "./readable-internals";
 
 export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 	constructor(stream: rs.ReadableStream) {
+		if (! rs.isReadableStream(stream)) {
+			throw new TypeError();
+		}
 		if (rs.isReadableStreamLocked(stream)) {
 			throw new TypeError("The stream is locked.");
 		}
@@ -9,11 +12,17 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 		this[rs.readRequests_] = [];
 	}
 
-	get closed() {
+	get closed(): Promise<void> {
+		if (! rs.isReadableStreamDefaultReader(this)) {
+			return Promise.reject(new TypeError());
+		}
 		return this[rs.closedPromise_].promise;
 	}
 
-	cancel(reason: any) {
+	cancel(reason: any): Promise<void> {
+		if (! rs.isReadableStreamDefaultReader(this)) {
+			return Promise.reject(new TypeError());
+		}
 		const stream = this[rs.ownerReadableStream_];
 		if (stream === undefined) {
 			throw new TypeError("Reader is not associated with a stream");
@@ -22,6 +31,9 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 	}
 
 	releaseLock() {
+		if (! rs.isReadableStreamDefaultReader(this)) {
+			throw new TypeError();
+		}
 		if (this[rs.ownerReadableStream_] === undefined) {
 			return;
 		}
@@ -32,7 +44,9 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 	}
 
 	read(): Promise<IteratorResult<any>> {
-		// If! IsReadableStreamDefaultReader(this) is false, return a promise rejected with a TypeError exception.
+		if (! rs.isReadableStreamDefaultReader(this)) {
+			return Promise.reject(new TypeError());
+		}
 		if (this[rs.ownerReadableStream_] === undefined) {
 			return Promise.reject(new TypeError("Reader is not associated with a stream"));
 		}
