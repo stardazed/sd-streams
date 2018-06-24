@@ -5,6 +5,7 @@
  */
 
 import * as rs from "./readable-internals";
+import { WritableStream } from "./writable-internals";
 import { ReadableStreamDefaultController } from "./readable-stream-default-controller";
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 
@@ -155,11 +156,16 @@ export class ReadableStream implements rs.ReadableStream {
 		return [branch1, branch2];
 	}
 
-/*
-	pipeThrough({ writable, readable }, options) {
+	pipeThrough(transform: rs.StreamTransform, options: rs.PipeToOptions): ReadableStream {
+		const { readable, writable } = transform;
+		if (readable === undefined || writable === undefined) {
+			throw new TypeError("Both a readable and writable stream must be provided");
+		}
+		this.pipeTo(writable, options).then(_ => {}, _error => {});
+		return readable;
 	}
 
-	pipeTo(dest, { preventClose, preventAbort, preventCancel } = {}) {
+	pipeTo(dest: WritableStream, options: rs.PipeToOptions = {}): Promise<void> {
+		return Promise.resolve();
 	}
-*/
 }

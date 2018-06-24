@@ -1,4 +1,5 @@
 import { ControlledPromise, SizeAlgorithm, StreamStrategy, createIterResultObject, closedPromise_, state_, createControlledPromise } from "./shared-internals";
+import { WritableStream } from "./writable-internals";
 import { QueueContainer, enqueueValueWithSize, resetQueue, queue_, queueTotalSize_ } from "./queue-mixin";
 export * from "./shared-internals";
 
@@ -109,6 +110,17 @@ export interface ReadableStreamSource {
 	cancel?(reason?: any): void;
 }
 
+export interface PipeToOptions {
+	preventClose?: boolean;
+	preventAbort?: boolean;
+	preventCancel?: boolean;
+}
+
+export interface StreamTransform {
+	readable: ReadableStream;
+	writable: WritableStream;
+}
+
 export type ReadableStreamState = "readable" | "closed" | "errored";
 
 export declare class ReadableStream {
@@ -119,8 +131,8 @@ export declare class ReadableStream {
 	getReader(options?: ReadableStreamReaderOptions): ReadableStreamReader;
 	tee(): ReadableStream[];
 
-	// pipeThrough({ writable, readable }, options);
-	// pipeTo(dest, { preventClose, preventAbort, preventCancel } = {});
+	pipeThrough(transform: StreamTransform, options?: PipeToOptions): ReadableStream;
+	pipeTo(dest: WritableStream, options?: PipeToOptions): Promise<void>;
 
 	[state_]: ReadableStreamState;
 	[reader_]: ReadableStreamReader | undefined;
