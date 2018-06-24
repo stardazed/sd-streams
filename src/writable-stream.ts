@@ -14,9 +14,9 @@ export class WritableStream {
 	[ws.closeRequest_]: object | undefined;
 	[ws.inFlightWriteRequest_]: object | undefined;
 	[ws.inFlightCloseRequest_]: object | undefined;
-	[ws.pendingAbortRequest_]: object | undefined;
+	[ws.pendingAbortRequest_]: ws.AbortRequest | undefined;
 	[ws.storedError_]: any;
-	[ws.writableStreamController_]: ws.WritableStreamController | undefined;
+	[ws.writableStreamController_]: ws.WritableStreamDefaultController | undefined;
 	[ws.writer_]: ws.WritableStreamWriter | undefined;
 	[ws.writeRequests_]: ws.ControlledPromise<any>[];
 
@@ -48,11 +48,11 @@ export class WritableStream {
 	}
 
 	get locked(): boolean {
-		return false;
+		return ws.isWritableStreamLocked(this);
 	}
 
-	abort(reason?: any) {
-		if (ws.writableStreamIsLocked(this)) {
+	abort(reason?: any): Promise<void> {
+		if (ws.isWritableStreamLocked(this)) {
 			return Promise.reject(new TypeError("Cannot abort a locked stream"));
 		}
 		return ws.writableStreamAbort(this, reason);

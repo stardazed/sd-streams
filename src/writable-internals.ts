@@ -98,7 +98,7 @@ export declare class WritableStream {
 
 // ---- Stream
 
-export function writableStreamIsLocked(stream: WritableStream) {
+export function isWritableStreamLocked(stream: WritableStream) {
 	return stream[writer_] !== undefined;
 }
 
