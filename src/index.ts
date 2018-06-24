@@ -1,2 +1,3 @@
 import { ReadableStream } from "./readable-stream";
-export { ReadableStream };
+import { WritableStream } from "./writable-stream";
+export { ReadableStream, WritableStream };

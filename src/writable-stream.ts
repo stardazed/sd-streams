@@ -17,7 +17,7 @@ export class WritableStream {
 	[ws.pendingAbortRequest_]: ws.AbortRequest | undefined;
 	[ws.storedError_]: any;
 	[ws.writableStreamController_]: ws.WritableStreamDefaultController | undefined;
-	[ws.writer_]: ws.WritableStreamWriter | undefined;
+	[ws.writer_]: ws.WritableStreamDefaultWriter | undefined;
 	[ws.writeRequests_]: ws.ControlledPromise<any>[];
 
 	constructor(sink: ws.WritableStreamSink = {}, strategy: ws.StreamStrategy = {}) {
