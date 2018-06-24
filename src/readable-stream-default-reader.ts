@@ -56,7 +56,7 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 	[rs.closedPromise_]: rs.ControlledPromise<void>;
 	[rs.ownerReadableStream_]: rs.ReadableStream | undefined;
 
-	[rs.readRequests_]: any[];
+	[rs.readRequests_]: rs.ControlledPromise<IteratorResult<any>>[];
 }
 
 /*
