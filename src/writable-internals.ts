@@ -27,8 +27,8 @@ export const errorSteps_ = Symbol("errorSteps_");
 export const abortSteps_ = Symbol("abortSteps_");
 
 
-export type WriteFunction = (chunk: any, controller: WritableStreamController) => void | Promise<void>;
-export type WriteAlgorithm = (chunk: any, controller: WritableStreamController) => Promise<void>;
+export type WriteFunction = (chunk: any) => void | Promise<void>;
+export type WriteAlgorithm = (chunk: any) => Promise<void>;
 export type CloseAlgorithm = () => Promise<void>;
 export type AbortAlgorithm = (reason?: any) => Promise<void>;
 
@@ -41,7 +41,11 @@ export interface WritableStreamController {
 	[abortSteps_](reason: any): Promise<void>;
 }
 
-export interface WritableStreamDefaultController extends WritableStreamController, q.QueueContainer<any> {
+export interface WriteRecord {
+	chunk: any;
+}
+
+export interface WritableStreamDefaultController extends WritableStreamController, q.QueueContainer<WriteRecord | "close"> {
 	[abortAlgorithm_]: AbortAlgorithm; // A promise - returning algorithm, taking one argument(the abort reason), which communicates a requested abort to the underlying sink
 	[closeAlgorithm_]: CloseAlgorithm; // A promise - returning algorithm which communicates a requested close to the underlying sink
 	[controlledWritableStream_]: WritableStream; // The WritableStream instance controlled
@@ -361,17 +365,128 @@ export function writableStreamDefaultWriterWrite(writer: WritableStreamDefaultWr
 
 // ---- Controller
 
-export function writableStreamDefaultControllerGetDesiredSize(wsdc: WritableStreamDefaultController) {
-	return wsdc[strategyHWM_] - wsdc[q.queueTotalSize_];
+export function isWritableStreamDefaultController(value: any): value is WritableStreamDefaultController {
+	if (value == null || typeof value !== "object") {
+		return false;
+	}
+	return controlledWritableStream_ in value;
 }
 
-export function writableStreamDefaultControllerGetBackpressure(wsdc: WritableStreamDefaultController) {
-	const desiredSize = writableStreamDefaultControllerGetDesiredSize(wsdc);
+export function writableStreamDefaultControllerClose(controller: WritableStreamDefaultController) {
+	q.enqueueValueWithSize(controller, "close", 0);
+	writableStreamDefaultControllerAdvanceQueueIfNeeded(controller);
+}
+
+export function writableStreamDefaultControllerGetChunkSize(controller: WritableStreamDefaultController, chunk: any) {
+	let chunkSize: number;
+	try {
+		chunkSize = controller[strategySizeAlgorithm_](chunk);
+	}
+	catch (error) {
+		writableStreamDefaultControllerErrorIfNeeded(controller, error);
+		chunkSize = 1;
+	}
+	return chunkSize;
+}
+
+export function writableStreamDefaultControllerGetDesiredSize(controller: WritableStreamDefaultController) {
+	return controller[strategyHWM_] - controller[q.queueTotalSize_];
+}
+
+export function writableStreamDefaultControllerWrite(controller: WritableStreamDefaultController, chunk: any, chunkSize: number) {
+	try {
+		q.enqueueValueWithSize(controller, { chunk }, chunkSize);
+	}
+	catch (error) {
+		writableStreamDefaultControllerErrorIfNeeded(controller, error);
+		return;
+	}
+	// Let stream be controller.[[controlledWritableStream]].
+	const stream = controller[controlledWritableStream_];
+	if (! writableStreamCloseQueuedOrInFlight(stream) && stream[state_] === "writable") {
+		const backpressure = writableStreamDefaultControllerGetBackpressure(controller);
+		writableStreamUpdateBackpressure(stream, backpressure);
+	}
+	writableStreamDefaultControllerAdvanceQueueIfNeeded(controller);
+}
+
+export function writableStreamDefaultControllerAdvanceQueueIfNeeded(controller: WritableStreamDefaultController) {
+	if (! controller[started_]) {
+		return;
+	}
+	const stream = controller[controlledWritableStream_];
+	if (stream[inFlightWriteRequest_] !== undefined) {
+		return;
+	}
+	const state = stream[state_];
+	if (state === "closed" || state === "errored") {
+		return;
+	}
+	if (state === "erroring") {
+		writableStreamFinishErroring(stream);
+		return;
+	}
+	if (controller[q.queue_].length === 0) {
+		return;
+	}
+	const writeRecord = q.peekQueueValue(controller);
+	if (writeRecord === "close") {
+		writableStreamDefaultControllerProcessClose(controller);
+	}
+	else {
+		writableStreamDefaultControllerProcessWrite(controller, writeRecord.chunk);
+	}
+}
+
+export function writableStreamDefaultControllerErrorIfNeeded(controller: WritableStreamDefaultController, error: any) {
+	if (controller[controlledWritableStream_][state_] === "writable") {
+		writableStreamDefaultControllerError(controller, error);
+	}
+}
+
+export function writableStreamDefaultControllerProcessClose(controller: WritableStreamDefaultController) {
+	const stream = controller[controlledWritableStream_];
+	writableStreamMarkCloseRequestInFlight(stream);
+	q.dequeueValue(controller);
+	// Assert: controller.[[queue]] is empty.
+	controller[closeAlgorithm_]().then(
+		_ => {
+			writableStreamFinishInFlightClose(stream);
+		},
+		error => {
+			writableStreamFinishInFlightCloseWithError(stream, error);
+		}
+	);
+}
+
+export function writableStreamDefaultControllerProcessWrite(controller: WritableStreamDefaultController, chunk: any) {
+	const stream = controller[controlledWritableStream_];
+	writableStreamMarkFirstWriteRequestInFlight(stream);
+	controller[writeAlgorithm_](chunk).then(
+		_ => {
+			writableStreamFinishInFlightWrite(stream);
+			const state = stream[state_];
+			// 	Assert: state is "writable" or "erroring".
+			q.dequeueValue(controller);
+			if (! writableStreamCloseQueuedOrInFlight(stream) && state === "writable") {
+				const backpressure = writableStreamDefaultControllerGetBackpressure(controller);
+				writableStreamUpdateBackpressure(stream, backpressure);
+			}
+			writableStreamDefaultControllerAdvanceQueueIfNeeded(controller);
+		},
+		error => {
+			writableStreamFinishInFlightWriteWithError(stream, error);
+		}
+	);
+}
+
+export function writableStreamDefaultControllerGetBackpressure(controller: WritableStreamDefaultController) {
+	const desiredSize = writableStreamDefaultControllerGetDesiredSize(controller);
 	return desiredSize <= 0;
 }
 
-export function writableStreamDefaultControllerError(wsdc: WritableStreamDefaultController, error: any) {
-	const stream = wsdc[controlledWritableStream_];
+export function writableStreamDefaultControllerError(controller: WritableStreamDefaultController, error: any) {
+	const stream = controller[controlledWritableStream_];
 	// Assert: stream.[[state]] is "writable".
 	writableStreamStartErroring(stream, error);
 }

@@ -10,7 +10,7 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 	[ws.strategySizeAlgorithm_]: ws.SizeAlgorithm;
 	[ws.writeAlgorithm_]: ws.WriteAlgorithm;
 
-	[q.queue_]: q.QueueElement<any>[];
+	[q.queue_]: q.QueueElement<ws.WriteRecord | "close">[];
 	[q.queueTotalSize_]: number;
 
 	constructor(stream: ws.WritableStream, startFunction: ws.StartFunction | undefined, writeFunction: ws.WriteFunction | undefined, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark: number, sizeAlgorithm: ws.SizeAlgorithm) {
