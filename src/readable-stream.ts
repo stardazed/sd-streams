@@ -6,6 +6,8 @@
 
 import * as rs from "./readable-internals";
 import { WritableStream } from "./writable-internals";
+import { readableStreamPipeTo } from "./transform-internals";
+
 import { ReadableStreamDefaultController } from "./readable-stream-default-controller";
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 
@@ -177,6 +179,6 @@ export class ReadableStream implements rs.ReadableStream {
 	}
 
 	pipeTo(dest: WritableStream, options: rs.PipeToOptions = {}): Promise<void> {
-		return Promise.resolve();
+		return readableStreamPipeTo(this, dest, options);
 	}
 }
