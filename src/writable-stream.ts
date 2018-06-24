@@ -59,6 +59,6 @@ export class WritableStream {
 	}
 
 	getWriter(): ws.WritableStreamWriter {
-		return new WritableStreamDefaultWriter();
+		return new WritableStreamDefaultWriter(this);
 	}
 }

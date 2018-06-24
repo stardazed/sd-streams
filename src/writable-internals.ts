@@ -20,6 +20,8 @@ export const strategyHWM_ = Symbol("strategyHWM_");
 export const strategySizeAlgorithm_ = Symbol("strategySizeAlgorithm_");
 export const writeAlgorithm_ = Symbol("writeAlgorithm_");
 
+export const ownerWritableStream_ = Symbol("ownerWritableStream_");
+
 export const errorSteps_ = Symbol("errorSteps_");
 export const abortSteps_ = Symbol("abortSteps_");
 
@@ -51,7 +53,17 @@ export interface WritableStreamDefaultController extends WritableStreamControlle
 // ----
 
 export interface WritableStreamWriter {
+	readonly closed: Promise<void>;
+	readonly desiredSize: number;
+	readonly ready: Promise<void>;
 
+	abort(reason: any): Promise<void>;
+	close(): Promise<void>;
+	releaseLock(): void;
+	write(chunk: any): Promise<void>;
+
+	[ownerWritableStream_]: WritableStream | undefined;
+	[closedPromise_]: ControlledPromise<void>;
 }
 
 // ----
