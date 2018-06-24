@@ -52,11 +52,11 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 		ws.writableStreamDefaultControllerError(this, e);
 	}
 
-	[ws.errorSteps_]() {
-		q.resetQueue(this);
-	}
-
 	[ws.abortSteps_](reason: any) {
 		return this[ws.abortAlgorithm_](reason);
+	}
+
+	[ws.errorSteps_]() {
+		q.resetQueue(this);
 	}
 }

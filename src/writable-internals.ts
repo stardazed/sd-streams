@@ -1,4 +1,4 @@
-import { StreamStrategy, state_, SizeAlgorithm, ControlledPromise, closedPromise_ } from "./shared-internals";
+import { StreamStrategy, state_, SizeAlgorithm, ControlledPromise, ControlledPromiseState, createControlledPromise, closedPromise_ } from "./shared-internals";
 import * as q from "./queue-mixin";
 export * from "./shared-internals";
 
@@ -21,6 +21,7 @@ export const strategySizeAlgorithm_ = Symbol("strategySizeAlgorithm_");
 export const writeAlgorithm_ = Symbol("writeAlgorithm_");
 
 export const ownerWritableStream_ = Symbol("ownerWritableStream_");
+export const readyPromise_ = Symbol("readyPromise_");
 
 export const errorSteps_ = Symbol("errorSteps_");
 export const abortSteps_ = Symbol("abortSteps_");
@@ -54,16 +55,19 @@ export interface WritableStreamDefaultController extends WritableStreamControlle
 
 export interface WritableStreamWriter {
 	readonly closed: Promise<void>;
-	readonly desiredSize: number;
+	readonly desiredSize: number | null;
 	readonly ready: Promise<void>;
 
 	abort(reason: any): Promise<void>;
 	close(): Promise<void>;
 	releaseLock(): void;
 	write(chunk: any): Promise<void>;
+}
 
+export interface WritableStreamDefaultWriter extends WritableStreamWriter {
 	[ownerWritableStream_]: WritableStream | undefined;
 	[closedPromise_]: ControlledPromise<void>;
+	[readyPromise_]: ControlledPromise<void>;
 }
 
 // ----
@@ -98,9 +102,9 @@ export declare class WritableStream {
 
 	[state_]: WritableStreamState;
 	[backpressure_]: boolean;
-	[closeRequest_]: object | undefined;
-	[inFlightWriteRequest_]: object | undefined;
-	[inFlightCloseRequest_]: object | undefined;
+	[closeRequest_]: ControlledPromise<void> | undefined;
+	[inFlightWriteRequest_]: ControlledPromise<void> | undefined;
+	[inFlightCloseRequest_]: ControlledPromise<void> | undefined;
 	[pendingAbortRequest_]: AbortRequest | undefined;
 	[storedError_]: any;
 	[writableStreamController_]: WritableStreamDefaultController | undefined;
@@ -238,6 +242,7 @@ export function writableStreamUpdateBackpressure(stream: WritableStream, backpre
 	}
 	stream[backpressure_] = backpressure;
 }
+
 
 // ---- Writers
 

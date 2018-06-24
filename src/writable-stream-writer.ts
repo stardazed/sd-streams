@@ -1,7 +1,8 @@
 import * as ws from "./writable-internals";
 
-export class WritableStreamDefaultWriter implements ws.WritableStreamWriter {
+export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWriter {
 	[ws.ownerWritableStream_]: ws.WritableStream | undefined;
+	[ws.readyPromise_]: ws.ControlledPromise<void>;
 	[ws.closedPromise_]: ws.ControlledPromise<void>;
 
 	constructor(stream: ws.WritableStream) {

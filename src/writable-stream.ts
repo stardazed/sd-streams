@@ -11,9 +11,9 @@ import { WritableStreamDefaultWriter } from "./writable-stream-writer";
 export class WritableStream {
 	[ws.state_]: ws.WritableStreamState;
 	[ws.backpressure_]: boolean;
-	[ws.closeRequest_]: object | undefined;
-	[ws.inFlightWriteRequest_]: object | undefined;
-	[ws.inFlightCloseRequest_]: object | undefined;
+	[ws.closeRequest_]: ws.ControlledPromise<void> | undefined;
+	[ws.inFlightWriteRequest_]: ws.ControlledPromise<void> | undefined;
+	[ws.inFlightCloseRequest_]: ws.ControlledPromise<void> | undefined;
 	[ws.pendingAbortRequest_]: ws.AbortRequest | undefined;
 	[ws.storedError_]: any;
 	[ws.writableStreamController_]: ws.WritableStreamDefaultController | undefined;
