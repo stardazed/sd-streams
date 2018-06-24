@@ -10,7 +10,7 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 	}
 
 	get closed() {
-		return this[rs.closedPromise_];
+		return this[rs.closedPromise_].promise;
 	}
 
 	cancel(reason: any) {
@@ -39,9 +39,7 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 		return rs.readableStreamDefaultReaderRead(this);
 	}
 
-	[rs.closedPromise_]: Promise<void>;
-	[rs.closedPromiseResolve_]?: (value?: any) => void;
-	[rs.closedPromiseReject_]?: (error: any) => void;
+	[rs.closedPromise_]: rs.ControlledPromise<void>;
 	[rs.ownerReadableStream_]: rs.ReadableStream | undefined;
 
 	[rs.readRequests_]: any[];
@@ -57,9 +55,7 @@ export class ReadableStreamBYOBReader implements rs.ReadableStreamReader {
 	read(view: ArrayBuffer): Promise<void>;
 
 	[rs.ownerReadableStream_]: rs.ReadableStream;
-	[rs.closedPromise_]: Promise<void>;
-	[rs.closedPromiseResolve_]?: () => void;
-	[rs.closedPromiseReject_]?: (error: any) => void;
+	[rs.closedPromise_]: rs.ControlledPromise<void>;
 
 	[rs.readIntoRequests_]: any[];
 }

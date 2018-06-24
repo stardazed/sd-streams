@@ -144,7 +144,7 @@ export class ReadableStream implements rs.ReadableStream {
 		branch1 = new ReadableStream(undefined, undefined, undefined, undefined, { startAlgorithm, pullAlgorithm, cancelAlgorithm: cancel1Algorithm });
 		branch2 = new ReadableStream(undefined, undefined, undefined, undefined, { startAlgorithm, pullAlgorithm, cancelAlgorithm: cancel2Algorithm });
 
-		reader[rs.closedPromise_].catch(error => {
+		reader[rs.closedPromise_].promise.catch(error => {
 			if (! closedOrErrored) {
 				rs.readableStreamDefaultControllerError(branch1![rs.readableStreamController_] as ReadableStreamDefaultController, error);
 				rs.readableStreamDefaultControllerError(branch2![rs.readableStreamController_] as ReadableStreamDefaultController, error);

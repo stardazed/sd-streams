@@ -15,9 +15,6 @@ export const cancelSteps_ = Symbol("cancelSteps_");
 export const pullSteps_ = Symbol("pullSteps_");
 
 export const ownerReadableStream_ = Symbol("ownerReadableStream_");
-export const closedPromise_ = Symbol("closedPromise_");
-export const closedPromiseResolve_ = Symbol("closedPromiseResolve_");
-export const closedPromiseReject_ = Symbol("closedPromiseReject_");
 export const readRequests_ = Symbol("readRequests_");
 export const readIntoRequests_ = Symbol("readIntoRequests_");
 
@@ -72,9 +69,7 @@ export interface ReadableStreamReader {
 	releaseLock(): void;
 
 	[ownerReadableStream_]: ReadableStream | undefined;
-	[closedPromise_]: Promise<void>;
-	[closedPromiseResolve_]?: (value?: any) => void;
-	[closedPromiseReject_]?: (error: any) => void;
+	[closedPromise_]: ControlledPromise<void>;
 }
 
 export declare class ReadableStreamDefaultReader implements ReadableStreamReader {
@@ -86,9 +81,7 @@ export declare class ReadableStreamDefaultReader implements ReadableStreamReader
 	read(): Promise<IteratorResult<any>>;
 
 	[ownerReadableStream_]: ReadableStream | undefined;
-	[closedPromise_]: Promise<void>;
-	[closedPromiseResolve_]?: (value?: any) => void;
-	[closedPromiseReject_]?: (error: any) => void;
+	[closedPromise_]: ControlledPromise<void>;
 
 	[readRequests_]: ControlledPromise<IteratorResult<any>>[];
 }
@@ -102,9 +95,7 @@ export declare class ReadableStreamBYOBReader implements ReadableStreamReader {
 	read(view: ArrayBuffer): Promise<IteratorResult<any>>;
 
 	[ownerReadableStream_]: ReadableStream | undefined;
-	[closedPromise_]: Promise<void>;
-	[closedPromiseResolve_]?: (value?: any) => void;
-	[closedPromiseReject_]?: (error: any) => void;
+	[closedPromise_]: ControlledPromise<void>;
 
 	[readIntoRequests_]: any[];
 }
@@ -188,10 +179,7 @@ export function readableStreamClose(stream: ReadableStream) {
 		}
 		reader[readRequests_] = [];
 	}
-	const resolve = reader[closedPromiseResolve_];
-	if (resolve) {
-		resolve(undefined);
-	}
+	reader[closedPromise_].resolve();
 }
 
 export function readableStreamError(stream: ReadableStream, error: any) {
@@ -218,11 +206,7 @@ export function readableStreamError(stream: ReadableStream, error: any) {
 		// Set reader.[[readIntoRequests]] to a new empty List.
 	}
 
-	const reject = reader[closedPromiseReject_];
-	if (reject) {
-		reject(error);
-		// <-- clear reject /resolve
-	}
+	reader[closedPromise_].reject(error);
 }
 
 
@@ -246,17 +230,16 @@ export function readableStreamReaderGenericInitialize(reader: ReadableStreamRead
 	reader[ownerReadableStream_] = stream;
 	stream[reader_] = reader;
 	const streamState = stream[state_];
+
+	reader[closedPromise_] = createControlledPromise<void>();
 	if (streamState === "readable") {
-		reader[closedPromise_] = new Promise((resolve, reject) => {
-			reader[closedPromiseResolve_] = resolve;
-			reader[closedPromiseReject_] = reject;
-		});
+		// leave as is
 	}
 	else if (streamState === "closed") {
-		reader[closedPromise_] = Promise.resolve(undefined);
+		reader[closedPromise_].resolve(undefined);
 	}
 	else {
-		reader[closedPromise_] = Promise.reject(stream[storedError_]);
+		reader[closedPromise_].reject(stream[storedError_]);
 	}
 }
 
@@ -269,17 +252,12 @@ export function readableStreamReaderGenericRelease(reader: ReadableStreamReader)
 	}
 
 	if (stream[state_] === "readable") {
-		const reject = reader[closedPromiseReject_];
-		if (reject) {
-			reject(new TypeError());
-		}
+		reader[closedPromise_].reject(new TypeError());
 	}
 	else {
-		reader[closedPromise_] = Promise.reject(new TypeError());
+		reader[closedPromise_] = createControlledPromise<void>();
+		reader[closedPromise_].reject(new TypeError());
 	}
-	// Set reader.[[closedPromise]].[[PromiseIsHandled]] to true.
-	reader[closedPromiseResolve_] = undefined;
-	reader[closedPromiseReject_] = undefined;
 
 	stream[reader_] = undefined;
 	reader[ownerReadableStream_] = undefined;
