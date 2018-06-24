@@ -1,8 +1,3 @@
-export interface ControlledPromise<V> {
-	resolve(value: V): void;
-	reject(error: any): void;
-}
-
 export type SizeAlgorithm = (this: void, chunk?: any) => number;
 
 export interface StreamStrategy {
@@ -10,7 +5,9 @@ export interface StreamStrategy {
 	highWaterMark?: number;
 }
 
+// shared symbol private keys
 export const state_ = Symbol("state_");
+export const closedPromise_ = Symbol("closedPromise_");
 
 // ---------
 
@@ -76,4 +73,21 @@ export function makeSizeAlgorithmFromSizeFunction(sizeFn: undefined | ((chunk: a
 		}
 		return 1;
 	};
+}
+
+// ----
+
+export interface ControlledPromise<V> {
+	resolve(value?: V): void;
+	reject(error: any): void;
+	promise: Promise<V>;
+}
+
+export function createControlledPromise<V>(): ControlledPromise<V> {
+	const conProm = {} as ControlledPromise<V>;
+	conProm.promise = new Promise<V>(function(resolve, reject) {
+		conProm.resolve = resolve;
+		conProm.reject = reject;
+	});
+	return conProm;
 }

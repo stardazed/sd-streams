@@ -1,4 +1,4 @@
-import { StreamStrategy, state_, SizeAlgorithm, ControlledPromise } from "./shared-internals";
+import { StreamStrategy, state_, SizeAlgorithm, ControlledPromise, closedPromise_ } from "./shared-internals";
 import * as q from "./queue-mixin";
 export * from "./shared-internals";
 

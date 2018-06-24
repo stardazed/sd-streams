@@ -1,4 +1,4 @@
-import { ControlledPromise, SizeAlgorithm, StreamStrategy, createIterResultObject, state_ } from "./shared-internals";
+import { ControlledPromise, SizeAlgorithm, StreamStrategy, createIterResultObject, closedPromise_, state_, createControlledPromise } from "./shared-internals";
 import { QueueContainer, enqueueValueWithSize, resetQueue, queue_, queueTotalSize_ } from "./queue-mixin";
 export * from "./shared-internals";
 
@@ -156,10 +156,9 @@ export function readableStreamAddReadRequest(stream: ReadableStream) {
 	// Assert: !IsReadableStreamDefaultReader(stream.[[reader]]) is true.
 	// Assert: stream.[[state]] is "readable".
 	const reader = stream[reader_] as ReadableStreamDefaultReader;
-	const promise = new Promise<IteratorResult<any>>(function(resolve, reject) {
-		reader[readRequests_].push({ resolve, reject });
-	});
-	return promise;
+	const conProm = createControlledPromise<IteratorResult<any>>();
+	reader[readRequests_].push(conProm);
+	return conProm.promise;
 }
 
 export function readableStreamCancel(stream: ReadableStream, reason: any) {
