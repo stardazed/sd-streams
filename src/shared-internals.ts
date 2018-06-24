@@ -77,17 +77,26 @@ export function makeSizeAlgorithmFromSizeFunction(sizeFn: undefined | ((chunk: a
 
 // ----
 
+export const enum ControlledPromiseState {
+	Pending,
+	Resolved,
+	Rejected
+}
+
 export interface ControlledPromise<V> {
 	resolve(value?: V): void;
 	reject(error: any): void;
 	promise: Promise<V>;
+	state: ControlledPromiseState;
 }
 
 export function createControlledPromise<V>(): ControlledPromise<V> {
-	const conProm = {} as ControlledPromise<V>;
+	const conProm = {
+		state: ControlledPromiseState.Pending
+	} as ControlledPromise<V>;
 	conProm.promise = new Promise<V>(function(resolve, reject) {
-		conProm.resolve = resolve;
-		conProm.reject = reject;
+		conProm.resolve = function(v?: V) { conProm.state = ControlledPromiseState.Resolved; resolve(v); };
+		conProm.reject = function(e?: any) { conProm.state = ControlledPromiseState.Rejected; reject(e); };
 	});
 	return conProm;
 }
