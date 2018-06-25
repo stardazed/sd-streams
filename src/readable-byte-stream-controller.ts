@@ -11,7 +11,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 	[rs.pullAgain_]: boolean;
 	[rs.pullAlgorithm_]: rs.PullAlgorithm;
 	[rs.pulling_]: boolean;
-	[rs.pendingPullIntos_]: rs.PullIntoRequest[];
+	[rs.pendingPullIntos_]: rs.PullIntoDescriptor[];
 	[rs.started_]: boolean;
 	[rs.strategyHWM_]: number;
 

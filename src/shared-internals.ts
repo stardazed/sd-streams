@@ -30,6 +30,18 @@ export function invokeOrNoop<O extends object, P extends keyof O>(o: O, p: P, ar
 	return Function.prototype.apply.call(method, o, args);
 }
 
+export function transferArrayBuffer(buffer: ArrayBufferLike) {
+	// This would in a JS engine context detach the buffer's backing store and return
+	// a new ArrayBuffer with the same backing store, invalidating `buffer`,
+	// i.e. a move operation in C++ parlance.
+	// Sadly ArrayBuffer.transfer is yet to be implemented by a single browser vendor.
+	return buffer.slice(0); // copies instead of moves
+}
+
+export function copyDataBlockBytes(toBlock: ArrayBufferLike, toIndex: number, fromBlock: ArrayBufferLike, fromIndex: number, count: number) {
+	new Uint8Array(toBlock, toIndex, count).set(new Uint8Array(fromBlock, fromIndex, count));
+}
+
 export function promiseCall<F extends Function>(f: F, v: object | undefined, args: any[]) { // tslint:disable-line:ban-types
 	try {
 		const result = Function.prototype.apply.call(f, v, args);

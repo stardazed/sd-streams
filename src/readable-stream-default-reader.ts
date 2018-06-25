@@ -65,7 +65,7 @@ export class ReadableStreamBYOBReader implements rs.ReadableStreamReader {
 	readonly closed: boolean;
 	cancel(reason: any): void;
 	releaseLock(): void;
-	read(view: ArrayBuffer): Promise<void>;
+	read(view: ArrayBufferLike): Promise<void>;
 
 	[rs.ownerReadableStream_]: rs.ReadableStream;
 	[rs.closedPromise_]: rs.ControlledPromise<void>;

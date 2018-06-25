@@ -1,4 +1,4 @@
-import { ControlledPromise, SizeAlgorithm, StreamStrategy, createIterResultObject, closedPromise_, state_, createControlledPromise } from "./shared-internals";
+import { ControlledPromise, SizeAlgorithm, StreamStrategy, createControlledPromise, createIterResultObject, transferArrayBuffer, closedPromise_, state_, copyDataBlockBytes } from "./shared-internals";
 import { WritableStream } from "./writable-internals";
 import { QueueContainer, ByteQueueContainer, enqueueValueWithSize, resetQueue, queue_, queueTotalSize_ } from "./queue-mixin";
 export * from "./shared-internals";
@@ -66,11 +66,18 @@ export declare class ReadableStreamBYOBRequest {
 	[view_]: ArrayBufferView;
 }
 
-export interface PullIntoRequest {
-	buffer: ArrayBuffer;
+interface ArrayBufferViewCtor {
+	new(buffer: ArrayBufferLike, byteOffset?: number, byteLength?: number): ArrayBufferView;
+}
+
+export interface PullIntoDescriptor {
+	readerType: "default" | "byob";
+	ctor: ArrayBufferViewCtor;
+	buffer: ArrayBufferLike;
 	byteOffset: number;
 	byteLength: number;
 	bytesFilled: number;
+	elementSize: number;
 }
 
 export interface ReadableByteStreamController extends ReadableStreamController, ByteQueueContainer {
@@ -84,7 +91,7 @@ export interface ReadableByteStreamController extends ReadableStreamController, 
 	[pullAgain_]: boolean; // A boolean flag set to true if the stream’s mechanisms requested a call to the underlying byte source’s pull() method to pull more data, but the pull could not yet be done since a previous call is still executing
 	[pullAlgorithm_]: PullAlgorithm; // A promise-returning algorithm that pulls data from the underlying source
 	[pulling_]: boolean; // A boolean flag set to true while the underlying byte source’s pull() method is executing and has not yet fulfilled, used to prevent reentrant calls
-	[pendingPullIntos_]: PullIntoRequest[]; // A List of descriptors representing pending BYOB pull requests
+	[pendingPullIntos_]: PullIntoDescriptor[]; // A List of descriptors representing pending BYOB pull requests
 	[started_]: boolean; // A boolean flag indicating whether the underlying source has finished starting
 	[strategyHWM_]: number; // A number supplied to the constructor as part of the stream’s queuing strategy, indicating the point at which the stream will apply backpressure to its underlying byte source
 }
@@ -137,7 +144,7 @@ export declare class ReadableStreamBYOBReader implements ReadableStreamReader {
 	readonly closed: Promise<void>;
 	cancel(reason: any): Promise<void>;
 	releaseLock(): void;
-	read(view: ArrayBuffer): Promise<IteratorResult<any>>;
+	read(view: ArrayBufferLike): Promise<IteratorResult<any>>;
 
 	[ownerReadableStream_]: ReadableStream | undefined;
 	[closedPromise_]: ControlledPromise<void>;
