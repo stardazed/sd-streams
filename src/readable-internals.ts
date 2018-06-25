@@ -62,8 +62,8 @@ export declare class ReadableStreamBYOBRequest {
 	respond(bytesWritten: number): void;
 	respondWithNewView(view: ArrayBufferView): void;
 
-	[associatedReadableByteStreamController_]: ReadableByteStreamController;
-	[view_]: ArrayBufferView;
+	[associatedReadableByteStreamController_]: ReadableByteStreamController | undefined;
+	[view_]: ArrayBufferView | undefined;
 }
 
 interface ArrayBufferViewCtor {

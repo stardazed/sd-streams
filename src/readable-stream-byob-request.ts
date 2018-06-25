@@ -1,8 +1,8 @@
 import * as rs from "./readable-internals";
 
 export class ReadableStreamBYOBRequest {
-	[rs.associatedReadableByteStreamController_]: rs.ReadableByteStreamController;
-	[rs.view_]: ArrayBufferView;
+	[rs.associatedReadableByteStreamController_]: rs.ReadableByteStreamController | undefined;
+	[rs.view_]: ArrayBufferView | undefined;
 
 	constructor(controller: rs.ReadableByteStreamController, view: ArrayBufferView) {
 		if (arguments.length !== 2) {
@@ -24,7 +24,7 @@ export class ReadableStreamBYOBRequest {
 		if (! rs.isReadableStreamBYOBRequest(this)) {
 			throw new TypeError();
 		}
-		return this[rs.view_];
+		return this[rs.view_]!;
 	}
 
 	respond(bytesWritten: number) {
@@ -35,7 +35,7 @@ export class ReadableStreamBYOBRequest {
 			throw new TypeError();
 		}
 		// If! IsDetachedBuffer(this.[[view]].[[ViewedArrayBuffer]]) is true, throw a TypeError exception.
-		return rs.readableByteStreamControllerRespond(this[rs.associatedReadableByteStreamController_], bytesWritten);
+		return rs.readableByteStreamControllerRespond(this[rs.associatedReadableByteStreamController_]!, bytesWritten);
 	}
 
 	respondWithNewView(view: ArrayBufferView) {
@@ -49,6 +49,6 @@ export class ReadableStreamBYOBRequest {
 			throw new TypeError("view parameter must be a TypedArray");
 		}
 		// If! IsDetachedBuffer(view.[[ViewedArrayBuffer]]) is true, throw a TypeError exception.
-		return rs.readableByteStreamControllerRespondWithNewView(this[rs.associatedReadableByteStreamController_], view);
+		return rs.readableByteStreamControllerRespondWithNewView(this[rs.associatedReadableByteStreamController_]!, view);
 	}
 }
