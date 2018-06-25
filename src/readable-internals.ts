@@ -1,6 +1,6 @@
 import { ControlledPromise, SizeAlgorithm, StreamStrategy, createIterResultObject, closedPromise_, state_, createControlledPromise } from "./shared-internals";
 import { WritableStream } from "./writable-internals";
-import { QueueContainer, enqueueValueWithSize, resetQueue, queue_, queueTotalSize_ } from "./queue-mixin";
+import { QueueContainer, ByteQueueContainer, enqueueValueWithSize, resetQueue, queue_, queueTotalSize_ } from "./queue-mixin";
 export * from "./shared-internals";
 
 // ReadableStreamDefaultController
@@ -73,7 +73,7 @@ export interface PullIntoRequest {
 	bytesFilled: number;
 }
 
-export interface ReadableByteStreamController extends ReadableStreamController, QueueContainer<any> {
+export interface ReadableByteStreamController extends ReadableStreamController, ByteQueueContainer {
 	readonly byobRequest: ReadableStreamBYOBRequest | undefined;
 
 	[autoAllocateChunkSize_]: number | undefined; // A positive integer, when the automatic buffer allocation feature is enabled. In that case, this value specifies the size of buffer to allocate. It is undefined otherwise.

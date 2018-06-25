@@ -15,8 +15,8 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 	[rs.started_]: boolean;
 	[rs.strategyHWM_]: number;
 
-	[q.queue_]: q.QueueElement<any>[]; // A List representing the stream’s internal queue of chunks
-	[q.queueTotalSize_]: number; // The total size (in bytes) of all the chunks stored in [[queue]]
+	[q.queue_]: { buffer: ArrayBufferLike, byteOffset: number, byteLength: number }[];
+	[q.queueTotalSize_]: number;
 
 	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullFunction: rs.PullFunction | undefined, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, autoAllocateChunkSize: number | undefined) {
 		if (stream[rs.readableStreamController_] !== undefined) {

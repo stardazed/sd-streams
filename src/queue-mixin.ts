@@ -11,6 +11,11 @@ export interface QueueContainer<V> {
 	[queueTotalSize_]: number;
 }
 
+export interface ByteQueueContainer {
+	[queue_]: { buffer: ArrayBufferLike, byteOffset: number, byteLength: number }[];
+	[queueTotalSize_]: number;
+}
+
 export function dequeueValue<V>(container: QueueContainer<V>) {
 	// Assert: container has[[queue]] and[[queueTotalSize]] internal slots.
 	// Assert: container.[[queue]] is not empty.
@@ -35,7 +40,7 @@ export function peekQueueValue<V>(container: QueueContainer<V>) {
 	return container[queue_][0].value;
 }
 
-export function resetQueue<V>(container: QueueContainer<V>) {
+export function resetQueue<V>(container: ByteQueueContainer | QueueContainer<V>) {
 	container[queue_] = [];
 	container[queueTotalSize_] = 0;
 }
