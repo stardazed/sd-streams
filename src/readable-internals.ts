@@ -27,6 +27,10 @@ export const ownerReadableStream_ = Symbol("ownerReadableStream_");
 export const readRequests_ = Symbol("readRequests_");
 export const readIntoRequests_ = Symbol("readIntoRequests_");
 
+// ReadableStreamBYOBRequest
+export const associatedReadableByteStreamController_ = Symbol("associatedReadableByteStreamController_");
+export const view_ = Symbol("view_");
+
 // ReadableStreamBYOBReader
 
 // ReadableStream
@@ -50,6 +54,16 @@ export interface ReadableStreamController {
 
 	[cancelSteps_](reason: any): Promise<void>;
 	[pullSteps_](): Promise<IteratorResult<any>>;
+}
+
+export declare class ReadableStreamBYOBRequest {
+	constructor(controller: ReadableByteStreamController, view: ArrayBufferView);
+	readonly view: ArrayBufferView;
+	respond(bytesWritten: number): void;
+	respondWithNewView(view: ArrayBufferView): void;
+
+	[associatedReadableByteStreamController_]: ReadableByteStreamController;
+	[view_]: ArrayBufferView;
 }
 
 export interface ReadableStreamDefaultController extends ReadableStreamController, QueueContainer<any> {
@@ -431,9 +445,25 @@ export function readableStreamDefaultControllerShouldCallPull(rsdc: ReadableStre
 	return desiredSize > 0;
 }
 
+// ---- BYOBRequest
+
+export function isReadableStreamBYOBRequest(value: any): value is ReadableStreamBYOBRequest {
+	if (value == null || typeof value !== "object") {
+		return false;
+	}
+	return associatedReadableByteStreamController_ in value;
+}
+
 
 // ---- BYOBReader
 
 
 // ---- ByteController
+
+export function isReadableByteStreamController(value: any): value is ReadableByteStreamController {
+	if (value == null || typeof value !== "object") {
+		return false;
+	}
+	return controlledReadableByteStream_ in value;
+}
 
