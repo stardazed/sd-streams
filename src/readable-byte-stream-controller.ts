@@ -1,5 +1,6 @@
 import * as rs from "./readable-internals";
 import * as q from "./queue-mixin";
+import { ReadableStreamBYOBRequest } from "./readable-stream-byob-request";
 
 export class ReadableByteStreamController implements rs.ReadableByteStreamController {
 	[rs.autoAllocateChunkSize_]: number | undefined;
@@ -57,6 +58,19 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 				rs.readableByteStreamControllerError(this, error);
 			}
 		);
+	}
+
+	get byobRequest(): rs.ReadableStreamBYOBRequest | undefined {
+		if (! rs.isReadableByteStreamController(this)) {
+			throw new TypeError();
+		}
+		if (this[rs.byobRequest_] === undefined && this[rs.pendingPullIntos_].length > 0) {
+			const firstDescriptor = this[rs.pendingPullIntos_][0];
+			const view = new Uint8Array(firstDescriptor.buffer, firstDescriptor.byteOffset + firstDescriptor.bytesFilled, firstDescriptor.byteLength - firstDescriptor.bytesFilled);
+			const byobRequest = new ReadableStreamBYOBRequest(this, view);
+			this[rs.byobRequest_] = byobRequest;
+		}
+		return this[rs.byobRequest_];
 	}
 
 	get desiredSize(): number | null {
