@@ -52,8 +52,6 @@ export interface ReadableStreamController {
 	[pullSteps_](): Promise<IteratorResult<any>>;
 }
 
-export type ReadableStreamControllerState = "reading" | undefined;
-
 export interface ReadableStreamDefaultController extends ReadableStreamController, QueueContainer<any> {
 	[controlledReadableStream_]: ReadableStream;
 	[pullAlgorithm_]: PullAlgorithm;
@@ -65,8 +63,6 @@ export interface ReadableStreamDefaultController extends ReadableStreamControlle
 	[closeRequested_]: boolean;
 	[pullAgain_]: boolean;
 	[pulling_]: boolean;
-
-	[state_]: ReadableStreamControllerState;
 }
 
 // ----
@@ -241,7 +237,7 @@ export function readableStreamError(stream: ReadableStream, error: any) {
 }
 
 
-// ---- Readers
+// ---- DefaultReader
 
 export function isReadableStreamDefaultReader(reader: any): reader is ReadableStreamDefaultReader {
 	if (reader == null || typeof reader !== "object") {
@@ -318,7 +314,7 @@ export function readableStreamFulfillReadRequest(stream: ReadableStream, chunk: 
 	readRequest.resolve(createIterResultObject(chunk, done));
 }
 
-// ---- Controller
+// ---- DefaultController
 
 export function isReadableStreamDefaultController(value: any): value is ReadableStreamDefaultController {
 	if (value == null || typeof value !== "object") {
@@ -434,3 +430,10 @@ export function readableStreamDefaultControllerShouldCallPull(rsdc: ReadableStre
 	}
 	return desiredSize > 0;
 }
+
+
+// ---- BYOBReader
+
+
+// ---- ByteController
+

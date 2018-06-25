@@ -16,8 +16,6 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	[rs.pullAgain_]: boolean;
 	[rs.pulling_]: boolean;
 
-	[rs.state_]: rs.ReadableStreamControllerState;
-
 	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullFunction: rs.PullFunction | undefined, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, sizeAlgorithm: rs.SizeAlgorithm) {
 		if (! rs.isReadableStream(stream)) {
 			throw new TypeError();
