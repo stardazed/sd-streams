@@ -11,6 +11,14 @@ export const closedPromise_ = Symbol("closedPromise_");
 
 // ---------
 
+export function isInteger(value: number) {
+	if (! isFinite(value)) { // covers NaN, +Infinity and -Infinity
+		return false;
+	}
+	const absValue = Math.abs(value);
+	return Math.floor(absValue) === absValue;
+}
+
 export function invokeOrNoop<O extends object, P extends keyof O>(o: O, p: P, args: any[]) {
 	// Assert: O is not undefined.
 	// Assert: IsPropertyKey(P) is true.

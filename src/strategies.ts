@@ -1,5 +1,5 @@
 /**
- * sd-streams/strategies - implementation of the built-in stream strategies
+ * streams/strategies - implementation of the built-in stream strategies
  * (c) 2018 by Arthur Langereis - @zenmumbler
  * https://github.com/stardazed/sd-streams
  */
