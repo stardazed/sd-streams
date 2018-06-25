@@ -66,6 +66,29 @@ export declare class ReadableStreamBYOBRequest {
 	[view_]: ArrayBufferView;
 }
 
+export interface PullIntoRequest {
+	buffer: ArrayBuffer;
+	byteOffset: number;
+	byteLength: number;
+	bytesFilled: number;
+}
+
+export interface ReadableByteStreamController extends ReadableStreamController, QueueContainer<any> {
+	readonly byobRequest: ReadableStreamBYOBRequest | undefined;
+
+	[autoAllocateChunkSize_]: number | undefined; // A positive integer, when the automatic buffer allocation feature is enabled. In that case, this value specifies the size of buffer to allocate. It is undefined otherwise.
+	[byobRequest_]: ReadableStreamBYOBRequest | undefined; // A ReadableStreamBYOBRequest instance representing the current BYOB pull request
+	[cancelAlgorithm_]: CancelAlgorithm; // A promise-returning algorithm, taking one argument (the cancel reason), which communicates a requested cancelation to the underlying source
+	[closeRequested_]: boolean; // A boolean flag indicating whether the stream has been closed by its underlying byte source, but still has chunks in its internal queue that have not yet been read
+	[controlledReadableByteStream_]: ReadableStream; // The ReadableStream instance controlled
+	[pullAgain_]: boolean; // A boolean flag set to true if the stream’s mechanisms requested a call to the underlying byte source’s pull() method to pull more data, but the pull could not yet be done since a previous call is still executing
+	[pullAlgorithm_]: PullAlgorithm; // A promise-returning algorithm that pulls data from the underlying source
+	[pulling_]: boolean; // A boolean flag set to true while the underlying byte source’s pull() method is executing and has not yet fulfilled, used to prevent reentrant calls
+	[pendingPullIntos_]: PullIntoRequest[]; // A List of descriptors representing pending BYOB pull requests
+	[started_]: boolean; // A boolean flag indicating whether the underlying source has finished starting
+	[strategyHWM_]: number; // A number supplied to the constructor as part of the stream’s queuing strategy, indicating the point at which the stream will apply backpressure to its underlying byte source
+}
+
 export interface ReadableStreamDefaultController extends ReadableStreamController, QueueContainer<any> {
 	[controlledReadableStream_]: ReadableStream;
 	[pullAlgorithm_]: PullAlgorithm;
