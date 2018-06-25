@@ -1,6 +1,10 @@
 import * as rs from "./readable-internals";
 
 export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
+	[rs.closedPromise_]: rs.ControlledPromise<void>;
+	[rs.ownerReadableStream_]: rs.ReadableStream | undefined;
+	[rs.readRequests_]: rs.ControlledPromise<IteratorResult<any>>[];
+
 	constructor(stream: rs.ReadableStream) {
 		if (! rs.isReadableStream(stream)) {
 			throw new TypeError();
@@ -52,11 +56,6 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 		}
 		return rs.readableStreamDefaultReaderRead(this);
 	}
-
-	[rs.closedPromise_]: rs.ControlledPromise<void>;
-	[rs.ownerReadableStream_]: rs.ReadableStream | undefined;
-
-	[rs.readRequests_]: rs.ControlledPromise<IteratorResult<any>>[];
 }
 
 /*

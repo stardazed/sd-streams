@@ -62,10 +62,9 @@ export class ReadableStream implements rs.ReadableStream {
 		}
 		else if (String(sourceType) === "bytes") {
 			if (strategy.size !== undefined) {
-				throw new RangeError("");
+				throw new RangeError("Strategy cannot specify `size` for a stream of type 'bytes'.");
 			}
 			const highWaterMark = rs.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 0 : stratHWM);
-
 			const cancelAlgorithm = rs.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
 			const autoAllocateChunkSize = source.autoAllocateChunkSize;
 			new ReadableByteStreamController(this, sourceStart && sourceStart.bind(source), sourcePull && sourcePull.bind(source), cancelAlgorithm, highWaterMark, autoAllocateChunkSize);

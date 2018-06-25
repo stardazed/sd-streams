@@ -2,19 +2,18 @@ import * as rs from "./readable-internals";
 import * as q from "./queue-mixin";
 
 export class ReadableStreamDefaultController implements rs.ReadableStreamDefaultController {
-	[rs.controlledReadableStream_]: rs.ReadableStream;
-	[rs.pullAlgorithm_]: rs.PullAlgorithm;
 	[rs.cancelAlgorithm_]: rs.CancelAlgorithm;
-	[rs.strategySizeAlgorithm_]: rs.SizeAlgorithm;
+	[rs.closeRequested_]: boolean;
+	[rs.controlledReadableStream_]: rs.ReadableStream;
+	[rs.pullAgain_]: boolean;
+	[rs.pullAlgorithm_]: rs.PullAlgorithm;
+	[rs.pulling_]: boolean;
 	[rs.strategyHWM_]: number;
+	[rs.strategySizeAlgorithm_]: rs.SizeAlgorithm;
+	[rs.started_]: boolean;
 
 	[q.queue_]: q.QueueElement<any>[];
 	[q.queueTotalSize_]: number;
-
-	[rs.started_]: boolean;
-	[rs.closeRequested_]: boolean;
-	[rs.pullAgain_]: boolean;
-	[rs.pulling_]: boolean;
 
 	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullFunction: rs.PullFunction | undefined, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, sizeAlgorithm: rs.SizeAlgorithm) {
 		if (! rs.isReadableStream(stream)) {
