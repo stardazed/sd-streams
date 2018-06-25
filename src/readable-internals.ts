@@ -3,6 +3,7 @@ import { WritableStream } from "./writable-internals";
 import { QueueContainer, enqueueValueWithSize, resetQueue, queue_, queueTotalSize_ } from "./queue-mixin";
 export * from "./shared-internals";
 
+// ReadableStreamDefaultController
 export const controlledReadableStream_ = Symbol("controlledReadableStream_");
 export const pullAlgorithm_ = Symbol("pullAlgorithm_");
 export const cancelAlgorithm_ = Symbol("cancelAlgorithm_");
@@ -15,10 +16,20 @@ export const pulling_ = Symbol("pulling_");
 export const cancelSteps_ = Symbol("cancelSteps_");
 export const pullSteps_ = Symbol("pullSteps_");
 
+// ReadableByteStreamController
+export const autoAllocateChunkSize_ = Symbol("autoAllocateChunkSize_");
+export const byobRequest_ = Symbol("byobRequest_");
+export const controlledReadableByteStream_ = Symbol("controlledReadableByteStream_");
+export const pendingPullIntos_ = Symbol("pendingPullIntos_");
+
+// ReadableStreamDefaultReader
 export const ownerReadableStream_ = Symbol("ownerReadableStream_");
 export const readRequests_ = Symbol("readRequests_");
 export const readIntoRequests_ = Symbol("readIntoRequests_");
 
+// ReadableStreamBYOBReader
+
+// ReadableStream
 export const reader_ = Symbol("reader_");
 export const readableStreamController_ = Symbol("readableStreamController_");
 export const storedError_ = Symbol("storedError_");
@@ -105,6 +116,7 @@ export declare class ReadableStreamBYOBReader implements ReadableStreamReader {
 
 export interface ReadableStreamSource {
 	type?: "bytes" | undefined;
+	autoAllocateChunkSize?: number; // only for "bytes" type sources
 	start?: StartFunction;
 	pull?: PullFunction;
 	cancel?(reason?: any): void;

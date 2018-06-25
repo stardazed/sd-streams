@@ -11,6 +11,9 @@ import { readableStreamPipeTo } from "./transform-internals";
 import { ReadableStreamDefaultController } from "./readable-stream-default-controller";
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 
+import { ReadableByteStreamController } from "./readable-byte-stream-controller";
+// import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
+
 interface RSInternalConstructorOptions {
 	startAlgorithm: rs.StartAlgorithm;
 	pullAlgorithm: rs.PullAlgorithm;
@@ -49,14 +52,23 @@ export class ReadableStream implements rs.ReadableStream {
 		const sourceType = source.type;
 		const sourcePull = source.pull;
 		const sourceStart = source.start;
+		const stratHWM = strategy.highWaterMark;
+
 		if (sourceType === undefined) {
 			const cancelAlgorithm = rs.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
 			const sizeAlgorithm = rs.makeSizeAlgorithmFromSizeFunction(strategy.size);
-			const highWaterMark = rs.validateAndNormalizeHighWaterMark(strategy.highWaterMark === undefined ? 1 : strategy.highWaterMark);
+			const highWaterMark = rs.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 1 : stratHWM);
 			new ReadableStreamDefaultController(this, sourceStart && sourceStart.bind(source), sourcePull && sourcePull.bind(source), cancelAlgorithm, highWaterMark, sizeAlgorithm);
 		}
 		else if (String(sourceType) === "bytes") {
-			throw new RangeError("Sources of type 'bytes' not implemented yet.");
+			if (strategy.size !== undefined) {
+				throw new RangeError("");
+			}
+			const highWaterMark = rs.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 0 : stratHWM);
+
+			const cancelAlgorithm = rs.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
+			const autoAllocateChunkSize = source.autoAllocateChunkSize;
+			new ReadableByteStreamController(this, sourceStart && sourceStart.bind(source), sourcePull && sourcePull.bind(source), cancelAlgorithm, highWaterMark, autoAllocateChunkSize);
 		}
 		else {
 			throw new RangeError("The underlying source's `type` field must be undefined or 'bytes'");
