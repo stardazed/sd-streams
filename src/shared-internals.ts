@@ -37,6 +37,11 @@ export function invokeOrNoop<O extends object, P extends keyof O>(o: O, p: P, ar
 	return Function.prototype.apply.call(method, o, args);
 }
 
+export function cloneArrayBuffer(srcBuffer: ArrayBufferLike, srcByteOffset: number, srcLength: number, cloneConstructor: ArrayBufferConstructor | SharedArrayBufferConstructor): InstanceType<typeof cloneConstructor> {
+	// this function fudges the return type but SharedArrayBuffer is disabled for a while anyway
+	return srcBuffer.slice(srcByteOffset, srcByteOffset + srcLength) as InstanceType<typeof cloneConstructor>;
+}
+
 export function transferArrayBuffer(buffer: ArrayBufferLike) {
 	// This would in a JS engine context detach the buffer's backing store and return
 	// a new ArrayBuffer with the same backing store, invalidating `buffer`,
