@@ -19,9 +19,13 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 	[q.queueTotalSize_]: number;
 
 	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullFunction: rs.PullFunction | undefined, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, autoAllocateChunkSize: number | undefined) {
+		if (! rs.isReadableStream(stream)) {
+			throw new TypeError();
+		}
 		if (stream[rs.readableStreamController_] !== undefined) {
 			throw new TypeError();
 		}
+
 		if (autoAllocateChunkSize !== undefined) {
 			autoAllocateChunkSize = Number(autoAllocateChunkSize);
 			if (! rs.isInteger(autoAllocateChunkSize) || autoAllocateChunkSize <= 0) {
@@ -74,23 +78,92 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 	}
 
 	get desiredSize(): number | null {
-		return 0;
+		if (! rs.isReadableByteStreamController(this)) {
+			throw new TypeError();
+		}
+		return rs.readableByteStreamControllerGetDesiredSize(this);
 	}
 
 	close() {
+		if (! rs.isReadableByteStreamController(this)) {
+			throw new TypeError();
+		}
+		if (this[rs.closeRequested_]) {
+			throw new TypeError("Stream is already closing");
+		}
+		if (this[rs.controlledReadableByteStream_][rs.state_] !== "readable") {
+			throw new TypeError("Stream is closed or errored");
+		}
+		rs.readableByteStreamControllerClose(this);
 	}
 
-	enqueue(_chunk?: any) {
+	enqueue(chunk: ArrayBufferView) {
+		if (! rs.isReadableByteStreamController(this)) {
+			throw new TypeError();
+		}
+		if (this[rs.closeRequested_]) {
+			throw new TypeError("Stream is already closing");
+		}
+		if (this[rs.controlledReadableByteStream_][rs.state_] !== "readable") {
+			throw new TypeError("Stream is closed or errored");
+		}
+		if (! ArrayBuffer.isView(chunk)) {
+			throw new TypeError("chunk must be a valid ArrayBufferView");
+		}
+		// If ! IsDetachedBuffer(chunk.[[ViewedArrayBuffer]]) is true, throw a TypeError exception.
+		return rs.readableByteStreamControllerEnqueue(this, chunk);
 	}
 
-	error(_e?: any) {
+	error(error?: any) {
+		if (! rs.isReadableByteStreamController(this)) {
+			throw new TypeError();
+		}
+		rs.readableByteStreamControllerError(this, error);
 	}
 
-	[rs.cancelSteps_](_reason: any) {
-		return Promise.resolve();
+	[rs.cancelSteps_](reason: any) {
+		if (this[rs.pendingPullIntos_].length > 0) {
+			const firstDescriptor = this[rs.pendingPullIntos_][0];
+			firstDescriptor.bytesFilled = 0;
+		}
+		q.resetQueue(this);
+		return this[rs.cancelAlgorithm_](reason);
 	}
 
 	[rs.pullSteps_]() {
-		return Promise.resolve({ value: 0, done: true });
+		const stream = this[rs.controlledReadableByteStream_];
+		// Assert: ! ReadableStreamHasDefaultReader(stream) is true.
+		if (this[q.queueTotalSize_] > 0) {
+			// Assert: ! ReadableStreamGetNumReadRequests(stream) is 0.
+			const entry = this[q.queue_].shift()!;
+			this[q.queueTotalSize_] -= entry.byteLength;
+			rs.readableByteStreamControllerHandleQueueDrain(this);
+			const view = new Uint8Array(entry.buffer, entry.byteOffset, entry.byteLength);
+			return Promise.resolve(rs.createIterResultObject(view, false));
+		}
+		const autoAllocateChunkSize = this[rs.autoAllocateChunkSize_];
+		if (autoAllocateChunkSize !== undefined) {
+			let buffer: ArrayBuffer;
+			try {
+				buffer = new ArrayBuffer(autoAllocateChunkSize);
+			}
+			catch (error) {
+				return Promise.reject(error);
+			}
+			const pullIntoDescriptor: rs.PullIntoDescriptor = {
+				buffer,
+				byteOffset: 0,
+				byteLength: autoAllocateChunkSize,
+				bytesFilled: 0,
+				elementSize: 1,
+				ctor: Uint8Array,
+				readerType: "default"
+			};
+			this[rs.pendingPullIntos_].push(pullIntoDescriptor);
+		}
+
+		const promise = rs.readableStreamAddReadRequest(stream);
+		rs.readableByteStreamControllerCallPullIfNeeded(this);
+		return promise;
 	}
 }

@@ -49,7 +49,6 @@ export type CancelAlgorithm = (reason?: any) => Promise<void>;
 export interface ReadableStreamController {
 	readonly desiredSize: number | null;
 	close(): void;
-	enqueue(chunk?: any): void;
 	error(e?: any): void;
 
 	[cancelSteps_](reason: any): Promise<void>;
@@ -82,6 +81,7 @@ export interface PullIntoDescriptor {
 
 export interface ReadableByteStreamController extends ReadableStreamController, ByteQueueContainer {
 	readonly byobRequest: ReadableStreamBYOBRequest | undefined;
+	enqueue(chunk: ArrayBufferView): void;
 
 	[autoAllocateChunkSize_]: number | undefined; // A positive integer, when the automatic buffer allocation feature is enabled. In that case, this value specifies the size of buffer to allocate. It is undefined otherwise.
 	[byobRequest_]: ReadableStreamBYOBRequest | undefined; // A ReadableStreamBYOBRequest instance representing the current BYOB pull request
@@ -97,6 +97,8 @@ export interface ReadableByteStreamController extends ReadableStreamController, 
 }
 
 export interface ReadableStreamDefaultController extends ReadableStreamController, QueueContainer<any> {
+	enqueue(chunk?: any): void;
+
 	[controlledReadableStream_]: ReadableStream;
 	[pullAlgorithm_]: PullAlgorithm;
 	[cancelAlgorithm_]: CancelAlgorithm;
