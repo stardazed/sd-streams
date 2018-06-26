@@ -12,7 +12,7 @@ import { ReadableStreamDefaultController } from "./readable-stream-default-contr
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 
 import { ReadableByteStreamController } from "./readable-byte-stream-controller";
-// import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
+import { ReadableStreamBYOBReader } from "./readable-stream-byob-reader";
 
 interface RSInternalConstructorOptions {
 	startAlgorithm: rs.StartAlgorithm;
@@ -87,7 +87,7 @@ export class ReadableStream implements rs.ReadableStream {
 			return new ReadableStreamDefaultReader(this);
 		}
 		else if (String(mode) === "byob") {
-			throw RangeError("byob reader mode not implemented yet");
+			throw new ReadableStreamBYOBReader(this);
 		}
 		throw RangeError("mode option must be undefined or `byob`");
 	}
