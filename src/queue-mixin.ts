@@ -1,3 +1,5 @@
+import { isFiniteNonNegativeNumber } from "./shared-internals";
+
 export const queue_ = Symbol("queue_");
 export const queueTotalSize_ = Symbol("queueTotalSize_");
 
@@ -27,7 +29,7 @@ export function dequeueValue<V>(container: QueueContainer<V>) {
 
 export function enqueueValueWithSize<V>(container: QueueContainer<V>, value: V, size: number) {
 	// Assert: container has[[queue]] and[[queueTotalSize]] internal slots.
-	if (!(isFinite(size) && size >= 0)) {
+	if (! isFiniteNonNegativeNumber) {
 		throw new RangeError("Chunk size must be a non-negative, finite numbers");
 	}
 	container[queue_].push({ value, size });
