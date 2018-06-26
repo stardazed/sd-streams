@@ -34,6 +34,16 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 		return rs.readableStreamCancel(stream, reason);
 	}
 
+	read(): Promise<IteratorResult<any>> {
+		if (! rs.isReadableStreamDefaultReader(this)) {
+			return Promise.reject(new TypeError());
+		}
+		if (this[rs.ownerReadableStream_] === undefined) {
+			return Promise.reject(new TypeError("Reader is not associated with a stream"));
+		}
+		return rs.readableStreamDefaultReaderRead(this);
+	}
+
 	releaseLock() {
 		if (! rs.isReadableStreamDefaultReader(this)) {
 			throw new TypeError();
@@ -46,30 +56,4 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 		}
 		rs.readableStreamReaderGenericRelease(this);
 	}
-
-	read(): Promise<IteratorResult<any>> {
-		if (! rs.isReadableStreamDefaultReader(this)) {
-			return Promise.reject(new TypeError());
-		}
-		if (this[rs.ownerReadableStream_] === undefined) {
-			return Promise.reject(new TypeError("Reader is not associated with a stream"));
-		}
-		return rs.readableStreamDefaultReaderRead(this);
-	}
 }
-
-/*
-export class ReadableStreamBYOBReader implements rs.ReadableStreamReader {
-	constructor(stream: rs.ReadableStream);
-
-	readonly closed: boolean;
-	cancel(reason: any): void;
-	releaseLock(): void;
-	read(view: ArrayBufferLike): Promise<void>;
-
-	[rs.ownerReadableStream_]: rs.ReadableStream;
-	[rs.closedPromise_]: rs.ControlledPromise<void>;
-
-	[rs.readIntoRequests_]: any[];
-}
-*/
