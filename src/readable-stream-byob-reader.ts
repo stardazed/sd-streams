@@ -32,7 +32,7 @@ export class ReadableStreamBYOBReader implements rs.ReadableStreamReader {
 		}
 		const stream = this[rs.ownerReadableStream_];
 		if (stream === undefined) {
-			return Promise.reject(new TypeError());
+			return Promise.reject(new TypeError("Reader is not associated with a stream"));
 		}
 		return rs.readableStreamCancel(stream, reason);
 	}
@@ -42,14 +42,14 @@ export class ReadableStreamBYOBReader implements rs.ReadableStreamReader {
 			return Promise.reject(new TypeError());
 		}
 		if (this[rs.ownerReadableStream_] === undefined) {
-			return Promise.reject(new TypeError());
+			return Promise.reject(new TypeError("Reader is not associated with a stream"));
 		}
 		if (! ArrayBuffer.isView(view)) {
-			return Promise.reject(new TypeError());
+			return Promise.reject(new TypeError("view argument must be a valid ArrayBufferView"));
 		}
 		// If ! IsDetachedBuffer(view.[[ViewedArrayBuffer]]) is true, return a promise rejected with a TypeError exception.
 		if (view.byteLength === 0) {
-			return Promise.reject(new TypeError());
+			return Promise.reject(new TypeError("supplied buffer view must be > 0 bytes"));
 		}
 		return rs.readableStreamBYOBReaderRead(this, view);
 	}
@@ -59,7 +59,7 @@ export class ReadableStreamBYOBReader implements rs.ReadableStreamReader {
 			throw new TypeError();
 		}
 		if (this[rs.ownerReadableStream_] === undefined) {
-			throw new TypeError();
+			throw new TypeError("Reader is not associated with a stream");
 		}
 		if (this[rs.readIntoRequests_].length > 0) {
 			throw new TypeError();
