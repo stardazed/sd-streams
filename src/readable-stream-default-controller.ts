@@ -1,4 +1,5 @@
 import * as rs from "./readable-internals";
+import * as shared from "./shared-internals";
 import * as q from "./queue-mixin";
 
 export class ReadableStreamDefaultController implements rs.ReadableStreamDefaultController {
@@ -9,13 +10,13 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	[rs.pullAlgorithm_]: rs.PullAlgorithm;
 	[rs.pulling_]: boolean;
 	[rs.strategyHWM_]: number;
-	[rs.strategySizeAlgorithm_]: rs.SizeAlgorithm;
+	[rs.strategySizeAlgorithm_]: shared.SizeAlgorithm;
 	[rs.started_]: boolean;
 
 	[q.queue_]: q.QueueElement<any>[];
 	[q.queueTotalSize_]: number;
 
-	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullFunction: rs.PullFunction | undefined, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, sizeAlgorithm: rs.SizeAlgorithm) {
+	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullFunction: rs.PullFunction | undefined, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
 		if (! rs.isReadableStream(stream)) {
 			throw new TypeError();
 		}
@@ -34,7 +35,7 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 		this[rs.strategySizeAlgorithm_] = sizeAlgorithm;
 		this[rs.strategyHWM_] = highWaterMark;
 
-		this[rs.pullAlgorithm_] = rs.createAlgorithmFromFunction(pullFunction, [this]);
+		this[rs.pullAlgorithm_] = shared.createAlgorithmFromFunction(pullFunction, [this]);
 		this[rs.cancelAlgorithm_] = cancelAlgorithm;
 
 		stream[rs.readableStreamController_] = this;
@@ -97,7 +98,7 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 			else {
 				rs.readableStreamDefaultControllerCallPullIfNeeded(this);
 			}
-			return Promise.resolve(rs.createIterResultObject(chunk, false));
+			return Promise.resolve(shared.createIterResultObject(chunk, false));
 		}
 
 		const pendingPromise = rs.readableStreamAddReadRequest(stream);

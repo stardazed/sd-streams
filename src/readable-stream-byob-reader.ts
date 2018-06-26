@@ -1,9 +1,10 @@
 import * as rs from "./readable-internals";
+import * as shared from "./shared-internals";
 
 export class ReadableStreamBYOBReader implements rs.ReadableStreamReader {
-	[rs.closedPromise_]: rs.ControlledPromise<void>;
+	[rs.closedPromise_]: shared.ControlledPromise<void>;
 	[rs.ownerReadableStream_]: rs.ReadableStream | undefined;
-	[rs.readIntoRequests_]: rs.ControlledPromise<IteratorResult<ArrayBufferView>>[];
+	[rs.readIntoRequests_]: shared.ControlledPromise<IteratorResult<ArrayBufferView>>[];
 
 	constructor(stream: rs.ReadableStream) {
 		if (! rs.isReadableStream(stream)) {

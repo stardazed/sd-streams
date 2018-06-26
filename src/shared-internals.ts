@@ -5,10 +5,6 @@ export interface StreamStrategy {
 	highWaterMark?: number;
 }
 
-// shared symbol private keys
-export const state_ = Symbol("state_");
-export const closedPromise_ = Symbol("closedPromise_");
-
 // ---------
 
 export function isInteger(value: number) {

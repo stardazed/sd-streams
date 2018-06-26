@@ -1,7 +1,7 @@
-import { StreamStrategy, state_, SizeAlgorithm, ControlledPromise, ControlledPromiseState, createControlledPromise, closedPromise_ } from "./shared-internals";
+import * as shared from "./shared-internals";
 import * as q from "./queue-mixin";
-export * from "./shared-internals";
 
+export const state_ = Symbol("writableState_");
 export const backpressure_ = Symbol("backpressure_");
 export const closeRequest_ = Symbol("closeRequest_");
 export const inFlightWriteRequest_ = Symbol("inFlightWriteRequest_");
@@ -21,6 +21,7 @@ export const strategySizeAlgorithm_ = Symbol("strategySizeAlgorithm_");
 export const writeAlgorithm_ = Symbol("writeAlgorithm_");
 
 export const ownerWritableStream_ = Symbol("ownerWritableStream_");
+export const closedPromise_ = Symbol("closedPromise_");
 export const readyPromise_ = Symbol("readyPromise_");
 
 export const errorSteps_ = Symbol("errorSteps_");
@@ -51,7 +52,7 @@ export interface WritableStreamDefaultController extends WritableStreamControlle
 	[controlledWritableStream_]: WritableStream; // The WritableStream instance controlled
 	[started_]: boolean; // A boolean flag indicating whether the underlying sink has finished starting
 	[strategyHWM_]: number; // A number supplied by the creator of the stream as part of the stream’s queuing strategy, indicating the point at which the stream will apply backpressure to its underlying sink
-	[strategySizeAlgorithm_]: SizeAlgorithm; // An algorithm to calculate the size of enqueued chunks, as part of the stream’s queuing strategy
+	[strategySizeAlgorithm_]: shared.SizeAlgorithm; // An algorithm to calculate the size of enqueued chunks, as part of the stream’s queuing strategy
 	[writeAlgorithm_]: WriteAlgorithm; // A promise-returning algorithm, taking one argument (the chunk to write), which writes data to the underlying sink
 }
 
@@ -70,8 +71,8 @@ export interface WritableStreamWriter {
 
 export interface WritableStreamDefaultWriter extends WritableStreamWriter {
 	[ownerWritableStream_]: WritableStream | undefined;
-	[closedPromise_]: ControlledPromise<void>;
-	[readyPromise_]: ControlledPromise<void>;
+	[closedPromise_]: shared.ControlledPromise<void>;
+	[readyPromise_]: shared.ControlledPromise<void>;
 }
 
 // ----
@@ -98,7 +99,7 @@ export interface AbortRequest {
 }
 
 export declare class WritableStream {
-	constructor(underlyingSink?: WritableStreamSink, strategy?: StreamStrategy);
+	constructor(underlyingSink?: WritableStreamSink, strategy?: shared.StreamStrategy);
 
 	readonly locked: boolean;
 	abort(reason?: any): Promise<void>;
@@ -106,14 +107,14 @@ export declare class WritableStream {
 
 	[state_]: WritableStreamState;
 	[backpressure_]: boolean;
-	[closeRequest_]: ControlledPromise<void> | undefined;
-	[inFlightWriteRequest_]: ControlledPromise<void> | undefined;
-	[inFlightCloseRequest_]: ControlledPromise<void> | undefined;
+	[closeRequest_]: shared.ControlledPromise<void> | undefined;
+	[inFlightWriteRequest_]: shared.ControlledPromise<void> | undefined;
+	[inFlightCloseRequest_]: shared.ControlledPromise<void> | undefined;
 	[pendingAbortRequest_]: AbortRequest | undefined;
 	[storedError_]: any;
 	[writableStreamController_]: WritableStreamDefaultController | undefined;
 	[writer_]: WritableStreamDefaultWriter | undefined;
-	[writeRequests_]: ControlledPromise<any>[];
+	[writeRequests_]: shared.ControlledPromise<any>[];
 }
 
 // ---- Stream
@@ -164,7 +165,7 @@ export function writableStreamAbort(stream: WritableStream, reason: any) {
 export function writableStreamAddWriteRequest(stream: WritableStream) {
 	// Assert: !IsWritableStreamLocked(stream) is true.
 	// Assert: stream.[[state]] is "writable".
-	const writePromise = createControlledPromise<void>();
+	const writePromise = shared.createControlledPromise<void>();
 	stream[writeRequests_].push(writePromise);
 	return writePromise.promise;
 }
@@ -322,7 +323,7 @@ export function writableStreamUpdateBackpressure(stream: WritableStream, backpre
 	const writer = stream[writer_];
 	if (writer !== undefined && backpressure !== stream[backpressure_]) {
 		if (backpressure) {
-			writer[readyPromise_] = createControlledPromise<void>();
+			writer[readyPromise_] = shared.createControlledPromise<void>();
 		}
 		else {
 			writer[readyPromise_].resolve(undefined);
@@ -356,7 +357,7 @@ export function writableStreamDefaultWriterClose(writer: WritableStreamDefaultWr
 	}
 	// Assert: state is "writable" or "erroring".
 	// Assert: writableStreamCloseQueuedOrInFlight(stream) is false.
-	const closePromise = createControlledPromise<void>();
+	const closePromise = shared.createControlledPromise<void>();
 	stream[closeRequest_] = closePromise;
 	if (stream[backpressure_] && state === "writable") {
 		writer[readyPromise_].resolve(undefined);
@@ -381,22 +382,22 @@ export function writableStreamDefaultWriterCloseWithErrorPropagation(writer: Wri
 
 export function writableStreamDefaultWriterEnsureClosedPromiseRejected(writer: WritableStreamDefaultWriter, error: any) {
 	const closedPromise = writer[closedPromise_];
-	if (closedPromise.state === ControlledPromiseState.Pending) {
+	if (closedPromise.state === shared.ControlledPromiseState.Pending) {
 		closedPromise.reject(error);
 	}
 	else {
-		writer[closedPromise_] = createControlledPromise<void>();
+		writer[closedPromise_] = shared.createControlledPromise<void>();
 		writer[closedPromise_].reject(error);
 	}
 }
 
 export function writableStreamDefaultWriterEnsureReadyPromiseRejected(writer: WritableStreamDefaultWriter, error: any) {
 	const readyPromise = writer[readyPromise_];
-	if (readyPromise.state === ControlledPromiseState.Pending) {
+	if (readyPromise.state === shared.ControlledPromiseState.Pending) {
 		readyPromise.reject(error);
 	}
 	else {
-		writer[readyPromise_] = createControlledPromise<void>();
+		writer[readyPromise_] = shared.createControlledPromise<void>();
 		writer[readyPromise_].reject(error);
 	}
 }

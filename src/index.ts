@@ -7,7 +7,6 @@
 
 import { ReadableStream } from "./readable-stream";
 import { WritableStream } from "./writable-stream";
-
 import { ByteLengthQueuingStrategy, CountQueuingStrategy } from "./strategies";
 
 export { ReadableStream, WritableStream, ByteLengthQueuingStrategy, CountQueuingStrategy };

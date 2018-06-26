@@ -1,4 +1,5 @@
 import * as ws from "./writable-internals";
+import * as shared from "./shared-internals";
 import * as q from "./queue-mixin";
 
 export class WritableStreamDefaultController implements ws.WritableStreamDefaultController {
@@ -7,13 +8,13 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 	[ws.controlledWritableStream_]: ws.WritableStream;
 	[ws.started_]: boolean;
 	[ws.strategyHWM_]: number;
-	[ws.strategySizeAlgorithm_]: ws.SizeAlgorithm;
+	[ws.strategySizeAlgorithm_]: shared.SizeAlgorithm;
 	[ws.writeAlgorithm_]: ws.WriteAlgorithm;
 
 	[q.queue_]: q.QueueElement<ws.WriteRecord | "close">[];
 	[q.queueTotalSize_]: number;
 
-	constructor(stream: ws.WritableStream, startFunction: ws.StartFunction | undefined, writeFunction: ws.WriteFunction | undefined, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark: number, sizeAlgorithm: ws.SizeAlgorithm) {
+	constructor(stream: ws.WritableStream, startFunction: ws.StartFunction | undefined, writeFunction: ws.WriteFunction | undefined, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
 		if (! ws.isWritableStream(stream)) {
 			throw new TypeError();
 		}
@@ -27,7 +28,7 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 		this[ws.started_] = false;
 		this[ws.strategySizeAlgorithm_] = sizeAlgorithm;
 		this[ws.strategyHWM_] = highWaterMark;
-		this[ws.writeAlgorithm_] = ws.createAlgorithmFromFunction(writeFunction, [this]);
+		this[ws.writeAlgorithm_] = shared.createAlgorithmFromFunction(writeFunction, [this]);
 		this[ws.closeAlgorithm_] = closeAlgorithm;
 		this[ws.abortAlgorithm_] = abortAlgorithm;
 

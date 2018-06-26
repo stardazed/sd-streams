@@ -5,8 +5,9 @@
  */
 
 import * as rs from "./readable-internals";
+import * as shared from "./shared-internals";
 import { WritableStream } from "./writable-internals";
-import { readableStreamPipeTo } from "./transform-internals";
+import { readableStreamPipeTo } from "./pipe-to";
 
 import { ReadableStreamDefaultController } from "./readable-stream-default-controller";
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
@@ -19,7 +20,7 @@ interface RSInternalConstructorOptions {
 	pullAlgorithm: rs.PullAlgorithm;
 	cancelAlgorithm: rs.CancelAlgorithm;
 	highWaterMark?: number;
-	sizeAlgorithm?: rs.SizeAlgorithm;
+	sizeAlgorithm?: shared.SizeAlgorithm;
 }
 
 export class ReadableStream implements rs.ReadableStream {
@@ -28,7 +29,7 @@ export class ReadableStream implements rs.ReadableStream {
 	[rs.storedError_]: any;
 	[rs.readableStreamController_]: rs.ReadableStreamController;
 
-	constructor(source: rs.ReadableStreamSource = {}, strategy: rs.StreamStrategy = {}, _1?: never, _2?: never, internalCtor?: RSInternalConstructorOptions) {
+	constructor(source: rs.ReadableStreamSource = {}, strategy: shared.StreamStrategy = {}, _1?: never, _2?: never, internalCtor?: RSInternalConstructorOptions) {
 		this[rs.state_] = "readable";
 		this[rs.reader_] = undefined;
 		this[rs.storedError_] = undefined;
@@ -55,17 +56,17 @@ export class ReadableStream implements rs.ReadableStream {
 		const stratHWM = strategy.highWaterMark;
 
 		if (sourceType === undefined) {
-			const cancelAlgorithm = rs.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
-			const sizeAlgorithm = rs.makeSizeAlgorithmFromSizeFunction(strategy.size);
-			const highWaterMark = rs.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 1 : stratHWM);
+			const cancelAlgorithm = shared.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
+			const sizeAlgorithm = shared.makeSizeAlgorithmFromSizeFunction(strategy.size);
+			const highWaterMark = shared.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 1 : stratHWM);
 			new ReadableStreamDefaultController(this, sourceStart && sourceStart.bind(source), sourcePull && sourcePull.bind(source), cancelAlgorithm, highWaterMark, sizeAlgorithm);
 		}
 		else if (String(sourceType) === "bytes") {
 			if (strategy.size !== undefined) {
 				throw new RangeError("Strategy cannot specify `size` for a stream of type 'bytes'.");
 			}
-			const highWaterMark = rs.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 0 : stratHWM);
-			const cancelAlgorithm = rs.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
+			const highWaterMark = shared.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 0 : stratHWM);
+			const cancelAlgorithm = shared.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
 			const autoAllocateChunkSize = source.autoAllocateChunkSize;
 			new ReadableByteStreamController(this, sourceStart && sourceStart.bind(source), sourcePull && sourcePull.bind(source), cancelAlgorithm, highWaterMark, autoAllocateChunkSize);
 		}

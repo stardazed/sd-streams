@@ -2,6 +2,7 @@ import * as rs from "./readable-internals";
 import * as ws from "./writable-internals";
 import * as shared from "./shared-internals";
 
+export const state_ = Symbol("transformState_");
 export const backpressure_ = Symbol("backpressure_");
 export const backpressureChangePromise_ = Symbol("backpressureChangePromise_");
 export const readable_ = Symbol("readable_");
@@ -42,7 +43,7 @@ export interface Transformer {
 }
 
 export declare class TransformStream {
-	constructor(transformer: Transformer, writableStrategy: ws.StreamStrategy, readableStrategy: rs.StreamStrategy);
+	constructor(transformer: Transformer, writableStrategy: shared.StreamStrategy, readableStrategy: shared.StreamStrategy);
 
 	readonly readable: rs.ReadableStream;
 	readonly writable: ws.WritableStream;

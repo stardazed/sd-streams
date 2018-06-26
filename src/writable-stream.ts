@@ -5,22 +5,23 @@
  */
 
 import * as ws from "./writable-internals";
+import * as shared from "./shared-internals";
 import { WritableStreamDefaultController } from "./writable-stream-controller";
 import { WritableStreamDefaultWriter } from "./writable-stream-writer";
 
 export class WritableStream {
 	[ws.state_]: ws.WritableStreamState;
 	[ws.backpressure_]: boolean;
-	[ws.closeRequest_]: ws.ControlledPromise<void> | undefined;
-	[ws.inFlightWriteRequest_]: ws.ControlledPromise<void> | undefined;
-	[ws.inFlightCloseRequest_]: ws.ControlledPromise<void> | undefined;
+	[ws.closeRequest_]: shared.ControlledPromise<void> | undefined;
+	[ws.inFlightWriteRequest_]: shared.ControlledPromise<void> | undefined;
+	[ws.inFlightCloseRequest_]: shared.ControlledPromise<void> | undefined;
 	[ws.pendingAbortRequest_]: ws.AbortRequest | undefined;
 	[ws.storedError_]: any;
 	[ws.writableStreamController_]: ws.WritableStreamDefaultController | undefined;
 	[ws.writer_]: ws.WritableStreamDefaultWriter | undefined;
-	[ws.writeRequests_]: ws.ControlledPromise<any>[];
+	[ws.writeRequests_]: shared.ControlledPromise<any>[];
 
-	constructor(sink: ws.WritableStreamSink = {}, strategy: ws.StreamStrategy = {}) {
+	constructor(sink: ws.WritableStreamSink = {}, strategy: shared.StreamStrategy = {}) {
 		this[ws.state_] = "writable";
 		this[ws.storedError_] = undefined;
 		this[ws.writableStreamController_] = undefined;
@@ -32,9 +33,9 @@ export class WritableStream {
 		this[ws.writeRequests_] = [];
 		this[ws.backpressure_] = false;
 
-		const sizeAlgorithm = ws.makeSizeAlgorithmFromSizeFunction(strategy.size);
+		const sizeAlgorithm = shared.makeSizeAlgorithmFromSizeFunction(strategy.size);
 		const hwm = strategy.highWaterMark;
-		const highWaterMark = ws.validateAndNormalizeHighWaterMark(hwm === undefined ? 1 : hwm);
+		const highWaterMark = shared.validateAndNormalizeHighWaterMark(hwm === undefined ? 1 : hwm);
 
 		if (sink.type !== undefined) {
 			throw new RangeError("The type of an underlying sink must be undefined");
@@ -42,8 +43,8 @@ export class WritableStream {
 
 		const sinkWrite = sink.write; // avoid double access, in case it's a property
 		const writeFunction = sinkWrite && sinkWrite.bind(sink);
-		const closeAlgorithm = ws.createAlgorithmFromUnderlyingMethod(sink, "close", []);
-		const abortAlgorithm = ws.createAlgorithmFromUnderlyingMethod(sink, "abort", []);
+		const closeAlgorithm = shared.createAlgorithmFromUnderlyingMethod(sink, "close", []);
+		const abortAlgorithm = shared.createAlgorithmFromUnderlyingMethod(sink, "abort", []);
 		const sinkStart = sink.start; // avoid double access, in case it's a property
 		const startFunction = sinkStart && sinkStart.bind(sink);
 

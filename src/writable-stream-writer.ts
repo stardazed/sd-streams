@@ -1,9 +1,10 @@
 import * as ws from "./writable-internals";
+import * as shared from "./shared-internals";
 
 export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWriter {
 	[ws.ownerWritableStream_]: ws.WritableStream | undefined;
-	[ws.readyPromise_]: ws.ControlledPromise<void>;
-	[ws.closedPromise_]: ws.ControlledPromise<void>;
+	[ws.readyPromise_]: shared.ControlledPromise<void>;
+	[ws.closedPromise_]: shared.ControlledPromise<void>;
 
 	constructor(stream: ws.WritableStream) {
 		if (! ws.isWritableStream(stream)) {
@@ -15,8 +16,8 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 		this[ws.ownerWritableStream_] = stream;
 		stream[ws.writer_] = this;
 
-		const readyPromise = ws.createControlledPromise<void>();
-		const closedPromise = ws.createControlledPromise<void>();
+		const readyPromise = shared.createControlledPromise<void>();
+		const closedPromise = shared.createControlledPromise<void>();
 		this[ws.readyPromise_] = readyPromise;
 		this[ws.closedPromise_] = closedPromise;
 
