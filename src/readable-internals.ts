@@ -409,6 +409,10 @@ export function isReadableStreamDefaultController(value: any): value is Readable
 	return controlledReadableStream_ in value;
 }
 
+export function readableStreamDefaultControllerHasBackpressure(controller: ReadableStreamDefaultController) {
+	return ! readableStreamDefaultControllerShouldCallPull(controller);
+}
+
 export function readableStreamDefaultControllerCanCloseOrEnqueue(rsdc: ReadableStreamDefaultController) {
 	const state = rsdc[controlledReadableStream_][state_];
 	return rsdc[closeRequested_] === false && state === "readable";
