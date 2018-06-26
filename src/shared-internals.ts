@@ -23,7 +23,7 @@ export function isFiniteNonNegativeNumber(value: any) {
 	if (! (typeof value === "number" && isFinite(value))) { // covers NaN, +Infinity and -Infinity
 		return false;
 	}
-	return value > 0;
+	return value >= 0;
 }
 
 export function invokeOrNoop<O extends object, P extends keyof O>(o: O, p: P, args: any[]) {

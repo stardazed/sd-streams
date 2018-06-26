@@ -87,7 +87,7 @@ export class ReadableStream implements rs.ReadableStream {
 			return new ReadableStreamDefaultReader(this);
 		}
 		else if (String(mode) === "byob") {
-			throw new ReadableStreamBYOBReader(this);
+			return new ReadableStreamBYOBReader(this);
 		}
 		throw RangeError("mode option must be undefined or `byob`");
 	}

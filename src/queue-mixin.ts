@@ -29,7 +29,7 @@ export function dequeueValue<V>(container: QueueContainer<V>) {
 
 export function enqueueValueWithSize<V>(container: QueueContainer<V>, value: V, size: number) {
 	// Assert: container has[[queue]] and[[queueTotalSize]] internal slots.
-	if (! isFiniteNonNegativeNumber) {
+	if (! isFiniteNonNegativeNumber(size)) {
 		throw new RangeError("Chunk size must be a non-negative, finite numbers");
 	}
 	container[queue_].push({ value, size });
