@@ -1,7 +1,6 @@
-dependencies:
-  rollup-plugin-typescript: 0.8.1
 devDependencies:
   rollup: 0.61.2
+  rollup-plugin-typescript: 0.8.1
   typescript: 2.9.2
 packages:
   /@types/estree/0.0.39:
@@ -13,36 +12,36 @@ packages:
     resolution:
       integrity: sha512-h7VDRFL8IhdPw1JjiNVvhr+WynfKW09q2BOflIOA0yeuXNeXBP1bIRuBrysSryH4keaJ5bYUNp63aIyQL9YpDQ==
   /balanced-match/1.0.0:
-    dev: false
+    dev: true
     resolution:
       integrity: sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
   /brace-expansion/1.1.11:
     dependencies:
       balanced-match: 1.0.0
       concat-map: 0.0.1
-    dev: false
+    dev: true
     resolution:
       integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==
   /compare-versions/2.0.1:
-    dev: false
+    dev: true
     resolution:
       integrity: sha1-Htwfk2h/2XoyXFn1XkWgfbEGrKY=
   /concat-map/0.0.1:
-    dev: false
+    dev: true
     resolution:
       integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
   /estree-walker/0.2.1:
-    dev: false
+    dev: true
     resolution:
       integrity: sha1-va/oCVOD2EFNXcLs9MkXO225QS4=
   /minimatch/3.0.4:
     dependencies:
       brace-expansion: 1.1.11
-    dev: false
+    dev: true
     resolution:
       integrity: sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==
   /object-assign/4.1.1:
-    dev: false
+    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -54,14 +53,14 @@ packages:
       rollup-pluginutils: 1.5.2
       tippex: 2.3.1
       typescript: 1.8.10
-    dev: false
+    dev: true
     resolution:
       integrity: sha1-L/fuzCHPa7K0P8J+W2iJUs5xkko=
   /rollup-pluginutils/1.5.2:
     dependencies:
       estree-walker: 0.2.1
       minimatch: 3.0.4
-    dev: false
+    dev: true
     resolution:
       integrity: sha1-HhVud4+UtyVb+hs9AXi+j1xVJAg=
   /rollup/0.61.2:
@@ -72,11 +71,11 @@ packages:
     resolution:
       integrity: sha512-NN7GaX3c9I3oz+CjEex7+JbnSxrLMTBXNRThI4qdN2Tq0K/7RiedlEzOHyuVAHPZKvQeoPiRioTWL3xhmN+oCg==
   /tippex/2.3.1:
-    dev: false
+    dev: true
     resolution:
       integrity: sha1-ov1bcIfXy/sgyYBqbBYQjCwPr9o=
   /typescript/1.8.10:
-    dev: false
+    dev: true
     engines:
       node: '>=0.8.0'
     resolution:
