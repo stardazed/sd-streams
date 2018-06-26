@@ -2,6 +2,8 @@ import * as rs from "./readable-internals";
 import * as ws from "./writable-internals";
 import * as shared from "./shared-internals";
 
+import { createReadableStream } from "./readable-stream";
+
 export const state_ = Symbol("transformState_");
 export const backpressure_ = Symbol("backpressure_");
 export const backpressureChangePromise_ = Symbol("backpressureChangePromise_");
@@ -222,5 +224,5 @@ export function transformStreamDefaultSourcePullAlgorithm(stream: TransformStrea
 	// Assert: stream.[[backpressure]] is true.
 	// Assert: stream.[[backpressureChangePromise]] is not undefined.
 	transformStreamSetBackpressure(stream, false);
-	return stream[backpressureChangePromise_];
+	return stream[backpressureChangePromise_]!.promise;
 }

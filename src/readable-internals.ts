@@ -197,6 +197,13 @@ export declare class ReadableStream {
 
 // ---- Stream
 
+export function initializeReadableStream(stream: ReadableStream) {
+	stream[state_] = "readable";
+	stream[reader_] = undefined;
+	stream[storedError_] = undefined;
+	(stream as any)[readableStreamController_] = undefined; // mark slot as used for brand check
+}
+
 export function isReadableStream(value: any): value is ReadableStream {
 	if (value == null || typeof value !== "object") {
 		return false;
@@ -403,6 +410,34 @@ export function readableStreamFulfillReadRequest(stream: ReadableStream, chunk: 
 
 // ---- DefaultController
 
+export function setUpReadableStreamDefaultController(stream: ReadableStream, controller: ReadableStreamDefaultController, startAlgorithm: StartAlgorithm, pullAlgorithm: PullAlgorithm, cancelAlgorithm: CancelAlgorithm, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
+	// Assert: stream.[[readableStreamController]] is undefined.
+	controller[controlledReadableStream_] = stream;
+	q.resetQueue(controller);
+	controller[started_] = false;
+	controller[closeRequested_] = false;
+	controller[pullAgain_] = false;
+	controller[pulling_] = false;
+	controller[strategySizeAlgorithm_] = sizeAlgorithm;
+	controller[strategyHWM_] = highWaterMark;
+	controller[pullAlgorithm_] = pullAlgorithm;
+	controller[cancelAlgorithm_] = cancelAlgorithm;
+	stream[readableStreamController_] = controller;
+
+	const startResult = startAlgorithm();
+	Promise.resolve(startResult).then(
+		_ => {
+			controller[started_] = true;
+			// Assert: controller.[[pulling]] is false.
+			// Assert: controller.[[pullAgain]] is false.
+			readableStreamDefaultControllerCallPullIfNeeded(controller);
+		},
+		error => {
+			readableStreamDefaultControllerError(controller, error);
+		}
+	);
+}
+
 export function isReadableStreamDefaultController(value: any): value is ReadableStreamDefaultController {
 	if (value == null || typeof value !== "object") {
 		return false;
@@ -414,33 +449,33 @@ export function readableStreamDefaultControllerHasBackpressure(controller: Reada
 	return ! readableStreamDefaultControllerShouldCallPull(controller);
 }
 
-export function readableStreamDefaultControllerCanCloseOrEnqueue(rsdc: ReadableStreamDefaultController) {
-	const state = rsdc[controlledReadableStream_][state_];
-	return rsdc[closeRequested_] === false && state === "readable";
+export function readableStreamDefaultControllerCanCloseOrEnqueue(controller: ReadableStreamDefaultController) {
+	const state = controller[controlledReadableStream_][state_];
+	return controller[closeRequested_] === false && state === "readable";
 }
 
-export function readableStreamDefaultControllerGetDesiredSize(rsdc: ReadableStreamDefaultController) {
-	const state = rsdc[controlledReadableStream_][state_];
+export function readableStreamDefaultControllerGetDesiredSize(controller: ReadableStreamDefaultController) {
+	const state = controller[controlledReadableStream_][state_];
 	if (state === "errored") {
 		return null;
 	}
 	if (state === "closed") {
 		return 0;
 	}
-	return rsdc[strategyHWM_] - rsdc[q.queueTotalSize_];
+	return controller[strategyHWM_] - controller[q.queueTotalSize_];
 }
 
-export function readableStreamDefaultControllerClose(rsdc: ReadableStreamDefaultController) {
+export function readableStreamDefaultControllerClose(controller: ReadableStreamDefaultController) {
 	// Assert: !ReadableStreamDefaultControllerCanCloseOrEnqueue(controller) is true.
-	rsdc[closeRequested_] = true;
-	const stream = rsdc[controlledReadableStream_];
-	if (rsdc[q.queue_].length === 0) {
+	controller[closeRequested_] = true;
+	const stream = controller[controlledReadableStream_];
+	if (controller[q.queue_].length === 0) {
 		readableStreamClose(stream);
 	}
 }
 
-export function readableStreamDefaultControllerEnqueue(rsdc: ReadableStreamDefaultController, chunk: any) {
-	const stream = rsdc[controlledReadableStream_];
+export function readableStreamDefaultControllerEnqueue(controller: ReadableStreamDefaultController, chunk: any) {
+	const stream = controller[controlledReadableStream_];
 	// Assert: !ReadableStreamDefaultControllerCanCloseOrEnqueue(controller) is true.
 	if (isReadableStreamLocked(stream) && readableStreamGetNumReadRequests(stream) > 0) {
 		readableStreamFulfillReadRequest(stream, chunk, false);
@@ -451,71 +486,71 @@ export function readableStreamDefaultControllerEnqueue(rsdc: ReadableStreamDefau
 		// impl note: assuming that in JS land this just means try/catch with rethrow
 		let chunkSize: number;
 		try {
-			chunkSize = rsdc[strategySizeAlgorithm_](chunk);
+			chunkSize = controller[strategySizeAlgorithm_](chunk);
 		}
 		catch (error) {
-			readableStreamDefaultControllerError(rsdc, error);
+			readableStreamDefaultControllerError(controller, error);
 			throw error;
 		}
 		try {
-			q.enqueueValueWithSize(rsdc, chunk, chunkSize);
+			q.enqueueValueWithSize(controller, chunk, chunkSize);
 		}
 		catch (error) {
-			readableStreamDefaultControllerError(rsdc, error);
+			readableStreamDefaultControllerError(controller, error);
 			throw error;
 		}
 	}
-	readableStreamDefaultControllerCallPullIfNeeded(rsdc);
+	readableStreamDefaultControllerCallPullIfNeeded(controller);
 }
 
-export function readableStreamDefaultControllerError(rsdc: ReadableStreamDefaultController, error: any) {
-	const stream = rsdc[controlledReadableStream_];
+export function readableStreamDefaultControllerError(controller: ReadableStreamDefaultController, error: any) {
+	const stream = controller[controlledReadableStream_];
 	if (stream[state_] !== "readable") {
 		return;
 	}
-	q.resetQueue(rsdc);
+	q.resetQueue(controller);
 	readableStreamError(stream, error);
 }
 
-export function readableStreamDefaultControllerCallPullIfNeeded(rsdc: ReadableStreamDefaultController) {
-	if (! readableStreamDefaultControllerShouldCallPull(rsdc)) {
+export function readableStreamDefaultControllerCallPullIfNeeded(controller: ReadableStreamDefaultController) {
+	if (! readableStreamDefaultControllerShouldCallPull(controller)) {
 		return;
 	}
-	if (rsdc[pulling_]) {
-		rsdc[pullAgain_] = true;
+	if (controller[pulling_]) {
+		controller[pullAgain_] = true;
 		return;
 	}
-	if (rsdc[pullAgain_]) {
+	if (controller[pullAgain_]) {
 		throw new RangeError("Stream controller is in an invalid state.");
 	}
 
-	rsdc[pulling_] = true;
-	rsdc[pullAlgorithm_](rsdc).then(
+	controller[pulling_] = true;
+	controller[pullAlgorithm_](controller).then(
 		_ => {
-			rsdc[pulling_] = false;
-			if (rsdc[pullAgain_]) {
-				rsdc[pullAgain_] = false;
-				readableStreamDefaultControllerCallPullIfNeeded(rsdc);
+			controller[pulling_] = false;
+			if (controller[pullAgain_]) {
+				controller[pullAgain_] = false;
+				readableStreamDefaultControllerCallPullIfNeeded(controller);
 			}
 		},
 		error => {
-			readableStreamDefaultControllerError(rsdc, error);
+			readableStreamDefaultControllerError(controller, error);
 		}
 	);
 }
 
-export function readableStreamDefaultControllerShouldCallPull(rsdc: ReadableStreamDefaultController) {
-	const stream = rsdc[controlledReadableStream_];
-	if (! readableStreamDefaultControllerCanCloseOrEnqueue(rsdc)) {
+export function readableStreamDefaultControllerShouldCallPull(controller: ReadableStreamDefaultController) {
+	const stream = controller[controlledReadableStream_];
+	if (! readableStreamDefaultControllerCanCloseOrEnqueue(controller)) {
 		return false;
 	}
-	if (rsdc[started_] === false) {
+	if (controller[started_] === false) {
 		return false;
 	}
 	if (isReadableStreamLocked(stream) && readableStreamGetNumReadRequests(stream) > 0) {
 		return true;
 	}
-	const desiredSize = readableStreamDefaultControllerGetDesiredSize(rsdc);
+	const desiredSize = readableStreamDefaultControllerGetDesiredSize(controller);
 	if (desiredSize === null) {
 		throw new RangeError("Stream is in an invalid state.");
 	}
@@ -524,6 +559,54 @@ export function readableStreamDefaultControllerShouldCallPull(rsdc: ReadableStre
 
 
 // ---- BYOBController
+
+export function setUpReadableByteStreamController(stream: ReadableStream, controller: ReadableByteStreamController, startAlgorithm: StartAlgorithm, pullAlgorithm: PullAlgorithm, cancelAlgorithm: CancelAlgorithm, highWaterMark: number, autoAllocateChunkSize: number | undefined) {
+	// Assert: stream.[[readableStreamController]] is undefined.
+	if (stream[readableStreamController_] !== undefined) {
+		throw new TypeError("Cannot reuse streams");
+	}
+	if (autoAllocateChunkSize !== undefined) {
+		if (! shared.isInteger(autoAllocateChunkSize) || autoAllocateChunkSize <= 0) {
+			throw new RangeError("autoAllocateChunkSize must be a positive, finite integer");
+		}
+	}
+	// Set controller.[[controlledReadableByteStream]] to stream.
+	controller[controlledReadableByteStream_] = stream;
+	// Set controller.[[pullAgain]] and controller.[[pulling]] to false.
+	controller[pullAgain_] = false;
+	controller[pulling_] = false;
+	readableByteStreamControllerClearPendingPullIntos(controller);
+	q.resetQueue(controller);
+	controller[closeRequested_] = false;
+	controller[started_] = false;
+	// Set controller.[[strategyHWM]] to ? ValidateAndNormalizeHighWaterMark(highWaterMark).
+	controller[strategyHWM_] = shared.validateAndNormalizeHighWaterMark(highWaterMark);
+	// Set controller.[[pullAlgorithm]] to pullAlgorithm.
+	controller[pullAlgorithm_] = pullAlgorithm;
+	// Set controller.[[cancelAlgorithm]] to cancelAlgorithm.
+	controller[cancelAlgorithm_] = cancelAlgorithm;
+	// Set controller.[[autoAllocateChunkSize]] to autoAllocateChunkSize.
+	controller[autoAllocateChunkSize_] = autoAllocateChunkSize;
+	// Set controller.[[pendingPullIntos]] to a new empty List.
+	controller[pendingPullIntos_] = [];
+	// Set stream.[[readableStreamController]] to controller.
+	stream[readableStreamController_] = controller;
+
+	// Let startResult be the result of performing startAlgorithm.
+	const startResult = startAlgorithm();
+	Promise.resolve(startResult).then(
+		_ => {
+			// Set controller.[[started]] to true.
+			controller[started_] = true;
+			// Assert: controller.[[pulling]] is false.
+			// Assert: controller.[[pullAgain]] is false.
+			readableByteStreamControllerCallPullIfNeeded(controller);
+		},
+		error => {
+			readableByteStreamControllerError(controller, error);
+		}
+	);
+}
 
 export function isReadableStreamBYOBRequest(value: any): value is ReadableStreamBYOBRequest {
 	if (value == null || typeof value !== "object") {

@@ -16,40 +16,8 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	[q.queue_]: q.QueueElement<any>[];
 	[q.queueTotalSize_]: number;
 
-	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullFunction: rs.PullFunction | undefined, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
-		if (! rs.isReadableStream(stream)) {
-			throw new TypeError();
-		}
-		if (stream[rs.readableStreamController_] !== undefined) {
-			throw new TypeError("Cannot reuse a stream");
-		}
-
-		this[rs.controlledReadableStream_] = stream;
-		q.resetQueue(this);
-
-		this[rs.started_] = false;
-		this[rs.closeRequested_] = false;
-		this[rs.pullAgain_] = false;
-		this[rs.pulling_] = false;
-
-		this[rs.strategySizeAlgorithm_] = sizeAlgorithm;
-		this[rs.strategyHWM_] = highWaterMark;
-
-		this[rs.pullAlgorithm_] = shared.createAlgorithmFromFunction(pullFunction, [this]);
-		this[rs.cancelAlgorithm_] = cancelAlgorithm;
-
-		stream[rs.readableStreamController_] = this;
-
-		const startResult = startFunction === undefined ? undefined : startFunction(this);
-		Promise.resolve(startResult).then(
-			_ => {
-				this[rs.started_] = true;
-				rs.readableStreamDefaultControllerCallPullIfNeeded(this);
-			},
-			error => {
-				rs.readableStreamDefaultControllerError(this, error);
-			}
-		);
+	constructor() {
+		throw new TypeError();
 	}
 
 	get desiredSize(): number | null {
@@ -105,4 +73,16 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 		rs.readableStreamDefaultControllerCallPullIfNeeded(this);
 		return pendingPromise;
 	}
+}
+
+
+export function setUpReadableStreamDefaultControllerFromUnderlyingSource(stream: rs.ReadableStream, underlyingSource: rs.ReadableStreamSource, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
+	// Assert: underlyingSource is not undefined.
+	const controller = Object.create(ReadableStreamDefaultController.prototype);
+	const startAlgorithm = () => {
+		return shared.invokeOrNoop(underlyingSource, "start", [controller]);
+	};
+	const pullAlgorithm = shared.createAlgorithmFromUnderlyingMethod(underlyingSource, "pull", [controller]);
+	const cancelAlgorithm = shared.createAlgorithmFromUnderlyingMethod(underlyingSource, "cancel", []);
+	rs.setUpReadableStreamDefaultController(stream, controller, startAlgorithm, pullAlgorithm, cancelAlgorithm, highWaterMark, sizeAlgorithm);
 }

@@ -9,19 +9,11 @@ import * as shared from "./shared-internals";
 import { WritableStream } from "./writable-internals";
 import { readableStreamPipeTo } from "./pipe-to";
 
-import { ReadableStreamDefaultController } from "./readable-stream-default-controller";
+import { ReadableStreamDefaultController, setUpReadableStreamDefaultControllerFromUnderlyingSource } from "./readable-stream-default-controller";
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 
-import { ReadableByteStreamController } from "./readable-byte-stream-controller";
+import { ReadableByteStreamController, setUpReadableByteStreamControllerFromUnderlyingSource } from "./readable-byte-stream-controller";
 import { ReadableStreamBYOBReader } from "./readable-stream-byob-reader";
-
-interface RSInternalConstructorOptions {
-	startAlgorithm: rs.StartAlgorithm;
-	pullAlgorithm: rs.PullAlgorithm;
-	cancelAlgorithm: rs.CancelAlgorithm;
-	highWaterMark?: number;
-	sizeAlgorithm?: shared.SizeAlgorithm;
-}
 
 export class ReadableStream implements rs.ReadableStream {
 	[rs.state_]: rs.ReadableStreamState;
@@ -29,46 +21,24 @@ export class ReadableStream implements rs.ReadableStream {
 	[rs.storedError_]: any;
 	[rs.readableStreamController_]: rs.ReadableStreamController;
 
-	constructor(source: rs.ReadableStreamSource = {}, strategy: shared.StreamStrategy = {}, _1?: never, _2?: never, internalCtor?: RSInternalConstructorOptions) {
-		this[rs.state_] = "readable";
-		this[rs.reader_] = undefined;
-		this[rs.storedError_] = undefined;
-		(this as any)[rs.readableStreamController_] = undefined;
+	constructor(source: rs.ReadableStreamSource = {}, strategy: shared.StreamStrategy = {}) {
+		rs.initializeReadableStream(this);
 
-		// allow for internal constructor parameters to be passed in 5th parameter
-		// ignores other parameters
-		if (arguments.length === 5 && typeof internalCtor === "object" && internalCtor !== null) {
-			// CreateReadableStream algorithm (§3.3.3)
-			if (internalCtor.highWaterMark === undefined) {
-				internalCtor.highWaterMark = 1;
-			}
-			if (internalCtor.sizeAlgorithm === undefined) {
-				internalCtor.sizeAlgorithm = function() { return 1; };
-			}
-			// Assert: IsNonNegativeNumber(highWaterMark) is true
-			new ReadableStreamDefaultController(this, internalCtor.startAlgorithm, internalCtor.pullAlgorithm, internalCtor.cancelAlgorithm, internalCtor.highWaterMark, internalCtor.sizeAlgorithm);
-			return;
-		}
-
-		const sourceType = source.type;
-		const sourcePull = source.pull;
-		const sourceStart = source.start;
+		const sizeFunc = strategy.size;
 		const stratHWM = strategy.highWaterMark;
+		const sourceType = source.type;
 
 		if (sourceType === undefined) {
-			const cancelAlgorithm = shared.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
-			const sizeAlgorithm = shared.makeSizeAlgorithmFromSizeFunction(strategy.size);
+			const sizeAlgorithm = shared.makeSizeAlgorithmFromSizeFunction(sizeFunc);
 			const highWaterMark = shared.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 1 : stratHWM);
-			new ReadableStreamDefaultController(this, sourceStart && sourceStart.bind(source), sourcePull && sourcePull.bind(source), cancelAlgorithm, highWaterMark, sizeAlgorithm);
+			setUpReadableStreamDefaultControllerFromUnderlyingSource(this, source, highWaterMark, sizeAlgorithm);
 		}
 		else if (String(sourceType) === "bytes") {
-			if (strategy.size !== undefined) {
-				throw new RangeError("Strategy cannot specify `size` for a stream of type 'bytes'.");
+			if (sizeFunc !== undefined) {
+				throw new RangeError("bytes streams cannot have a strategy with a `size` field");
 			}
 			const highWaterMark = shared.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 0 : stratHWM);
-			const cancelAlgorithm = shared.createAlgorithmFromUnderlyingMethod(source, "cancel", []);
-			const autoAllocateChunkSize = source.autoAllocateChunkSize;
-			new ReadableByteStreamController(this, sourceStart && sourceStart.bind(source), sourcePull && sourcePull.bind(source), cancelAlgorithm, highWaterMark, autoAllocateChunkSize);
+			setUpReadableByteStreamControllerFromUnderlyingSource(this, source, highWaterMark);
 		}
 		else {
 			throw new RangeError("The underlying source's `type` field must be undefined or 'bytes'");
@@ -167,8 +137,8 @@ export class ReadableStream implements rs.ReadableStream {
 		};
 
 		const startAlgorithm = () => undefined;
-		branch1 = new ReadableStream(undefined, undefined, undefined, undefined, { startAlgorithm, pullAlgorithm, cancelAlgorithm: cancel1Algorithm });
-		branch2 = new ReadableStream(undefined, undefined, undefined, undefined, { startAlgorithm, pullAlgorithm, cancelAlgorithm: cancel2Algorithm });
+		branch1 = createReadableStream(startAlgorithm, pullAlgorithm, cancel1Algorithm);
+		branch2 = createReadableStream(startAlgorithm, pullAlgorithm, cancel2Algorithm);
 
 		reader[rs.closedPromise_].promise.catch(error => {
 			if (! closedOrErrored) {
@@ -193,4 +163,40 @@ export class ReadableStream implements rs.ReadableStream {
 	pipeTo(dest: WritableStream, options: rs.PipeToOptions = {}): Promise<void> {
 		return readableStreamPipeTo(this, dest, options);
 	}
+}
+
+
+export function createReadableStream(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, sizeAlgorithm?: shared.SizeAlgorithm) {
+	if (highWaterMark === undefined) {
+		highWaterMark = 1;
+	}
+	if (sizeAlgorithm === undefined) {
+		sizeAlgorithm = () => 1;
+	}
+	// Assert: ! IsNonNegativeNumber(highWaterMark) is true.
+
+	const stream = Object.create(ReadableStream.prototype) as ReadableStream;
+	rs.initializeReadableStream(stream);
+	const controller = Object.create(ReadableStreamDefaultController.prototype) as ReadableStreamDefaultController;
+	rs.setUpReadableStreamDefaultController(stream, controller, startAlgorithm, pullAlgorithm, cancelAlgorithm, highWaterMark, sizeAlgorithm);
+	return stream;
+}
+
+
+export function createReadableByteStream(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, autoAllocateChunkSize?: number) {
+	if (highWaterMark === undefined) {
+		highWaterMark = 0;
+	}
+	// Assert: ! IsNonNegativeNumber(highWaterMark) is true.
+	if (autoAllocateChunkSize !== undefined) {
+		if (! shared.isInteger(autoAllocateChunkSize) || autoAllocateChunkSize <= 0) {
+			throw new RangeError("autoAllocateChunkSize must be a positive, finite integer");
+		}
+	}
+
+	const stream = Object.create(ReadableStream.prototype) as ReadableStream;
+	rs.initializeReadableStream(stream);
+	const controller = Object.create(ReadableByteStreamController.prototype) as ReadableByteStreamController;
+	rs.setUpReadableByteStreamController(stream, controller, startAlgorithm, pullAlgorithm, cancelAlgorithm, highWaterMark, autoAllocateChunkSize);
+	return stream;
 }

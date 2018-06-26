@@ -19,50 +19,8 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 	[q.queue_]: { buffer: ArrayBufferLike, byteOffset: number, byteLength: number }[];
 	[q.queueTotalSize_]: number;
 
-	constructor(stream: rs.ReadableStream, startFunction: rs.StartFunction | undefined, pullFunction: rs.PullFunction | undefined, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark: number, autoAllocateChunkSize: number | undefined) {
-		if (! rs.isReadableStream(stream)) {
-			throw new TypeError();
-		}
-		if (stream[rs.readableStreamController_] !== undefined) {
-			throw new TypeError();
-		}
-
-		if (autoAllocateChunkSize !== undefined) {
-			autoAllocateChunkSize = Number(autoAllocateChunkSize);
-			if (! shared.isInteger(autoAllocateChunkSize) || autoAllocateChunkSize <= 0) {
-				throw new RangeError("autoAllocateChunkSize, if provided, must be a positive, finite integer");
-			}
-		}
-
-		this[rs.controlledReadableByteStream_] = stream;
-		this[rs.pullAgain_] = false;
-		this[rs.pulling_] = false;
-
-		rs.readableByteStreamControllerClearPendingPullIntos(this);
-		q.resetQueue(this);
-
-		this[rs.closeRequested_] = false;
-		this[rs.started_] = false;
-		this[rs.strategyHWM_] = shared.validateAndNormalizeHighWaterMark(highWaterMark);
-		this[rs.pullAlgorithm_] = shared.createAlgorithmFromFunction(pullFunction, [this]);
-		this[rs.cancelAlgorithm_] = cancelAlgorithm;
-		this[rs.autoAllocateChunkSize_] = autoAllocateChunkSize;
-		this[rs.pendingPullIntos_] = [];
-
-		stream[rs.readableStreamController_] = this;
-
-		const startResult = startFunction === undefined ? undefined : startFunction(this);
-		Promise.resolve(startResult).then(
-			_ => {
-				this[rs.started_] = true;
-				// Assert: controller.[[pulling]] is false.
-				// Assert: controller.[[pullAgain]] is false.
-				rs.readableByteStreamControllerCallPullIfNeeded(this);
-			},
-			error => {
-				rs.readableByteStreamControllerError(this, error);
-			}
-		);
+	constructor() {
+		throw new TypeError();
 	}
 
 	get byobRequest(): rs.ReadableStreamBYOBRequest | undefined {
@@ -167,4 +125,24 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 		rs.readableByteStreamControllerCallPullIfNeeded(this);
 		return promise;
 	}
+}
+
+export function setUpReadableByteStreamControllerFromUnderlyingSource(stream: rs.ReadableStream, underlyingByteSource: rs.ReadableStreamSource, highWaterMark: number) {
+	// Assert: underlyingByteSource is not undefined.
+	const controller = Object.create(ReadableByteStreamController.prototype) as ReadableByteStreamController;
+
+	const startAlgorithm = () => {
+		return shared.invokeOrNoop(underlyingByteSource, "start", [controller]);
+	};
+	const pullAlgorithm = shared.createAlgorithmFromUnderlyingMethod(underlyingByteSource, "pull", [controller]);
+	const cancelAlgorithm = shared.createAlgorithmFromUnderlyingMethod(underlyingByteSource, "cancel", []);
+
+	let autoAllocateChunkSize = underlyingByteSource.autoAllocateChunkSize;
+	if (autoAllocateChunkSize !== undefined) {
+		autoAllocateChunkSize = Number(autoAllocateChunkSize);
+		if (! shared.isInteger(autoAllocateChunkSize) || autoAllocateChunkSize <= 0) {
+			throw new RangeError("autoAllocateChunkSize must be a positive, finite integer");
+		}
+	}
+	rs.setUpReadableByteStreamController(stream, controller, startAlgorithm, pullAlgorithm, cancelAlgorithm, highWaterMark, autoAllocateChunkSize);
 }
