@@ -1,6 +1,6 @@
 // @ts-check
 import typescript from "typescript";
-import tsc from "rollup-plugin-typescript2";
+import tsc from "rollup-plugin-typescript";
 
 export default [
 	{
@@ -15,7 +15,6 @@ export default [
 		plugins: [
 			tsc({
 				typescript,
-				cacheRoot: "./build",
 				include: ["src/**/*.ts"],
 			})
 		]

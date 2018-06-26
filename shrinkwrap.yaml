@@ -1,6 +1,7 @@
+dependencies:
+  rollup-plugin-typescript: 0.8.1
 devDependencies:
   rollup: 0.61.2
-  rollup-plugin-typescript2: 0.15.1
   typescript: 2.9.2
 packages:
   /@types/estree/0.0.39:
@@ -11,342 +12,58 @@ packages:
     dev: true
     resolution:
       integrity: sha512-h7VDRFL8IhdPw1JjiNVvhr+WynfKW09q2BOflIOA0yeuXNeXBP1bIRuBrysSryH4keaJ5bYUNp63aIyQL9YpDQ==
-  /arr-diff/2.0.0:
+  /balanced-match/1.0.0:
+    dev: false
+    resolution:
+      integrity: sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
+  /brace-expansion/1.1.11:
     dependencies:
-      arr-flatten: 1.1.0
-    dev: true
-    engines:
-      node: '>=0.10.0'
+      balanced-match: 1.0.0
+      concat-map: 0.0.1
+    dev: false
     resolution:
-      integrity: sha1-jzuCf5Vai9ZpaX5KQlasPOrjVs8=
-  /arr-flatten/1.1.0:
-    dev: true
-    engines:
-      node: '>=0.10.0'
+      integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==
+  /compare-versions/2.0.1:
+    dev: false
     resolution:
-      integrity: sha512-L3hKV5R/p5o81R7O02IGnwpDmkp6E982XhtbuwSe3O4qOtMMMtodicASA1Cny2U+aCXcNpml+m4dPsvsJ3jatg==
-  /array-unique/0.2.1:
-    dev: true
-    engines:
-      node: '>=0.10.0'
+      integrity: sha1-Htwfk2h/2XoyXFn1XkWgfbEGrKY=
+  /concat-map/0.0.1:
+    dev: false
     resolution:
-      integrity: sha1-odl8yvy8JiXMcPrc6zalDFiwGlM=
-  /braces/1.8.5:
+      integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
+  /estree-walker/0.2.1:
+    dev: false
+    resolution:
+      integrity: sha1-va/oCVOD2EFNXcLs9MkXO225QS4=
+  /minimatch/3.0.4:
     dependencies:
-      expand-range: 1.8.2
-      preserve: 0.2.0
-      repeat-element: 1.1.2
-    dev: true
+      brace-expansion: 1.1.11
+    dev: false
+    resolution:
+      integrity: sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==
+  /object-assign/4.1.1:
+    dev: false
     engines:
       node: '>=0.10.0'
     resolution:
-      integrity: sha1-uneWLhLf+WnWt2cR6RS3N4V79qc=
-  /estree-walker/0.5.2:
-    dev: true
-    resolution:
-      integrity: sha512-XpCnW/AE10ws/kDAs37cngSkvgIR8aN3G0MS85m7dUpuK2EREo9VJ00uvw6Dg/hXEpfsE1I1TvJOJr+Z+TL+ig==
-  /expand-brackets/0.1.5:
+      integrity: sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
+  /rollup-plugin-typescript/0.8.1:
     dependencies:
-      is-posix-bracket: 0.1.1
-    dev: true
-    engines:
-      node: '>=0.10.0'
+      compare-versions: 2.0.1
+      object-assign: 4.1.1
+      rollup-pluginutils: 1.5.2
+      tippex: 2.3.1
+      typescript: 1.8.10
+    dev: false
     resolution:
-      integrity: sha1-3wcoTjQqgHzXM6xa9yQR5YHRF3s=
-  /expand-range/1.8.2:
+      integrity: sha1-L/fuzCHPa7K0P8J+W2iJUs5xkko=
+  /rollup-pluginutils/1.5.2:
     dependencies:
-      fill-range: 2.2.4
-    dev: true
-    engines:
-      node: '>=0.10.0'
+      estree-walker: 0.2.1
+      minimatch: 3.0.4
+    dev: false
     resolution:
-      integrity: sha1-opnv/TNf4nIeuujiV+x5ZE/IUzc=
-  /extglob/0.3.2:
-    dependencies:
-      is-extglob: 1.0.0
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-Lhj/PS9JqydlzskCPwEdqo2DSaE=
-  /filename-regex/2.0.1:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-wcS5vuPglyXdsQa3XB4wH+LxiyY=
-  /fill-range/2.2.4:
-    dependencies:
-      is-number: 2.1.0
-      isobject: 2.1.0
-      randomatic: 3.0.0
-      repeat-element: 1.1.2
-      repeat-string: 1.6.1
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha512-cnrcCbj01+j2gTG921VZPnHbjmdAf8oQV/iGeV2kZxGSyfYjjTyY79ErsK1WJWMpw6DaApEX72binqJE+/d+5Q==
-  /for-in/1.0.2:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=
-  /for-own/0.1.5:
-    dependencies:
-      for-in: 1.0.2
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-UmXGgaTylNq78XyVCbZ2OqhFEM4=
-  /fs-extra/5.0.0:
-    dependencies:
-      graceful-fs: 4.1.11
-      jsonfile: 4.0.0
-      universalify: 0.1.2
-    dev: true
-    resolution:
-      integrity: sha512-66Pm4RYbjzdyeuqudYqhFiNBbCIuI9kgRqLPSHIlXHidW8NIQtVdkM1yeZ4lXwuhbTETv3EUGMNHAAw6hiundQ==
-  /glob-base/0.3.0:
-    dependencies:
-      glob-parent: 2.0.0
-      is-glob: 2.0.1
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-27Fk9iIbHAscz4Kuoyi0l98Oo8Q=
-  /glob-parent/2.0.0:
-    dependencies:
-      is-glob: 2.0.1
-    dev: true
-    resolution:
-      integrity: sha1-gTg9ctsFT8zPUzbaqQLxgvbtuyg=
-  /graceful-fs/4.1.11:
-    dev: true
-    engines:
-      node: '>=0.4.0'
-    resolution:
-      integrity: sha1-Dovf5NHduIVNZOBOp8AOKgJuVlg=
-  /is-buffer/1.1.6:
-    dev: true
-    resolution:
-      integrity: sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
-  /is-dotfile/1.0.3:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-pqLzL/0t+wT1yiXs0Pa4PPeYoeE=
-  /is-equal-shallow/0.1.3:
-    dependencies:
-      is-primitive: 2.0.0
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-IjgJj8Ih3gvPpdnqxMRdY4qhxTQ=
-  /is-extendable/0.1.1:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-YrEQ4omkcUGOPsNqYX1HLjAd/Ik=
-  /is-extglob/1.0.0:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-rEaBd8SUNAWgkvyPKXYMb/xiBsA=
-  /is-glob/2.0.1:
-    dependencies:
-      is-extglob: 1.0.0
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-0Jb5JqPe1WAPP9/ZEZjLCIjC2GM=
-  /is-number/2.1.0:
-    dependencies:
-      kind-of: 3.2.2
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-Afy7s5NGOlSPL0ZszhbezknbkI8=
-  /is-number/4.0.0:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha512-rSklcAIlf1OmFdyAqbnWTLVelsQ58uvZ66S/ZyawjWqIviTWCjg2PzVGw8WUA+nNuPTqb4wgA+NszrJ+08LlgQ==
-  /is-posix-bracket/0.1.1:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-MzTceXdDaOkvAW5vvAqI9c1ua8Q=
-  /is-primitive/2.0.0:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-IHurkWOEmcB7Kt8kCkGochADRXU=
-  /isarray/1.0.0:
-    dev: true
-    resolution:
-      integrity: sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=
-  /isobject/2.1.0:
-    dependencies:
-      isarray: 1.0.0
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-8GVWEJaj8dou9GJy+BXIQNh+DIk=
-  /jsonfile/4.0.0:
-    dev: true
-    optionalDependencies:
-      graceful-fs: 4.1.11
-    resolution:
-      integrity: sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss=
-  /kind-of/3.2.2:
-    dependencies:
-      is-buffer: 1.1.6
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-MeohpzS6ubuw8yRm2JOupR5KPGQ=
-  /kind-of/6.0.2:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha512-s5kLOcnH0XqDO+FvuaLX8DDjZ18CGFk7VygH40QoKPUQhW4e2rvM0rwUq0t8IQDOwYSeLK01U90OjzBTme2QqA==
-  /math-random/1.0.1:
-    dev: true
-    resolution:
-      integrity: sha1-izqsWIuKZuSXXjzepn97sylgH6w=
-  /micromatch/2.3.11:
-    dependencies:
-      arr-diff: 2.0.0
-      array-unique: 0.2.1
-      braces: 1.8.5
-      expand-brackets: 0.1.5
-      extglob: 0.3.2
-      filename-regex: 2.0.1
-      is-extglob: 1.0.0
-      is-glob: 2.0.1
-      kind-of: 3.2.2
-      normalize-path: 2.1.1
-      object.omit: 2.0.1
-      parse-glob: 3.0.4
-      regex-cache: 0.4.4
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-hmd8l9FyCzY0MdBNDRUpO9OMFWU=
-  /normalize-path/2.1.1:
-    dependencies:
-      remove-trailing-separator: 1.1.0
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-GrKLVW4Zg2Oowab35vogE3/mrtk=
-  /object.omit/2.0.1:
-    dependencies:
-      for-own: 0.1.5
-      is-extendable: 0.1.1
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-Gpx0SCnznbuFjHbKNXmuKlTr0fo=
-  /parse-glob/3.0.4:
-    dependencies:
-      glob-base: 0.3.0
-      is-dotfile: 1.0.3
-      is-extglob: 1.0.0
-      is-glob: 2.0.1
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-ssN2z7EfNVE7rdFz7wu246OIORw=
-  /path-parse/1.0.5:
-    dev: true
-    resolution:
-      integrity: sha1-PBrfhx6pzWyUMbbqK9dKD/BVxME=
-  /preserve/0.2.0:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-gV7R9uvGWSb4ZbMQwHE7yzMVzks=
-  /randomatic/3.0.0:
-    dependencies:
-      is-number: 4.0.0
-      kind-of: 6.0.2
-      math-random: 1.0.1
-    dev: true
-    engines:
-      node: '>= 0.10.0'
-    resolution:
-      integrity: sha512-VdxFOIEY3mNO5PtSRkkle/hPJDHvQhK21oa73K4yAc9qmp6N429gAyF1gZMOTMeS0/AYzaV/2Trcef+NaIonSA==
-  /regex-cache/0.4.4:
-    dependencies:
-      is-equal-shallow: 0.1.3
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha512-nVIZwtCjkC9YgvWkpM55B5rBhBYRZhAaJbgcFYXXsHnbZ9UZI9nnVWYZpBlCqv9ho2eZryPnWrZGsOdPwVWXWQ==
-  /remove-trailing-separator/1.1.0:
-    dev: true
-    resolution:
-      integrity: sha1-wkvOKig62tW8P1jg1IJJuSN52O8=
-  /repeat-element/1.1.2:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha1-7wiaF40Ug7quTZPrmLT55OEdmQo=
-  /repeat-string/1.6.1:
-    dev: true
-    engines:
-      node: '>=0.10'
-    resolution:
-      integrity: sha1-jcrkcOHIirwtYA//Sndihtp15jc=
-  /resolve/1.8.1:
-    dependencies:
-      path-parse: 1.0.5
-    dev: true
-    resolution:
-      integrity: sha512-AicPrAC7Qu1JxPCZ9ZgCZlY35QgFnNqc+0LtbRNxnVw4TXvjQ72wnuL9JQcEBgXkI9JM8MsT9kaQoHcpCRJOYA==
-  /rollup-plugin-typescript2/0.15.1:
-    dependencies:
-      fs-extra: 5.0.0
-      resolve: 1.8.1
-      rollup-pluginutils: 2.3.0
-      tslib: 1.9.2
-    dev: true
-    peerDependencies:
-      rollup: '>=0.50.0'
-      typescript: '>=2.4.0'
-    resolution:
-      integrity: sha512-lJ/yfIj1fmp0KyfgPmd2QFeRpLgXlc58fS3Ha9Loc7/p3qByDL7CRndcI9MflE/pUSrfUdDjZMR0mHSKvqrZ+g==
-  /rollup-pluginutils/2.3.0:
-    dependencies:
-      estree-walker: 0.5.2
-      micromatch: 2.3.11
-    dev: true
-    resolution:
-      integrity: sha512-xB6hsRsjdJdIYWEyYUJy/3ki5g69wrf0luHPGNK3ZSocV6HLNfio59l3dZ3TL4xUwEKgROhFi9jOCt6c5gfUWw==
+      integrity: sha1-HhVud4+UtyVb+hs9AXi+j1xVJAg=
   /rollup/0.61.2:
     dependencies:
       '@types/estree': 0.0.39
@@ -354,26 +71,26 @@ packages:
     dev: true
     resolution:
       integrity: sha512-NN7GaX3c9I3oz+CjEex7+JbnSxrLMTBXNRThI4qdN2Tq0K/7RiedlEzOHyuVAHPZKvQeoPiRioTWL3xhmN+oCg==
-  /tslib/1.9.2:
-    dev: true
+  /tippex/2.3.1:
+    dev: false
     resolution:
-      integrity: sha512-AVP5Xol3WivEr7hnssHDsaM+lVrVXWUvd1cfXTRkTj80b//6g2wIFEH6hZG0muGZRnHGrfttpdzRk3YlBkWjKw==
+      integrity: sha1-ov1bcIfXy/sgyYBqbBYQjCwPr9o=
+  /typescript/1.8.10:
+    dev: false
+    engines:
+      node: '>=0.8.0'
+    resolution:
+      integrity: sha1-tHXW4N/wv1DyluXKbvn7tccyDx4=
   /typescript/2.9.2:
     dev: true
     engines:
       node: '>=4.2.0'
     resolution:
       integrity: sha512-Gr4p6nFNaoufRIY4NMdpQRNmgxVIGMs4Fcu/ujdYk3nAZqk7supzBE9idmvfZIlH/Cuj//dvi+019qEue9lV0w==
-  /universalify/0.1.2:
-    dev: true
-    engines:
-      node: '>= 4.0.0'
-    resolution:
-      integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==
 registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 7
 shrinkwrapVersion: 3
 specifiers:
   rollup: ^0.61.2
-  rollup-plugin-typescript2: ^0.15.0
+  rollup-plugin-typescript: ^0.8.1
   typescript: ^2.9.2

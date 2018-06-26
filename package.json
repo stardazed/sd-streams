@@ -14,7 +14,7 @@
 	"types": "dist/index.d.ts",
 	"devDependencies": {
 		"rollup": "^0.61.2",
-		"rollup-plugin-typescript2": "^0.15.0",
+		"rollup-plugin-typescript": "^0.8.1",
 		"typescript": "^2.9.2"
 	}
 }
