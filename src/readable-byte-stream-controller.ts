@@ -1,5 +1,6 @@
 import * as rs from "./readable-internals";
 import * as q from "./queue-mixin";
+import * as shared from "./shared-internals";
 import { ReadableStreamBYOBRequest } from "./readable-stream-byob-request";
 
 export class ReadableByteStreamController implements rs.ReadableByteStreamController {
@@ -28,7 +29,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 
 		if (autoAllocateChunkSize !== undefined) {
 			autoAllocateChunkSize = Number(autoAllocateChunkSize);
-			if (! rs.isInteger(autoAllocateChunkSize) || autoAllocateChunkSize <= 0) {
+			if (! shared.isInteger(autoAllocateChunkSize) || autoAllocateChunkSize <= 0) {
 				throw new RangeError("autoAllocateChunkSize, if provided, must be a positive, finite integer");
 			}
 		}
@@ -42,8 +43,8 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 
 		this[rs.closeRequested_] = false;
 		this[rs.started_] = false;
-		this[rs.strategyHWM_] = rs.validateAndNormalizeHighWaterMark(highWaterMark);
-		this[rs.pullAlgorithm_] = rs.createAlgorithmFromFunction(pullFunction, [this]);
+		this[rs.strategyHWM_] = shared.validateAndNormalizeHighWaterMark(highWaterMark);
+		this[rs.pullAlgorithm_] = shared.createAlgorithmFromFunction(pullFunction, [this]);
 		this[rs.cancelAlgorithm_] = cancelAlgorithm;
 		this[rs.autoAllocateChunkSize_] = autoAllocateChunkSize;
 		this[rs.pendingPullIntos_] = [];
@@ -139,7 +140,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 			this[q.queueTotalSize_] -= entry.byteLength;
 			rs.readableByteStreamControllerHandleQueueDrain(this);
 			const view = new Uint8Array(entry.buffer, entry.byteOffset, entry.byteLength);
-			return Promise.resolve(rs.createIterResultObject(view, false));
+			return Promise.resolve(shared.createIterResultObject(view, false));
 		}
 		const autoAllocateChunkSize = this[rs.autoAllocateChunkSize_];
 		if (autoAllocateChunkSize !== undefined) {

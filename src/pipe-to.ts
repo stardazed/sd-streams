@@ -1,5 +1,6 @@
 import * as rs from "./readable-internals";
 import * as ws from "./writable-internals";
+import * as shared from "./shared-internals";
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 import { WritableStreamDefaultWriter } from "./writable-stream-writer";
 
@@ -26,7 +27,7 @@ export function readableStreamPipeTo(source: rs.ReadableStream, dest: ws.Writabl
 	// let shuttingDown = false;
 	// let pipeResolve: () => void;
 	// let pipeReject: (error: any) => void;
-	const promise = rs.createControlledPromise<void>();
+	const promise = shared.createControlledPromise<void>();
 
 	function next() {
 		const input = rs.readableStreamDefaultReaderRead(reader);
