@@ -87,10 +87,11 @@ export function createIterResultObject(value: any, done: boolean) {
 }
 
 export function validateAndNormalizeHighWaterMark(hwm: any) {
-	if (typeof hwm !== "number" || isNaN(hwm) || hwm < 0) {
+	const highWaterMark = Number(hwm);
+	if (isNaN(highWaterMark) || highWaterMark < 0) {
 		throw new RangeError("highWaterMark must be a valid, non-negative integer.");
 	}
-	return hwm;
+	return highWaterMark;
 }
 
 export function makeSizeAlgorithmFromSizeFunction(sizeFn: undefined | ((chunk: any) => number)): SizeAlgorithm {
