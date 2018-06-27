@@ -168,7 +168,13 @@ export class ReadableStream implements rs.ReadableStream {
 		if (! ws.isWritableStream(dest)) {
 			return Promise.reject(new TypeError());
 		}
-	
+		if (rs.isReadableStreamLocked(this)) {
+			return Promise.reject(new TypeError("Cannot pipe from a locked stream"));
+		}
+		if (ws.isWritableStreamLocked(dest)) {
+			return Promise.reject(new TypeError("Cannot pipe to a locked stream"));
+		}
+		
 		return pipeTo(this, dest, options);
 	}
 }

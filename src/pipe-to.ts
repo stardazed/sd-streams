@@ -16,13 +16,6 @@ export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, _opti
 	// const preventAbort = !!options.preventAbort;
 	// const preventCancel = !!options.preventCancel;
 
-	if (rs.isReadableStreamLocked(source)) {
-		return Promise.reject(new TypeError("Cannot pipe from a locked stream"));
-	}
-	if (ws.isWritableStreamLocked(dest)) {
-		return Promise.reject(new TypeError("Cannot pipe to a locked stream"));
-	}
-
 	// If IsReadableByteStreamController(this.[[readableStreamController]]) is true, let reader be either ! AcquireReadableStreamBYOBReader(this) or ! AcquireReadableStreamDefaultReader(this), at the user agent’s discretion.
 	// Otherwise, let reader be ! AcquireReadableStreamDefaultReader(this).
 	const reader = new ReadableStreamDefaultReader(source);
