@@ -68,15 +68,14 @@ export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, optio
 
 	function flushRemainder() {
 		if (dest[ws.state_] === "writable" && (! ws.writableStreamCloseQueuedOrInFlight(dest))) {
-			const writePromises: Promise<void>[] = [];
 			const readController = source[rs.readableStreamController_] as rs.ReadableStreamDefaultController;
 			const readQueue = readController[q.queue_];
 
 			while (readQueue.length && dest[ws.state_] === "writable") {
 				const chunk = q.dequeueValue(readController);
-				writePromises.push(ws.writableStreamDefaultWriterWrite(writer, chunk).catch(_ => undefined));
+				ws.writableStreamDefaultWriterWrite(writer, chunk);
 			}
-			return Promise.all(writePromises).then(_ => undefined);
+			return Promise.all(dest[ws.writeRequests_]).then(_ => undefined);
 		}
 		else {
 			return Promise.resolve();
