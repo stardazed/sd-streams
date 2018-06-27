@@ -9,14 +9,14 @@ over the incomplete typings in the TS standard library.
 
 ### Limitations
 While the full streams API is implemented, because it is written as a client library
-it cannot directly be used with other APIs, such as calling `getReader` for the `body`
-of a `fetch` call, that may either not be implemented at all or return a browser internal
-`ReadableStream`. Due to implementation details of streams, you cannot mix and match
-the types in this implementation with those provided by the browser.
+it cannot directly be used with other built-in APIs, such as calling `getReader` on the
+`body` of a `fetch` call, that may either not be implemented at all or return a browser
+internal `ReadableStream`. Due to implementation details of streams, you cannot mix and
+match the types in this implementation with those provided by the browser.
 
 In addition, while the BYOB variant of `ReadableStream` is implemented, buffers are copied
 and not transferred as no browser has implemented detached buffers yet, let alone exposed
-them client-level code.
+them to client-level code.
 
 Installation
 ------------
