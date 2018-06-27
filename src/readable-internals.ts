@@ -61,8 +61,7 @@ export interface ReadableStreamController {
 	[pullSteps_](): Promise<IteratorResult<any>>;
 }
 
-export declare class ReadableStreamBYOBRequest {
-	constructor(controller: ReadableByteStreamController, view: ArrayBufferView);
+export interface ReadableStreamBYOBRequest {
 	readonly view: ArrayBufferView;
 	respond(bytesWritten: number): void;
 	respondWithNewView(view: ArrayBufferView): void;
