@@ -542,7 +542,6 @@ export function writableStreamDefaultControllerWrite(controller: WritableStreamD
 		writableStreamDefaultControllerErrorIfNeeded(controller, error);
 		return;
 	}
-	// Let stream be controller.[[controlledWritableStream]].
 	const stream = controller[controlledWritableStream_];
 	if (! writableStreamCloseQueuedOrInFlight(stream) && stream[state_] === "writable") {
 		const backpressure = writableStreamDefaultControllerGetBackpressure(controller);
