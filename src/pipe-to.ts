@@ -8,9 +8,14 @@
 import * as rs from "./readable-internals";
 import * as ws from "./writable-internals";
 import * as shared from "./shared-internals";
-import * as q from "./queue-mixin";
+
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 import { WritableStreamDefaultWriter } from "./writable-stream-default-writer";
+
+// add a wrapper to handle falsy rejections
+interface ErrorWrapper {
+	actualError: any;
+}
 
 export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, options: rs.PipeToOptions) {
 	const preventClose = !!options.preventClose;
@@ -18,6 +23,7 @@ export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, optio
 	const preventCancel = !!options.preventCancel;
 
 	let shuttingDown = false;
+	let latestWrite = Promise.resolve();
 	const promise = shared.createControlledPromise<void>();
 
 	// If IsReadableByteStreamController(this.[[readableStreamController]]) is true, let reader be either ! AcquireReadableStreamBYOBReader(this) or ! AcquireReadableStreamDefaultReader(this), at the user agent’s discretion.
@@ -25,65 +31,76 @@ export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, optio
 	const reader = new ReadableStreamDefaultReader(source);
 	const writer = new WritableStreamDefaultWriter(dest);
 
-	reader[rs.closedPromise_].promise.then(
-		_ => {
-			if (! preventClose) {
-				shutDown(() => ws.writableStreamDefaultWriterCloseWithErrorPropagation(writer));
-			}
-			else {
-				shutDown();
-			}
-		},
-		error => {
-			if (! preventAbort) {
-				shutDown(() => ws.writableStreamAbort(dest, error), error);
-			}
-			else {
-				shutDown(undefined, error);
-			}
+	function onStreamErrored(stream: rs.ReadableStream | ws.WritableStream, promise: Promise<void>, action: (error: any) => void) {
+		if (stream[shared.state_] === "errored") {
+			action(stream[shared.storedError_]);
+		} else {
+			promise.catch(action);
 		}
-	);
+	}
 
-	writer[ws.closedPromise_].promise.then(
-		_ => {
-			// Assert: no chunks have been read or written.
-			const destClosed = new TypeError();
-			if (! preventCancel) {
-				shutDown(() => rs.readableStreamCancel(source, destClosed), destClosed);
-			}
-			else {
-				shutDown(undefined, destClosed);
-			}
-		},
-		error => {
-			// If preventCancel is false, shutdown with an action of ! ReadableStreamCancel(this, dest.[[storedError]]) and with dest.[[storedError]].
-			if (! preventCancel) {
-				shutDown(() => rs.readableStreamCancel(source, error), error);
-			}
-			else {
-				shutDown(undefined, error);
-			}
+	function onStreamClosed(stream: rs.ReadableStream | ws.WritableStream, promise: Promise<void>, action: () => void) {
+		if (stream[shared.state_] === "closed") {
+			action();
+		} else {
+			promise.then(action);
 		}
-	);
+	}
+
+	onStreamErrored(source, reader[rs.closedPromise_].promise, error => {
+		if (! preventAbort) {
+			shutDown(() => ws.writableStreamAbort(dest, error), { actualError: error });
+		}
+		else {
+			shutDown(undefined, { actualError: error });
+		}
+	});
+
+	onStreamErrored(dest, writer[ws.closedPromise_].promise, error => {
+		if (! preventCancel) {
+			shutDown(() => rs.readableStreamCancel(source, error), { actualError: error });
+		}
+		else {
+			shutDown(undefined, { actualError: error });
+		}
+	});
+
+	onStreamClosed(source, reader[rs.closedPromise_].promise, () => {
+		if (! preventClose) {
+			shutDown(() => ws.writableStreamDefaultWriterCloseWithErrorPropagation(writer));
+		}
+		else {
+			shutDown();
+		}
+	});
+
+	if (ws.writableStreamCloseQueuedOrInFlight(dest) || dest[shared.state_] === "closed") {
+		// Assert: no chunks have been read or written.
+		const destClosed = new TypeError();
+		if (! preventCancel) {
+			shutDown(() => rs.readableStreamCancel(source, destClosed), { actualError: destClosed });
+		}
+		else {
+			shutDown(undefined, { actualError: destClosed });
+		}
+	}
+
+	function awaitLatestWrite(): Promise<void> {
+		const curLatestWrite = latestWrite;
+		return latestWrite.then(() => curLatestWrite === latestWrite ? undefined : awaitLatestWrite());
+	}
 
 	function flushRemainder() {
-		if (dest[ws.state_] === "writable" && (! ws.writableStreamCloseQueuedOrInFlight(dest))) {
-			const readController = source[rs.readableStreamController_] as rs.ReadableStreamDefaultController;
-			const readQueue = readController[q.queue_];
-
-			while (readQueue.length && dest[ws.state_] === "writable") {
-				const chunk = q.dequeueValue(readController);
-				ws.writableStreamDefaultWriterWrite(writer, chunk);
-			}
-			return Promise.all(dest[ws.writeRequests_]).then(_ => undefined);
+		if (dest[shared.state_] === "writable" && (! ws.writableStreamCloseQueuedOrInFlight(dest))) {
+			return awaitLatestWrite();
 		}
 		else {
 			return Promise.resolve();
 		}
 	}
 
-	function shutDown(action?: () => Promise<void>, error?: any) {
-		flushRemainder().then(_ => {
+	function shutDown(action?: () => Promise<void>, error?: ErrorWrapper) {
+		flushRemainder().then(() => {
 			if (! shuttingDown) {
 				shuttingDown = true;
 				if (action === undefined) {
@@ -91,17 +108,17 @@ export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, optio
 				}
 				action().then(
 					_ => finalize(error),
-					newError => finalize(newError)
+					newError => finalize({ actualError: newError })
 				);
 			}
 		});
 	}
 
-	function finalize(error?: any) {
+	function finalize(error?: ErrorWrapper) {
 		ws.writableStreamDefaultWriterRelease(writer);
 		rs.readableStreamReaderGenericRelease(reader);
 		if (error) {
-			promise.reject(error);
+			promise.reject(error.actualError);
 		}
 		else {
 			promise.resolve(undefined);
@@ -109,26 +126,26 @@ export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, optio
 	}
 
 	function next() {
-		const input = rs.readableStreamDefaultReaderRead(reader);
-		const ready = writer[ws.readyPromise_].promise;
+		if (shuttingDown) {
+			return;
+		}
 
-		Promise.all([input, ready]).then(
-			([{ value, done }]) => {
-				if (done) {
-					shutDown();
-				}
-				else {
-					// prevent an error if dest errored or closed during the read
-					if (dest[ws.state_] === "writable") {
-						ws.writableStreamDefaultWriterWrite(writer, value);
+		writer[ws.readyPromise_].promise.then(() => {
+			rs.readableStreamDefaultReaderRead(reader).then(
+				({ value, done }) => {
+					if (done) {
+						// shutDown();
+					}
+					else {
+						latestWrite = ws.writableStreamDefaultWriterWrite(writer, value);
 						next();
 					}
+				},
+				_error => {
+					latestWrite = Promise.resolve();
 				}
-			},
-			(error: any) => {
-				shutDown(undefined, error);
-			}
-		);
+			);
+		});
 	}
 
 	next();
