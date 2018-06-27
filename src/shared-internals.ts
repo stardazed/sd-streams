@@ -60,15 +60,6 @@ export function promiseCall<F extends Function>(f: F, v: object | undefined, arg
 	}
 }
 
-export function createAlgorithmFromFunction(func: Function | undefined, extraArgs: any[]) { // tslint:disable-line:ban-types
-	if (func === undefined) {
-		return () => Promise.resolve(undefined);
-	}
-	return function(...fnArgs: any[]) {
-		return promiseCall(func, undefined, fnArgs.concat(extraArgs));
-	};
-}
-
 export function createAlgorithmFromUnderlyingMethod<O extends object, K extends keyof O>(obj: O, methodName: K, extraArgs: any[]) {
 	const method = obj[methodName];
 	if (method === undefined) {
