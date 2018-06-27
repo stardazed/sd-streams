@@ -30,7 +30,8 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 		if (this[rs.byobRequest_] === undefined && this[rs.pendingPullIntos_].length > 0) {
 			const firstDescriptor = this[rs.pendingPullIntos_][0];
 			const view = new Uint8Array(firstDescriptor.buffer, firstDescriptor.byteOffset + firstDescriptor.bytesFilled, firstDescriptor.byteLength - firstDescriptor.bytesFilled);
-			const byobRequest = new ReadableStreamBYOBRequest(this, view);
+			const byobRequest = Object.create(ReadableStreamBYOBRequest.prototype) as ReadableStreamBYOBRequest;
+			rs.setUpReadableStreamBYOBRequest(byobRequest, this, view);
 			this[rs.byobRequest_] = byobRequest;
 		}
 		return this[rs.byobRequest_];

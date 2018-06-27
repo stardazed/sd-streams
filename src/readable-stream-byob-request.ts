@@ -4,20 +4,8 @@ export class ReadableStreamBYOBRequest {
 	[rs.associatedReadableByteStreamController_]: rs.ReadableByteStreamController | undefined;
 	[rs.view_]: ArrayBufferView | undefined;
 
-	constructor(controller: rs.ReadableByteStreamController, view: ArrayBufferView) {
-		if (arguments.length !== 2) {
-			throw new TypeError();
-		}
-		if (! rs.isReadableByteStreamController(controller)) {
-			throw new TypeError();
-		}
-		if (! ArrayBuffer.isView(view)) {
-			throw new TypeError();
-		}
-		// Assert: !IsDetachedBuffer(view.[[ViewedArrayBuffer]]) is false.
-
-		this[rs.associatedReadableByteStreamController_] = controller;
-		this[rs.view_] = view;
+	constructor() {
+		throw new TypeError();
 	}
 
 	get view(): ArrayBufferView {

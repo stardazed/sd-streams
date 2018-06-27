@@ -3,6 +3,7 @@ import * as ws from "./writable-internals";
 import * as shared from "./shared-internals";
 
 import { createReadableStream } from "./readable-stream";
+import { createWritableStream } from "./writable-stream";
 
 export const state_ = Symbol("transformState_");
 export const backpressure_ = Symbol("backpressure_");

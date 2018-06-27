@@ -6,7 +6,7 @@
 
 import * as ws from "./writable-internals";
 import * as shared from "./shared-internals";
-import { WritableStreamDefaultController } from "./writable-stream-controller";
+import { WritableStreamDefaultController, setUpWritableStreamDefaultControllerFromUnderlyingSink } from "./writable-stream-controller";
 import { WritableStreamDefaultWriter } from "./writable-stream-writer";
 
 export class WritableStream {
@@ -22,33 +22,17 @@ export class WritableStream {
 	[ws.writeRequests_]: shared.ControlledPromise<any>[];
 
 	constructor(sink: ws.WritableStreamSink = {}, strategy: shared.StreamStrategy = {}) {
-		this[ws.state_] = "writable";
-		this[ws.storedError_] = undefined;
-		this[ws.writableStreamController_] = undefined;
-		this[ws.closeRequest_] = undefined;
-		this[ws.inFlightCloseRequest_] = undefined;
-		this[ws.inFlightWriteRequest_] = undefined;
-		this[ws.pendingAbortRequest_] = undefined;
-
-		this[ws.writeRequests_] = [];
-		this[ws.backpressure_] = false;
-
-		const sizeAlgorithm = shared.makeSizeAlgorithmFromSizeFunction(strategy.size);
-		const hwm = strategy.highWaterMark;
-		const highWaterMark = shared.validateAndNormalizeHighWaterMark(hwm === undefined ? 1 : hwm);
-
+		ws.initializeWritableStream(this);
+		const sizeFunc = strategy.size;
+		const stratHWM = strategy.highWaterMark;
 		if (sink.type !== undefined) {
 			throw new RangeError("The type of an underlying sink must be undefined");
 		}
 
-		const sinkWrite = sink.write; // avoid double access, in case it's a property
-		const writeFunction = sinkWrite && sinkWrite.bind(sink);
-		const closeAlgorithm = shared.createAlgorithmFromUnderlyingMethod(sink, "close", []);
-		const abortAlgorithm = shared.createAlgorithmFromUnderlyingMethod(sink, "abort", []);
-		const sinkStart = sink.start; // avoid double access, in case it's a property
-		const startFunction = sinkStart && sinkStart.bind(sink);
+		const sizeAlgorithm = shared.makeSizeAlgorithmFromSizeFunction(sizeFunc);
+		const highWaterMark = shared.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 1 : stratHWM);
 
-		new WritableStreamDefaultController(this, startFunction, writeFunction, closeAlgorithm, abortAlgorithm, highWaterMark, sizeAlgorithm);
+		setUpWritableStreamDefaultControllerFromUnderlyingSink(this, sink, highWaterMark, sizeAlgorithm);
 	}
 
 	get locked(): boolean {
@@ -74,4 +58,20 @@ export class WritableStream {
 		}
 		return new WritableStreamDefaultWriter(this);
 	}
+}
+
+export function createWritableStream(startAlgorithm: ws.StartAlgorithm, writeAlgorithm: ws.WriteAlgorithm, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark?: number, sizeAlgorithm?: shared.SizeAlgorithm) {
+	if (highWaterMark === undefined) {
+		highWaterMark = 1;
+	}
+	if (sizeAlgorithm === undefined) {
+		sizeAlgorithm = () => 1;
+	}
+	// Assert: ! IsNonNegativeNumber(highWaterMark) is true.
+
+	const stream = Object.create(WritableStream.prototype) as WritableStream;
+	ws.initializeWritableStream(stream);
+	const controller = Object.create(WritableStreamDefaultController.prototype) as WritableStreamDefaultController;
+	ws.setUpWritableStreamDefaultController(stream, controller, startAlgorithm, writeAlgorithm, closeAlgorithm, abortAlgorithm, highWaterMark, sizeAlgorithm);
+	return stream;
 }

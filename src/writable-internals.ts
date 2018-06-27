@@ -27,7 +27,8 @@ export const readyPromise_ = Symbol("readyPromise_");
 export const errorSteps_ = Symbol("errorSteps_");
 export const abortSteps_ = Symbol("abortSteps_");
 
-
+export type StartFunction = (controller: WritableStreamController) => void | Promise<void>;
+export type StartAlgorithm = () => Promise<void> | void;
 export type WriteFunction = (chunk: any, controller: WritableStreamController) => void | Promise<void>;
 export type WriteAlgorithm = (chunk: any) => Promise<void>;
 export type CloseAlgorithm = () => Promise<void>;
@@ -77,8 +78,6 @@ export interface WritableStreamDefaultWriter extends WritableStreamWriter {
 
 // ----
 
-export type StartFunction = (controller: WritableStreamController) => void | Promise<void>;
-
 export type WritableStreamState = "writable" | "closed" | "erroring" | "errored";
 
 export interface WritableStreamSink {
@@ -118,6 +117,19 @@ export declare class WritableStream {
 }
 
 // ---- Stream
+
+export function initializeWritableStream(stream: WritableStream) {
+	stream[state_] = "writable";
+	stream[storedError_] = undefined;
+	stream[writer_] = undefined;
+	stream[writableStreamController_] = undefined;
+	stream[inFlightWriteRequest_] = undefined;
+	stream[closeRequest_] = undefined;
+	stream[inFlightCloseRequest_] = undefined;
+	stream[pendingAbortRequest_] = undefined;
+	stream[writeRequests_] = [];
+	stream[backpressure_] = false;
+}
 
 export function isWritableStream(value: any): value is WritableStream {
 	if (value == null || typeof value !== "object") {
@@ -451,6 +463,41 @@ export function writableStreamDefaultWriterWrite(writer: WritableStreamDefaultWr
 
 
 // ---- Controller
+
+export function setUpWritableStreamDefaultController(stream: WritableStream, controller: WritableStreamDefaultController, startAlgorithm: StartAlgorithm, writeAlgorithm: WriteAlgorithm, closeAlgorithm: CloseAlgorithm, abortAlgorithm: AbortAlgorithm, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
+	if (! isWritableStream(stream)) {
+		throw new TypeError();
+	}
+	if (! stream[writableStreamController_] !== undefined) {
+		throw new TypeError();
+	}
+
+	controller[controlledWritableStream_] = stream;
+	stream[writableStreamController_] = controller;
+	q.resetQueue(controller);
+	controller[started_] = false;
+	controller[strategySizeAlgorithm_] = sizeAlgorithm;
+	controller[strategyHWM_] = highWaterMark;
+	controller[writeAlgorithm_] = writeAlgorithm;
+	controller[closeAlgorithm_] = closeAlgorithm;
+	controller[abortAlgorithm_] = abortAlgorithm;
+	const backpressure = writableStreamDefaultControllerGetBackpressure(controller);
+	writableStreamUpdateBackpressure(stream, backpressure);
+
+	const startResult =  startAlgorithm();
+	Promise.resolve(startResult).then(
+		_ => {
+			// Assert: stream.[[state]] is "writable" or "erroring".
+			controller[started_] = true;
+			writableStreamDefaultControllerAdvanceQueueIfNeeded(controller);
+		},
+		error => {
+			// Assert: stream.[[state]] is "writable" or "erroring".
+			controller[started_] = true;
+			writableStreamDealWithRejection(stream, error);
+		}
+	);
+}
 
 export function isWritableStreamDefaultController(value: any): value is WritableStreamDefaultController {
 	if (value == null || typeof value !== "object") {

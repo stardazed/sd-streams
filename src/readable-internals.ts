@@ -968,3 +968,16 @@ export function readableByteStreamControllerShouldCallPull(controller: ReadableB
 	// Assert: desiredSize is not null.
 	return desiredSize! > 0;
 }
+
+export function setUpReadableStreamBYOBRequest(request: ReadableStreamBYOBRequest, controller: ReadableByteStreamController, view: ArrayBufferView) {
+	if (! isReadableByteStreamController(controller)) {
+		throw new TypeError();
+	}
+	if (! ArrayBuffer.isView(view)) {
+		throw new TypeError();
+	}
+	// Assert: !IsDetachedBuffer(view.[[ViewedArrayBuffer]]) is false.
+
+	request[associatedReadableByteStreamController_] = controller;
+	request[view_] = view;
+}

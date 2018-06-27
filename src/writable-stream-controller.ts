@@ -14,40 +14,8 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 	[q.queue_]: q.QueueElement<ws.WriteRecord | "close">[];
 	[q.queueTotalSize_]: number;
 
-	constructor(stream: ws.WritableStream, startFunction: ws.StartFunction | undefined, writeFunction: ws.WriteFunction | undefined, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
-		if (! ws.isWritableStream(stream)) {
-			throw new TypeError();
-		}
-		if (stream[ws.writableStreamController_] !== undefined) {
-			throw new TypeError("Cannot reuse a stream");
-		}
-
-		this[ws.controlledWritableStream_] = stream;
-		stream[ws.writableStreamController_] = this;
-		q.resetQueue(this);
-		this[ws.started_] = false;
-		this[ws.strategySizeAlgorithm_] = sizeAlgorithm;
-		this[ws.strategyHWM_] = highWaterMark;
-		this[ws.writeAlgorithm_] = shared.createAlgorithmFromFunction(writeFunction, [this]);
-		this[ws.closeAlgorithm_] = closeAlgorithm;
-		this[ws.abortAlgorithm_] = abortAlgorithm;
-
-		const backpressure = ws.writableStreamDefaultControllerGetBackpressure(this);
-		ws.writableStreamUpdateBackpressure(stream, backpressure);
-
-		const startResult = startFunction === undefined ? undefined : startFunction(this);
-		Promise.resolve(startResult).then(
-			_ => {
-				// Assert: stream.[[state]] is "writable" or "erroring".
-				this[ws.started_] = true;
-				ws.writableStreamDefaultControllerAdvanceQueueIfNeeded(this);
-			},
-			error => {
-				// Assert: stream.[[state]] is "writable" or "erroring".
-				this[ws.started_] = true;
-				ws.writableStreamDealWithRejection(stream, error);
-			}
-		);
+	constructor() {
+		throw new TypeError();
 	}
 
 	error(e?: any) {
@@ -68,4 +36,17 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 	[ws.errorSteps_]() {
 		q.resetQueue(this);
 	}
+}
+
+export function setUpWritableStreamDefaultControllerFromUnderlyingSink(stream: ws.WritableStream, underlyingSink: ws.WritableStreamSink, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
+	// Assert: underlyingSink is not undefined.
+	const controller = Object.create(WritableStreamDefaultController.prototype) as WritableStreamDefaultController;
+
+	const startAlgorithm = function() {
+		return shared.invokeOrNoop(underlyingSink, "start", [controller]);
+	};
+	const writeAlgorithm = shared.createAlgorithmFromUnderlyingMethod(underlyingSink, "write", [controller]);
+	const closeAlgorithm = shared.createAlgorithmFromUnderlyingMethod(underlyingSink, "close", []);
+	const abortAlgorithm = shared.createAlgorithmFromUnderlyingMethod(underlyingSink, "abort", []);
+	ws.setUpWritableStreamDefaultController(stream, controller, startAlgorithm, writeAlgorithm, closeAlgorithm, abortAlgorithm, highWaterMark, sizeAlgorithm);
 }
