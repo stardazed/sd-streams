@@ -10,7 +10,6 @@ export default [
 				file: "dist/sd-streams.esm.js",
 				format: "es",
 				sourcemap: false,
-				compact: true,
 				banner: `/**
 * @stardazed/streams - implementation of the web streams standard
 * Part of Stardazed
