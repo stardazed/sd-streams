@@ -11,10 +11,7 @@ import * as shared from "./shared-internals";
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 import { WritableStreamDefaultWriter } from "./writable-stream-default-writer";
 
-export function readableStreamPipeTo(source: rs.ReadableStream, dest: ws.WritableStream, _options: rs.PipeToOptions) {
-	// If ! IsReadableStream(this) is false, return a promise rejected with a TypeError exception.
-	// If ! IsWritableStream(dest) is false, return a promise rejected with a TypeError exception.
-
+export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, _options: rs.PipeToOptions) {
 	// const preventClose = !!options.preventClose;
 	// const preventAbort = !!options.preventAbort;
 	// const preventCancel = !!options.preventCancel;

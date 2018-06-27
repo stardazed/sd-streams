@@ -6,9 +6,9 @@
  */
 
 import * as rs from "./readable-internals";
+import * as ws from "./writable-internals";
 import * as shared from "./shared-internals";
-import { WritableStream } from "./writable-internals";
-import { readableStreamPipeTo } from "./pipe-to";
+import { pipeTo } from "./pipe-to";
 
 import { ReadableStreamDefaultController, setUpReadableStreamDefaultControllerFromUnderlyingSource } from "./readable-stream-default-controller";
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
@@ -161,8 +161,15 @@ export class ReadableStream implements rs.ReadableStream {
 		return readable;
 	}
 
-	pipeTo(dest: WritableStream, options: rs.PipeToOptions = {}): Promise<void> {
-		return readableStreamPipeTo(this, dest, options);
+	pipeTo(dest: ws.WritableStream, options: rs.PipeToOptions = {}): Promise<void> {
+		if (! rs.isReadableStream(this)) {
+			return Promise.reject(new TypeError());
+		}
+		if (! ws.isWritableStream(dest)) {
+			return Promise.reject(new TypeError());
+		}
+	
+		return pipeTo(this, dest, options);
 	}
 }
 
