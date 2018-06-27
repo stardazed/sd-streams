@@ -3,10 +3,11 @@
 		"module": "es2015",
 		"target": "es2015",
 		"moduleResolution": "node",
+		"outDir": "build",
 
 		"declaration": true,
 		"sourceMap": false,
-		"removeComments": false,
+		"removeComments": true,
 		"noEmitOnError": true,
 
 		"strict": true,

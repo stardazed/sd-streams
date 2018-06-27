@@ -9,9 +9,9 @@
 		"type": "git",
 		"url": "https://github.com/stardazed/sd-streams.git"
 	},
-	"main": "dist/index.esm.js",
-	"module": "dist/index.esm.js",
-	"types": "dist/index.d.ts",
+	"main": "dist/sd-streams.esm.js",
+	"module": "dist/sd-streams.esm.js",
+	"types": "dist/sd-streams.d.ts",
 	"devDependencies": {
 		"rollup": "^0.61.2",
 		"rollup-plugin-typescript": "^0.8.1",
