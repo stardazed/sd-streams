@@ -1,13 +1,14 @@
 /**
- * streams/writable-stream - WritableStream implementation
+ * streams/writable-stream - WritableStream class implementation
+ * Part of Stardazed
  * (c) 2018 by Arthur Langereis - @zenmumbler
  * https://github.com/stardazed/sd-streams
  */
 
 import * as ws from "./writable-internals";
 import * as shared from "./shared-internals";
-import { WritableStreamDefaultController, setUpWritableStreamDefaultControllerFromUnderlyingSink } from "./writable-stream-controller";
-import { WritableStreamDefaultWriter } from "./writable-stream-writer";
+import { WritableStreamDefaultController, setUpWritableStreamDefaultControllerFromUnderlyingSink } from "./writable-stream-default-controller";
+import { WritableStreamDefaultWriter } from "./writable-stream-default-writer";
 
 export class WritableStream {
 	[ws.state_]: ws.WritableStreamState;

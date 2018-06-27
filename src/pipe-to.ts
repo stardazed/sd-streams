@@ -1,8 +1,15 @@
+/**
+ * streams/pipe-to - pipeTo algorithm implementation
+ * Part of Stardazed
+ * (c) 2018 by Arthur Langereis - @zenmumbler
+ * https://github.com/stardazed/sd-streams
+ */
+
 import * as rs from "./readable-internals";
 import * as ws from "./writable-internals";
 import * as shared from "./shared-internals";
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
-import { WritableStreamDefaultWriter } from "./writable-stream-writer";
+import { WritableStreamDefaultWriter } from "./writable-stream-default-writer";
 
 export function readableStreamPipeTo(source: rs.ReadableStream, dest: ws.WritableStream, _options: rs.PipeToOptions) {
 	// If ! IsReadableStream(this) is false, return a promise rejected with a TypeError exception.

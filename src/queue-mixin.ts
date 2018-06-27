@@ -1,3 +1,10 @@
+/**
+ * streams/queue-mixin - internal queue operations for stream controllers
+ * Part of Stardazed
+ * (c) 2018 by Arthur Langereis - @zenmumbler
+ * https://github.com/stardazed/sd-streams
+ */
+
 import { isFiniteNonNegativeNumber } from "./shared-internals";
 
 export const queue_ = Symbol("queue_");

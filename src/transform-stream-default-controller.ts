@@ -1,3 +1,10 @@
+/**
+ * streams/transform-stream-default-controller - TransformStreamDefaultController class implementation
+ * Part of Stardazed
+ * (c) 2018 by Arthur Langereis - @zenmumbler
+ * https://github.com/stardazed/sd-streams
+ */
+
 import * as rs from "./readable-internals";
 import * as ts from "./transform-internals";
 

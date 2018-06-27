@@ -1,3 +1,10 @@
+/**
+ * streams/shared-internals - common types and methods for streams
+ * Part of Stardazed
+ * (c) 2018 by Arthur Langereis - @zenmumbler
+ * https://github.com/stardazed/sd-streams
+ */
+
 export type SizeAlgorithm = (this: void, chunk?: any) => number;
 
 export interface StreamStrategy {

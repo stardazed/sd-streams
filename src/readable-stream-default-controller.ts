@@ -1,3 +1,10 @@
+/**
+ * streams/readable-stream-default-controller - ReadableStreamDefaultController class implementation
+ * Part of Stardazed
+ * (c) 2018 by Arthur Langereis - @zenmumbler
+ * https://github.com/stardazed/sd-streams
+ */
+
 import * as rs from "./readable-internals";
 import * as shared from "./shared-internals";
 import * as q from "./queue-mixin";

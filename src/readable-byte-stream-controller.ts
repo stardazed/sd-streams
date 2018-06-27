@@ -1,3 +1,10 @@
+/**
+ * streams/readable-byte-stream-controller - ReadableByteStreamController class implementation
+ * Part of Stardazed
+ * (c) 2018 by Arthur Langereis - @zenmumbler
+ * https://github.com/stardazed/sd-streams
+ */
+
 import * as rs from "./readable-internals";
 import * as q from "./queue-mixin";
 import * as shared from "./shared-internals";

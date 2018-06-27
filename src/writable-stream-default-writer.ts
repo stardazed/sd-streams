@@ -1,3 +1,10 @@
+/**
+ * streams/writable-stream-default-writer - WritableStreamDefaultWriter class implementation
+ * Part of Stardazed
+ * (c) 2018 by Arthur Langereis - @zenmumbler
+ * https://github.com/stardazed/sd-streams
+ */
+
 import * as ws from "./writable-internals";
 import * as shared from "./shared-internals";
 

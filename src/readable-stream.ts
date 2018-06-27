@@ -1,5 +1,6 @@
 /**
- * streams/readable-stream - ReadableStream implementation
+ * streams/readable-stream - ReadableStream class implementation
+ * Part of Stardazed
  * (c) 2018 by Arthur Langereis - @zenmumbler
  * https://github.com/stardazed/sd-streams
  */
