@@ -1,5 +1,4 @@
 node_modules/
 build/
-dist/
-yarn-error.log*
+dist/*.js
 test
