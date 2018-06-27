@@ -468,7 +468,7 @@ export function setUpWritableStreamDefaultController(stream: WritableStream, con
 	if (! isWritableStream(stream)) {
 		throw new TypeError();
 	}
-	if (! stream[writableStreamController_] !== undefined) {
+	if (stream[writableStreamController_] !== undefined) {
 		throw new TypeError();
 	}
 
