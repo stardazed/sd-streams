@@ -41,10 +41,8 @@ export const view_ = Symbol("view_");
 // ReadableStreamBYOBReader
 
 // ReadableStream
-export const state_ = Symbol("readableState_");
 export const reader_ = Symbol("reader_");
 export const readableStreamController_ = Symbol("readableStreamController_");
-export const storedError_ = Symbol("storedError_");
 
 export type StartFunction = (controller: ReadableStreamController) => void | Promise<void>;
 export type StartAlgorithm = () => Promise<void> | void;
@@ -196,18 +194,18 @@ export declare class ReadableStream {
 	pipeThrough(transform: StreamTransform, options?: PipeToOptions): ReadableStream;
 	pipeTo(dest: ws.WritableStream, options?: PipeToOptions): Promise<void>;
 
-	[state_]: ReadableStreamState;
+	[shared.state_]: ReadableStreamState;
+	[shared.storedError_]: any;
 	[reader_]: ReadableStreamReader | undefined;
 	[readableStreamController_]: ReadableStreamController;
-	[storedError_]: any;
 }
 
 // ---- Stream
 
 export function initializeReadableStream(stream: ReadableStream) {
-	stream[state_] = "readable";
+	stream[shared.state_] = "readable";
 	stream[reader_] = undefined;
-	stream[storedError_] = undefined;
+	stream[shared.storedError_] = undefined;
 	(stream as any)[readableStreamController_] = undefined; // mark slot as used for brand check
 }
 
@@ -267,11 +265,11 @@ export function readableStreamHasDefaultReader(stream: ReadableStream) {
 }
 
 export function readableStreamCancel(stream: ReadableStream, reason: any) {
-	if (stream[state_] === "closed") {
+	if (stream[shared.state_] === "closed") {
 		return Promise.resolve(undefined);
 	}
-	if (stream[state_] === "errored") {
-		return Promise.reject(stream[storedError_]);
+	if (stream[shared.state_] === "errored") {
+		return Promise.reject(stream[shared.storedError_]);
 	}
 	readableStreamClose(stream);
 
@@ -281,7 +279,7 @@ export function readableStreamCancel(stream: ReadableStream, reason: any) {
 
 export function readableStreamClose(stream: ReadableStream) {
 	// Assert: stream.[[state]] is "readable".
-	stream[state_] = "closed";
+	stream[shared.state_] = "closed";
 	const reader = stream[reader_];
 	if (reader === undefined) {
 		return;
@@ -297,11 +295,11 @@ export function readableStreamClose(stream: ReadableStream) {
 }
 
 export function readableStreamError(stream: ReadableStream, error: any) {
-	if (stream[state_] !== "readable") {
+	if (stream[shared.state_] !== "readable") {
 		throw new RangeError("Stream is in an invalid state");
 	}
-	stream[state_] = "errored";
-	stream[storedError_] = error;
+	stream[shared.state_] = "errored";
+	stream[shared.storedError_] = error;
 
 	const reader = stream[reader_];
 	if (reader === undefined) {
@@ -345,7 +343,7 @@ export function isReadableStreamBYOBReader(reader: any): reader is ReadableStrea
 export function readableStreamReaderGenericInitialize(reader: ReadableStreamReader, stream: ReadableStream) {
 	reader[ownerReadableStream_] = stream;
 	stream[reader_] = reader;
-	const streamState = stream[state_];
+	const streamState = stream[shared.state_];
 
 	reader[closedPromise_] = shared.createControlledPromise<void>();
 	if (streamState === "readable") {
@@ -355,7 +353,7 @@ export function readableStreamReaderGenericInitialize(reader: ReadableStreamRead
 		reader[closedPromise_].resolve(undefined);
 	}
 	else {
-		reader[closedPromise_].reject(stream[storedError_]);
+		reader[closedPromise_].reject(stream[shared.storedError_]);
 	}
 }
 
@@ -367,7 +365,7 @@ export function readableStreamReaderGenericRelease(reader: ReadableStreamReader)
 		throw new TypeError("Reader is in an inconsistent state");
 	}
 
-	if (stream[state_] === "readable") {
+	if (stream[shared.state_] === "readable") {
 		reader[closedPromise_].reject(new TypeError());
 	}
 	else {
@@ -383,8 +381,8 @@ export function readableStreamBYOBReaderRead(reader: ReadableStreamBYOBReader, v
 	const stream = reader[ownerReadableStream_]!;
 	// Assert: stream is not undefined.
 	
-	if (stream[state_] === "errored") {
-		return Promise.reject(stream[storedError_]);
+	if (stream[shared.state_] === "errored") {
+		return Promise.reject(stream[shared.storedError_]);
 	}
 	return readableByteStreamControllerPullInto(stream[readableStreamController_] as ReadableByteStreamController, view);
 }
@@ -393,11 +391,11 @@ export function readableStreamDefaultReaderRead(reader: ReadableStreamDefaultRea
 	const stream = reader[ownerReadableStream_]!;
 	// Assert: stream is not undefined.
 
-	if (stream[state_] === "closed") {
+	if (stream[shared.state_] === "closed") {
 		return Promise.resolve(shared.createIterResultObject(undefined, true));
 	}
-	if (stream[state_] === "errored") {
-		return Promise.reject(stream[storedError_]);
+	if (stream[shared.state_] === "errored") {
+		return Promise.reject(stream[shared.storedError_]);
 	}
 	// Assert: stream.[[state]] is "readable".
 	return stream[readableStreamController_][pullSteps_]();
@@ -457,12 +455,12 @@ export function readableStreamDefaultControllerHasBackpressure(controller: Reada
 }
 
 export function readableStreamDefaultControllerCanCloseOrEnqueue(controller: ReadableStreamDefaultController) {
-	const state = controller[controlledReadableStream_][state_];
+	const state = controller[controlledReadableStream_][shared.state_];
 	return controller[closeRequested_] === false && state === "readable";
 }
 
 export function readableStreamDefaultControllerGetDesiredSize(controller: ReadableStreamDefaultController) {
-	const state = controller[controlledReadableStream_][state_];
+	const state = controller[controlledReadableStream_][shared.state_];
 	if (state === "errored") {
 		return null;
 	}
@@ -512,7 +510,7 @@ export function readableStreamDefaultControllerEnqueue(controller: ReadableStrea
 
 export function readableStreamDefaultControllerError(controller: ReadableStreamDefaultController, error: any) {
 	const stream = controller[controlledReadableStream_];
-	if (stream[state_] !== "readable") {
+	if (stream[shared.state_] !== "readable") {
 		return;
 	}
 	q.resetQueue(controller);
@@ -586,24 +584,17 @@ export function setUpReadableByteStreamController(stream: ReadableStream, contro
 	q.resetQueue(controller);
 	controller[closeRequested_] = false;
 	controller[started_] = false;
-	// Set controller.[[strategyHWM]] to ? ValidateAndNormalizeHighWaterMark(highWaterMark).
 	controller[strategyHWM_] = shared.validateAndNormalizeHighWaterMark(highWaterMark);
-	// Set controller.[[pullAlgorithm]] to pullAlgorithm.
 	controller[pullAlgorithm_] = pullAlgorithm;
-	// Set controller.[[cancelAlgorithm]] to cancelAlgorithm.
 	controller[cancelAlgorithm_] = cancelAlgorithm;
-	// Set controller.[[autoAllocateChunkSize]] to autoAllocateChunkSize.
 	controller[autoAllocateChunkSize_] = autoAllocateChunkSize;
-	// Set controller.[[pendingPullIntos]] to a new empty List.
 	controller[pendingPullIntos_] = [];
-	// Set stream.[[readableStreamController]] to controller.
 	stream[readableStreamController_] = controller;
 
 	// Let startResult be the result of performing startAlgorithm.
 	const startResult = startAlgorithm();
 	Promise.resolve(startResult).then(
 		_ => {
-			// Set controller.[[started]] to true.
 			controller[started_] = true;
 			// Assert: controller.[[pulling]] is false.
 			// Assert: controller.[[pullAgain]] is false.
@@ -680,7 +671,7 @@ export function readableByteStreamControllerClose(controller: ReadableByteStream
 export function readableByteStreamControllerCommitPullIntoDescriptor(stream: ReadableStream, pullIntoDescriptor: PullIntoDescriptor) {
 	// Assert: stream.[[state]] is not "errored".
 	let done = false;
-	if (stream[state_] === "closed") {
+	if (stream[shared.state_] === "closed") {
 		// Assert: pullIntoDescriptor.[[bytesFilled]] is 0.
 		done = true;
 	}
@@ -737,7 +728,7 @@ export function readableByteStreamControllerEnqueueChunkToQueue(controller: Read
 
 export function readableByteStreamControllerError(controller: ReadableByteStreamController, error: any) {
 	const stream = controller[controlledReadableByteStream_];
-	if (stream[state_] !== "readable") {
+	if (stream[shared.state_] !== "readable") {
 		return;
 	}
 	readableByteStreamControllerClearPendingPullIntos(controller);
@@ -792,7 +783,7 @@ export function readableByteStreamControllerFillPullIntoDescriptorFromQueue(cont
 
 export function readableByteStreamControllerGetDesiredSize(controller: ReadableByteStreamController) {
 	const stream = controller[controlledReadableByteStream_];
-	const state = stream[state_];
+	const state = stream[shared.state_];
 	if (state === "errored") {
 		return null;
 	}
@@ -852,7 +843,7 @@ export function readableByteStreamControllerPullInto(controller: ReadableByteStr
 		controller[pendingPullIntos_].push(pullIntoDescriptor);
 		return readableStreamAddReadIntoRequest(stream);
 	}
-	if (stream[state_] === "closed") {
+	if (stream[shared.state_] === "closed") {
 		const emptyView = new ctor(pullIntoDescriptor.buffer, pullIntoDescriptor.byteOffset, 0);
 		return Promise.resolve(shared.createIterResultObject(emptyView, true));
 	}
@@ -921,7 +912,7 @@ export function readableByteStreamControllerRespondInReadableState(controller: R
 export function readableByteStreamControllerRespondInternal(controller: ReadableByteStreamController, bytesWritten: number) {
 	const firstDescriptor = controller[pendingPullIntos_][0];
 	const stream = controller[controlledReadableByteStream_];
-	if (stream[state_] === "closed") {
+	if (stream[shared.state_] === "closed") {
 		if (bytesWritten !== 0) {
 			throw new TypeError();
 		}
@@ -956,7 +947,7 @@ export function readableByteStreamControllerShiftPendingPullInto(controller: Rea
 export function readableByteStreamControllerShouldCallPull(controller: ReadableByteStreamController) {
 	// Let stream be controller.[[controlledReadableByteStream]].
 	const stream = controller[controlledReadableByteStream_];
-	if (stream[state_] !== "readable") {
+	if (stream[shared.state_] !== "readable") {
 		return false;
 	}
 	if (controller[closeRequested_]) {

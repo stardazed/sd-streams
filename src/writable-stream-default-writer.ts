@@ -28,7 +28,7 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 		this[ws.readyPromise_] = readyPromise;
 		this[ws.closedPromise_] = closedPromise;
 
-		const state = stream[ws.state_];
+		const state = stream[shared.state_];
 		if (state === "writable") {
 			if (! ws.writableStreamCloseQueuedOrInFlight(stream) && stream[ws.backpressure_]) {
 				// OK Set this.[[readyPromise]] to a new promise.
@@ -39,7 +39,7 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 			// OK Set this.[[closedPromise]] to a new promise.
 		}
 		else if (state === "erroring") {
-			readyPromise.reject(stream[ws.storedError_]);
+			readyPromise.reject(stream[shared.storedError_]);
 			// OK Set this.[[closedPromise]] to a new promise.
 		}
 		else if (state === "closed") {
@@ -48,7 +48,7 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 		}
 		else {
 			// Assert: state is "errored".
-			const storedError = stream[ws.storedError_];
+			const storedError = stream[shared.storedError_];
 			readyPromise.reject(storedError);
 			closedPromise.reject(storedError);
 		}

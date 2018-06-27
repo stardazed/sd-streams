@@ -29,7 +29,7 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 		if (! ws.isWritableStreamDefaultController(this)) {
 			throw new TypeError();
 		}
-		const state = this[ws.controlledWritableStream_][ws.state_];
+		const state = this[ws.controlledWritableStream_][shared.state_];
 		if (state !== "writable") {
 			return;
 		}

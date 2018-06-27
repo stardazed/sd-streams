@@ -8,13 +8,11 @@
 import * as shared from "./shared-internals";
 import * as q from "./queue-mixin";
 
-export const state_ = Symbol("writableState_");
 export const backpressure_ = Symbol("backpressure_");
 export const closeRequest_ = Symbol("closeRequest_");
 export const inFlightWriteRequest_ = Symbol("inFlightWriteRequest_");
 export const inFlightCloseRequest_ = Symbol("inFlightCloseRequest_");
 export const pendingAbortRequest_ = Symbol("pendingAbortRequest_");
-export const storedError_ = Symbol("storedError_");
 export const writableStreamController_ = Symbol("writableStreamController_");
 export const writer_ = Symbol("writer_");
 export const writeRequests_ = Symbol("writeRequests_");
@@ -111,13 +109,13 @@ export declare class WritableStream {
 	abort(reason?: any): Promise<void>;
 	getWriter(): WritableStreamWriter;
 
-	[state_]: WritableStreamState;
+	[shared.state_]: WritableStreamState;
 	[backpressure_]: boolean;
 	[closeRequest_]: shared.ControlledPromise<void> | undefined;
 	[inFlightWriteRequest_]: shared.ControlledPromise<void> | undefined;
 	[inFlightCloseRequest_]: shared.ControlledPromise<void> | undefined;
 	[pendingAbortRequest_]: AbortRequest | undefined;
-	[storedError_]: any;
+	[shared.storedError_]: any;
 	[writableStreamController_]: WritableStreamDefaultController | undefined;
 	[writer_]: WritableStreamDefaultWriter | undefined;
 	[writeRequests_]: shared.ControlledPromise<any>[];
@@ -126,8 +124,8 @@ export declare class WritableStream {
 // ---- Stream
 
 export function initializeWritableStream(stream: WritableStream) {
-	stream[state_] = "writable";
-	stream[storedError_] = undefined;
+	stream[shared.state_] = "writable";
+	stream[shared.storedError_] = undefined;
 	stream[writer_] = undefined;
 	stream[writableStreamController_] = undefined;
 	stream[inFlightWriteRequest_] = undefined;
@@ -150,7 +148,7 @@ export function isWritableStreamLocked(stream: WritableStream) {
 }
 
 export function writableStreamAbort(stream: WritableStream, reason: any) {
-	const state = stream[state_];
+	const state = stream[shared.state_];
 	if (state === "closed" || state === "errored") {
 		return Promise.resolve(undefined);
 	}
@@ -190,7 +188,7 @@ export function writableStreamAddWriteRequest(stream: WritableStream) {
 }
 
 export function writableStreamDealWithRejection(stream: WritableStream, error: any) {
-	const state = stream[state_];
+	const state = stream[shared.state_];
 	if (state === "writable") {
 		writableStreamStartErroring(stream, error);
 		return;
@@ -205,8 +203,8 @@ export function writableStreamStartErroring(stream: WritableStream, reason: any)
 	// Assert: stream.[[state]] is "writable".
 	const controller = stream[writableStreamController_]!;
 	// Assert: controller is not undefined.
-	stream[state_] = "erroring";
-	stream[storedError_] = reason;
+	stream[shared.state_] = "erroring";
+	stream[shared.storedError_] = reason;
 	const writer = stream[writer_];
 	if (writer !== undefined) {
 		writableStreamDefaultWriterEnsureReadyPromiseRejected(writer, reason);
@@ -219,10 +217,10 @@ export function writableStreamStartErroring(stream: WritableStream, reason: any)
 export function writableStreamFinishErroring(stream: WritableStream) {
 	// Assert: stream.[[state]] is "erroring".
 	// Assert: writableStreamHasOperationMarkedInFlight(stream) is false.
-	stream[state_] = "errored";
+	stream[shared.state_] = "errored";
 	const controller = stream[writableStreamController_]!;
 	controller[errorSteps_]();
-	const storedError = stream[storedError_];
+	const storedError = stream[shared.storedError_];
 	for (const writeRequest of stream[writeRequests_]) {
 		writeRequest.reject(storedError);
 	}
@@ -270,16 +268,16 @@ export function writableStreamFinishInFlightClose(stream: WritableStream) {
 	// Assert: stream.[[inFlightCloseRequest]] is not undefined.
 	stream[inFlightCloseRequest_]!.resolve(undefined);
 	stream[inFlightCloseRequest_] = undefined;
-	const state = stream[state_];
+	const state = stream[shared.state_];
 	// Assert: stream.[[state]] is "writable" or "erroring".
 	if (state === "erroring") {
-		stream[storedError_] = undefined;
+		stream[shared.storedError_] = undefined;
 		if (stream[pendingAbortRequest_] !== undefined) {
 			stream[pendingAbortRequest_]!.resolve();
 			stream[pendingAbortRequest_] = undefined;
 		}
 	}
-	stream[state_] = "closed";
+	stream[shared.state_] = "closed";
 	const writer = stream[writer_];
 	if (writer !== undefined) {
 		writer[closedPromise_].resolve(undefined);
@@ -327,12 +325,12 @@ export function writableStreamRejectCloseAndClosedPromiseIfNeeded(stream: Writab
 	const closeRequest = stream[closeRequest_];
 	if (closeRequest !== undefined) {
 		// Assert: stream.[[inFlightCloseRequest]] is undefined.
-		closeRequest.reject(stream[storedError_]);
+		closeRequest.reject(stream[shared.storedError_]);
 		stream[closeRequest_] = undefined;
 	}
 	const writer = stream[writer_];
 	if (writer !== undefined) {
-		writer[closedPromise_].reject(stream[storedError_]);
+		writer[closedPromise_].reject(stream[shared.storedError_]);
 	}
 }
 
@@ -370,7 +368,7 @@ export function writableStreamDefaultWriterAbort(writer: WritableStreamDefaultWr
 export function writableStreamDefaultWriterClose(writer: WritableStreamDefaultWriter) {
 	const stream = writer[ownerWritableStream_]!;
 	// Assert: stream is not undefined.
-	const state = stream[state_];
+	const state = stream[shared.state_];
 	if (state === "closed" || state === "errored") {
 		return Promise.reject(new TypeError("Writer stream is already closed or errored"));
 	}
@@ -388,12 +386,12 @@ export function writableStreamDefaultWriterClose(writer: WritableStreamDefaultWr
 export function writableStreamDefaultWriterCloseWithErrorPropagation(writer: WritableStreamDefaultWriter) {
 	const stream = writer[ownerWritableStream_]!;
 	// Assert: stream is not undefined.
-	const state = stream[state_];
+	const state = stream[shared.state_];
 	if (writableStreamCloseQueuedOrInFlight(stream) || state === "closed") {
 		return Promise.resolve(undefined);
 	}
 	if (state === "errored") {
-		return Promise.reject(stream[storedError_]);
+		return Promise.reject(stream[shared.storedError_]);
 	}
 	// Assert: state is "writable" or "erroring".
 	return writableStreamDefaultWriterClose(writer);
@@ -423,7 +421,7 @@ export function writableStreamDefaultWriterEnsureReadyPromiseRejected(writer: Wr
 
 export function writableStreamDefaultWriterGetDesiredSize(writer: WritableStreamDefaultWriter) {
 	const stream = writer[ownerWritableStream_]!;
-	const state = stream[state_];
+	const state = stream[shared.state_];
 	if (state === "errored" || state === "erroring") {
 		return null;
 	}
@@ -452,15 +450,15 @@ export function writableStreamDefaultWriterWrite(writer: WritableStreamDefaultWr
 	if (writer[ownerWritableStream_] !== stream) {
 		return Promise.reject(new TypeError());
 	}
-	const state = stream[state_];
+	const state = stream[shared.state_];
 	if (state === "errored") {
-		return Promise.reject(stream[storedError_]);
+		return Promise.reject(stream[shared.storedError_]);
 	}
 	if (writableStreamCloseQueuedOrInFlight(stream) || state === "closed") {
 		return Promise.reject(new TypeError("Cannot write to a closing or closed stream"));
 	}
 	if (state === "erroring") {
-		return Promise.reject(stream[storedError_]);
+		return Promise.reject(stream[shared.storedError_]);
 	}
 	// Assert: state is "writable".
 	const promise = writableStreamAddWriteRequest(stream);
@@ -491,7 +489,7 @@ export function setUpWritableStreamDefaultController(stream: WritableStream, con
 	const backpressure = writableStreamDefaultControllerGetBackpressure(controller);
 	writableStreamUpdateBackpressure(stream, backpressure);
 
-	const startResult =  startAlgorithm();
+	const startResult = startAlgorithm();
 	Promise.resolve(startResult).then(
 		_ => {
 			// Assert: stream.[[state]] is "writable" or "erroring".
@@ -543,7 +541,7 @@ export function writableStreamDefaultControllerWrite(controller: WritableStreamD
 		return;
 	}
 	const stream = controller[controlledWritableStream_];
-	if (! writableStreamCloseQueuedOrInFlight(stream) && stream[state_] === "writable") {
+	if (! writableStreamCloseQueuedOrInFlight(stream) && stream[shared.state_] === "writable") {
 		const backpressure = writableStreamDefaultControllerGetBackpressure(controller);
 		writableStreamUpdateBackpressure(stream, backpressure);
 	}
@@ -558,7 +556,7 @@ export function writableStreamDefaultControllerAdvanceQueueIfNeeded(controller: 
 	if (stream[inFlightWriteRequest_] !== undefined) {
 		return;
 	}
-	const state = stream[state_];
+	const state = stream[shared.state_];
 	if (state === "closed" || state === "errored") {
 		return;
 	}
@@ -579,7 +577,7 @@ export function writableStreamDefaultControllerAdvanceQueueIfNeeded(controller: 
 }
 
 export function writableStreamDefaultControllerErrorIfNeeded(controller: WritableStreamDefaultController, error: any) {
-	if (controller[controlledWritableStream_][state_] === "writable") {
+	if (controller[controlledWritableStream_][shared.state_] === "writable") {
 		writableStreamDefaultControllerError(controller, error);
 	}
 }
@@ -605,7 +603,7 @@ export function writableStreamDefaultControllerProcessWrite(controller: Writable
 	controller[writeAlgorithm_](chunk).then(
 		_ => {
 			writableStreamFinishInFlightWrite(stream);
-			const state = stream[state_];
+			const state = stream[shared.state_];
 			// 	Assert: state is "writable" or "erroring".
 			q.dequeueValue(controller);
 			if (! writableStreamCloseQueuedOrInFlight(stream) && state === "writable") {

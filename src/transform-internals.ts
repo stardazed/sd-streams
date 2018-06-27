@@ -155,7 +155,7 @@ export function transformStreamDefaultControllerEnqueue(controller: TransformStr
 	}
 	catch (error) {
 		transformStreamErrorWritableAndUnblockWrite(stream, error);
-		throw stream[readable_][rs.storedError_];
+		throw stream[readable_][shared.storedError_];
 	}
 	const backpressure = rs.readableStreamDefaultControllerHasBackpressure(readableController);
 	if (backpressure !== stream[backpressure_]) {
@@ -189,9 +189,9 @@ export function transformStreamDefaultSinkWriteAlgorithm(stream: TransformStream
 		// Assert: backpressureChangePromise is not undefined.
 		return backpressureChangePromise.promise.then(_ => {
 			const writable = stream[writable_];
-			const state = writable[ws.state_];
+			const state = writable[shared.state_];
 			if (state === "erroring") {
-				throw writable[ws.storedError_];
+				throw writable[shared.storedError_];
 			}
 			// Assert: state is "writable".
 			return controller[transformAlgorithm_](chunk);
@@ -210,8 +210,8 @@ export function transformStreamDefaultSinkCloseAlgorithm(stream: TransformStream
 	const flushPromise = stream[transformStreamController_][flushAlgorithm_]();
 	return flushPromise.then(
 		_ => {
-			if (readable[rs.state_] === "errored") {
-				throw readable[rs.storedError_];
+			if (readable[shared.state_] === "errored") {
+				throw readable[shared.storedError_];
 			}
 			const readableController = readable[rs.readableStreamController_] as rs.ReadableStreamDefaultController;
 			if (rs.readableStreamDefaultControllerCanCloseOrEnqueue(readableController)) {
@@ -220,7 +220,7 @@ export function transformStreamDefaultSinkCloseAlgorithm(stream: TransformStream
 		},
 		error => {
 			transformStreamError(stream, error);
-			throw readable[rs.storedError_];
+			throw readable[shared.storedError_];
 		}
 	);
 }

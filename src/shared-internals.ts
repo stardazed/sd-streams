@@ -5,6 +5,13 @@
  * https://github.com/stardazed/sd-streams
  */
 
+// common stream fields
+
+export const state_ = Symbol("state_");
+export const storedError_ = Symbol("storedError_");
+
+// ---------
+
 export type SizeAlgorithm = (this: void, chunk?: any) => number;
 
 export interface StreamStrategy {

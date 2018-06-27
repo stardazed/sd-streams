@@ -11,13 +11,13 @@ import { WritableStreamDefaultController, setUpWritableStreamDefaultControllerFr
 import { WritableStreamDefaultWriter } from "./writable-stream-default-writer";
 
 export class WritableStream {
-	[ws.state_]: ws.WritableStreamState;
+	[shared.state_]: ws.WritableStreamState;
+	[shared.storedError_]: any;
 	[ws.backpressure_]: boolean;
 	[ws.closeRequest_]: shared.ControlledPromise<void> | undefined;
 	[ws.inFlightWriteRequest_]: shared.ControlledPromise<void> | undefined;
 	[ws.inFlightCloseRequest_]: shared.ControlledPromise<void> | undefined;
 	[ws.pendingAbortRequest_]: ws.AbortRequest | undefined;
-	[ws.storedError_]: any;
 	[ws.writableStreamController_]: ws.WritableStreamDefaultController | undefined;
 	[ws.writer_]: ws.WritableStreamDefaultWriter | undefined;
 	[ws.writeRequests_]: shared.ControlledPromise<any>[];

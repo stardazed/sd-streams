@@ -17,9 +17,9 @@ import { ReadableByteStreamController, setUpReadableByteStreamControllerFromUnde
 import { ReadableStreamBYOBReader } from "./readable-stream-byob-reader";
 
 export class ReadableStream implements rs.ReadableStream {
-	[rs.state_]: rs.ReadableStreamState;
+	[shared.state_]: rs.ReadableStreamState;
+	[shared.storedError_]: any;
 	[rs.reader_]: rs.ReadableStreamReader | undefined;
-	[rs.storedError_]: any;
 	[rs.readableStreamController_]: rs.ReadableStreamController;
 
 	constructor(source: rs.ReadableStreamSource = {}, strategy: shared.StreamStrategy = {}) {

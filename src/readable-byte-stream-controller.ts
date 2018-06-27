@@ -58,7 +58,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 		if (this[rs.closeRequested_]) {
 			throw new TypeError("Stream is already closing");
 		}
-		if (this[rs.controlledReadableByteStream_][rs.state_] !== "readable") {
+		if (this[rs.controlledReadableByteStream_][shared.state_] !== "readable") {
 			throw new TypeError("Stream is closed or errored");
 		}
 		rs.readableByteStreamControllerClose(this);
@@ -71,7 +71,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 		if (this[rs.closeRequested_]) {
 			throw new TypeError("Stream is already closing");
 		}
-		if (this[rs.controlledReadableByteStream_][rs.state_] !== "readable") {
+		if (this[rs.controlledReadableByteStream_][shared.state_] !== "readable") {
 			throw new TypeError("Stream is closed or errored");
 		}
 		if (! ArrayBuffer.isView(chunk)) {
