@@ -7,6 +7,7 @@
 
 import { ReadableStream } from "./readable-stream";
 import { WritableStream } from "./writable-stream";
+import { TransformStream } from "./transform-stream";
 import { ByteLengthQueuingStrategy, CountQueuingStrategy } from "./strategies";
 
-export { ReadableStream, WritableStream, ByteLengthQueuingStrategy, CountQueuingStrategy };
+export { ReadableStream, WritableStream, TransformStream, ByteLengthQueuingStrategy, CountQueuingStrategy };
