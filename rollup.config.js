@@ -4,7 +4,7 @@ import tsc from "rollup-plugin-typescript";
 
 export default [
 	{
-		input: "src/index.ts",
+		input: "src/sd-streams.ts",
 		output: [
 			{
 				file: "dist/sd-streams.esm.js",
