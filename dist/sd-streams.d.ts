@@ -49,9 +49,9 @@ export declare class WritableStream {
 // ---- ReadableStream
 
 export interface ReadableStreamController {
-	readonly desiredSize: number | null;
 	close(): void;
 	error(e?: any): void;
+	readonly desiredSize: number | null;
 }
 
 export interface ReadableStreamDefaultController extends ReadableStreamController {
@@ -64,15 +64,15 @@ export interface ReadableByteStreamController extends ReadableStreamController {
 }
 
 export interface ReadableStreamBYOBRequest {
-	readonly view: ArrayBufferView;
 	respond(bytesWritten: number): void;
 	respondWithNewView(view: ArrayBufferView): void;
+	readonly view: ArrayBufferView;
 }
 
 export interface ReadableStreamReader {
-	readonly closed: Promise<void>;
 	cancel(reason: any): Promise<void>;
 	releaseLock(): void;
+	readonly closed: Promise<void>;
 }
 
 export interface ReadableStreamDefaultReader extends ReadableStreamReader {
@@ -84,11 +84,11 @@ export interface ReadableStreamBYOBReader extends ReadableStreamReader {
 }
 
 interface ReadableStreamSource<Controller extends ReadableStreamController = ReadableStreamDefaultController> {
-	type?: "bytes" | undefined;
-	autoAllocateChunkSize?: number; // only for "bytes" type sources
 	start?(controller: Controller): void | Promise<void>;
 	pull?(controller: Controller): void | Promise<void>;
 	cancel?(reason?: any): void;
+	type?: "bytes" | undefined;
+	autoAllocateChunkSize?: number; // only for "bytes" type sources
 }
 
 export interface PipeToOptions {
