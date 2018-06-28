@@ -157,7 +157,12 @@ export class ReadableStream implements rs.ReadableStream {
 		if (readable === undefined || writable === undefined) {
 			throw new TypeError("Both a readable and writable stream must be provided");
 		}
-		this.pipeTo(writable, options).catch(() => {});
+		const pipeResult = this.pipeTo(writable, options);
+
+		// not sure why the spec is so pedantic about the authenticity of only this particular promise, but hey
+		try {
+			Promise.prototype.then.call(pipeResult, undefined, () => {});
+		} catch (_e) {}
 		return readable;
 	}
 
