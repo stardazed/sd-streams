@@ -1,9 +1,9 @@
 /**
-* @stardazed/streams - implementation of the web streams standard
-* Part of Stardazed
-* (c) 2018 by Arthur Langereis - @zenmumbler
-* https://github.com/stardazed/sd-streams
-*/
+ * @stardazed/streams - implementation of the web streams standard
+ * Part of Stardazed
+ * (c) 2018 by Arthur Langereis - @zenmumbler
+ * https://github.com/stardazed/sd-streams
+ */
 
 // ---- Common
 
