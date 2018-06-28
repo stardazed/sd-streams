@@ -95,23 +95,34 @@ export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, optio
 			return awaitLatestWrite();
 		}
 		else {
-			return Promise.resolve();
+			return undefined;
 		}
 	}
 
 	function shutDown(action?: () => Promise<void>, error?: ErrorWrapper) {
-		flushRemainder().then(() => {
-			if (! shuttingDown) {
-				shuttingDown = true;
-				if (action === undefined) {
-					action = () => Promise.resolve();
-				}
-				action().then(
-					_ => finalize(error),
-					newError => finalize({ actualError: newError })
-				);
-			}
-		});
+		if (shuttingDown) {
+			return;
+		}
+		shuttingDown = true;
+
+		if (action === undefined) {
+			action = () => Promise.resolve();
+		}
+
+		function finishShutDown() {
+			action!().then(
+				_ => finalize(error),
+				newError => finalize({ actualError: newError })
+			);
+		}
+
+		const flushWait = flushRemainder();
+		if (flushWait) {
+			flushWait.then(finishShutDown);
+		}
+		else {
+			finishShutDown();
+		}
 	}
 
 	function finalize(error?: ErrorWrapper) {
@@ -134,12 +145,10 @@ export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, optio
 			rs.readableStreamDefaultReaderRead(reader).then(
 				({ value, done }) => {
 					if (done) {
-						// shutDown();
+						return;
 					}
-					else {
-						latestWrite = ws.writableStreamDefaultWriterWrite(writer, value);
-						next();
-					}
+					latestWrite = ws.writableStreamDefaultWriterWrite(writer, value).catch(() => {});
+					next();
 				},
 				_error => {
 					latestWrite = Promise.resolve();
