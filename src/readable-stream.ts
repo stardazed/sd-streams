@@ -157,7 +157,7 @@ export class ReadableStream implements rs.ReadableStream {
 		if (readable === undefined || writable === undefined) {
 			throw new TypeError("Both a readable and writable stream must be provided");
 		}
-		this.pipeTo(writable, options);
+		this.pipeTo(writable, options).catch(() => {});
 		return readable;
 	}
 

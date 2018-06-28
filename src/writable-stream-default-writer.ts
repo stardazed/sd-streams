@@ -40,6 +40,7 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 		}
 		else if (state === "erroring") {
 			readyPromise.reject(stream[shared.storedError_]);
+			readyPromise.promise.catch(() => {});
 			// OK Set this.[[closedPromise]] to a new promise.
 		}
 		else if (state === "closed") {
@@ -50,7 +51,9 @@ export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWrit
 			// Assert: state is "errored".
 			const storedError = stream[shared.storedError_];
 			readyPromise.reject(storedError);
+			readyPromise.promise.catch(() => {});
 			closedPromise.reject(storedError);
+			closedPromise.promise.catch(() => {});
 		}
 	}
 

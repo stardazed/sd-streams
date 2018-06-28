@@ -331,6 +331,7 @@ export function writableStreamRejectCloseAndClosedPromiseIfNeeded(stream: Writab
 	const writer = stream[writer_];
 	if (writer !== undefined) {
 		writer[closedPromise_].reject(stream[shared.storedError_]);
+		writer[closedPromise_].promise.catch(() => {});
 	}
 }
 
@@ -406,6 +407,7 @@ export function writableStreamDefaultWriterEnsureClosedPromiseRejected(writer: W
 		writer[closedPromise_] = shared.createControlledPromise<void>();
 		writer[closedPromise_].reject(error);
 	}
+	writer[closedPromise_].promise.catch(() => {});
 }
 
 export function writableStreamDefaultWriterEnsureReadyPromiseRejected(writer: WritableStreamDefaultWriter, error: any) {
@@ -417,6 +419,7 @@ export function writableStreamDefaultWriterEnsureReadyPromiseRejected(writer: Wr
 		writer[readyPromise_] = shared.createControlledPromise<void>();
 		writer[readyPromise_].reject(error);
 	}
+	writer[readyPromise_].promise.catch(() => {});
 }
 
 export function writableStreamDefaultWriterGetDesiredSize(writer: WritableStreamDefaultWriter) {

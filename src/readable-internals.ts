@@ -291,6 +291,7 @@ export function readableStreamClose(stream: ReadableStream) {
 		reader[readRequests_] = [];
 	}
 	reader[closedPromise_].resolve();
+	reader[closedPromise_].promise.catch(() => {});
 }
 
 export function readableStreamError(stream: ReadableStream, error: any) {
@@ -353,6 +354,7 @@ export function readableStreamReaderGenericInitialize(reader: ReadableStreamRead
 	}
 	else {
 		reader[closedPromise_].reject(stream[shared.storedError_]);
+		reader[closedPromise_].promise.catch(() => {});
 	}
 }
 
@@ -365,12 +367,13 @@ export function readableStreamReaderGenericRelease(reader: ReadableStreamReader)
 	}
 
 	if (stream[shared.state_] === "readable") {
-		reader[closedPromise_].reject(new TypeError());
+		// code moved out
 	}
 	else {
 		reader[closedPromise_] = shared.createControlledPromise<void>();
-		reader[closedPromise_].reject(new TypeError());
 	}
+	reader[closedPromise_].reject(new TypeError());
+	reader[closedPromise_].promise.catch(() => {});
 
 	stream[reader_] = undefined;
 	reader[ownerReadableStream_] = undefined;
