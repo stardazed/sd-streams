@@ -7,10 +7,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
-  /@types/node/10.3.6:
+  /@types/node/10.5.1:
     dev: true
     resolution:
-      integrity: sha512-h7VDRFL8IhdPw1JjiNVvhr+WynfKW09q2BOflIOA0yeuXNeXBP1bIRuBrysSryH4keaJ5bYUNp63aIyQL9YpDQ==
+      integrity: sha512-AFLl1IALIuyt6oK4AYZsgWVJ/5rnyzQWud7IebaZWWV3YmgtPZkQmYio9R5Ze/2pdd7XfqF5bP+hWS11mAKoOQ==
   /balanced-match/1.0.0:
     dev: true
     resolution:
@@ -66,8 +66,9 @@ packages:
   /rollup/0.61.2:
     dependencies:
       '@types/estree': 0.0.39
-      '@types/node': 10.3.6
+      '@types/node': 10.5.1
     dev: true
+    hasBin: true
     resolution:
       integrity: sha512-NN7GaX3c9I3oz+CjEex7+JbnSxrLMTBXNRThI4qdN2Tq0K/7RiedlEzOHyuVAHPZKvQeoPiRioTWL3xhmN+oCg==
   /tippex/2.3.1:
