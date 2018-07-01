@@ -2,7 +2,7 @@
 ==================
 This library provides a full implementation of the web streams standard. It has
 no dependencies and can be used as a streams replacement in browsers without (full)
-support for the streams standard.
+support for the streams standard or in Node.
 
 It also provides a full set of TypeScript types for the library as an improvement
 over the incomplete typings in the TS standard library.
