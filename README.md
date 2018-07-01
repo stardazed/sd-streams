@@ -49,6 +49,24 @@ yarn add @stardazed/streams
 
 Usage
 -----
+In a build system or runtime with module support:
+
+```js
+// stream types
+import { ReadableStream, WriteStream, TransformStream } from "@stardazed/streams";
+// built-in strategies
+import { ByteLengthQueuingStrategy, CountQueuingStrategy } from "@stardazed/streams";
+```
+
+In pre-modular Node:
+
+```js
+// stream types
+const { ReadableStream, WriteStream, TransformStream } = require("@stardazed/streams");
+// built-in strategies
+const { ByteLengthQueuingStrategy, CountQueuingStrategy } = require("@stardazed/streams");
+```
+
 See the [Web Streams Standard Specification](https://streams.spec.whatwg.org) for
 documentation, examples, etc.
 
