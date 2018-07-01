@@ -1,10 +1,11 @@
 {
 	"name": "@stardazed/streams",
-	"description": "Web Streams implementation / polyfill",
+	"description": "Web Streams implementation",
 	"version": "1.0.1",
 	"author": {
 		"name": "Arthur Langereis"
 	},
+	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/stardazed/sd-streams.git"
