@@ -1,7 +1,6 @@
 {
-	"name": "@stardazed/streams",
-	"description": "Web Streams implementation",
-	"version": "1.0.2",
+	"private": true,
+	"description": "Stardazed Web Streams Implementation Monorepo",
 	"author": {
 		"name": "Arthur Langereis"
 	},
@@ -9,18 +8,5 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/stardazed/sd-streams.git"
-	},
-	"main": "dist/sd-streams.umd.js",
-	"browser": "dist/sd-streams.esm.js",
-	"module": "dist/sd-streams.esm.js",
-	"types": "dist/sd-streams.d.ts",
-	"scripts": {
-		"build": "rollup -c",
-		"prepublishOnly": "npm run build"
-	},
-	"devDependencies": {
-		"rollup": "^0.61.2",
-		"rollup-plugin-typescript": "^0.8.1",
-		"typescript": "^2.9.2"
 	}
 }

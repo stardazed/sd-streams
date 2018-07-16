@@ -1,0 +1,76 @@
+<title>ReadableStream linear queuing test</title>
+
+<script src="../../dist/sd-streams-polyfill.min.js"></script>
+<script>
+'use strict';
+
+function test() {
+  const results = document.getElementById('results');
+
+  function log(s) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(s));
+    results.appendChild(div);
+  }
+
+  function testCount(count) {
+    const t0 = performance.now();
+    const rs = new ReadableStream({
+      start(controller) {
+        for (let i = 0; i < count; ++i) {
+          controller.enqueue(i);
+        }
+        controller.close();
+      }
+    });
+    const reader = rs.getReader();
+    return readLoop(count, reader, t0);
+  }
+
+  function readLoop(count, reader, t0) {
+    return reader.read().then(result => {
+      return result.done ? endTiming(count, t0)
+          : readLoop(count, reader, t0);
+    });
+  }
+
+  function endTiming(count, t0) {
+    const t1 = performance.now();
+    const elapsed = t1 - t0;
+    const elapsedForDisplay = elapsed.toFixed(2);
+    const perRead = (elapsed / count).toFixed(2);
+    log(`${count} reads took ${elapsedForDisplay}ms, ${perRead}ms per read`);
+    // Browser, paint thyself!
+    let resolve;
+    const p = new Promise(r => {
+      resolve = r;
+    });
+    setTimeout(resolve, 10);
+    return p;
+  }
+
+  const status = document.getElementById('status');
+  status.textContent = 'Testing ...';
+  let promise = Promise.resolve();
+  for (let count = 3545; count <= 113440; count = count * 2) {
+    promise = promise.then(() => testCount(count));
+  }
+  promise.then(() => {
+    status.textContent = 'Done';
+  });
+}
+
+onload = test;
+</script>
+<style>
+#status {
+  font-size: large;
+  margin-left: 2em;
+  font-family: sans-serif;
+  margin-bottom: 10pt;
+  margin-top: 10pt;
+}
+#results { font-family: monospace; }
+</style>
+<div id=status>Loading</div>
+<div id=results></div>

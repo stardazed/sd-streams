@@ -7,10 +7,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
-  /@types/node/10.5.1:
+  /@types/node/10.5.2:
     dev: true
     resolution:
-      integrity: sha512-AFLl1IALIuyt6oK4AYZsgWVJ/5rnyzQWud7IebaZWWV3YmgtPZkQmYio9R5Ze/2pdd7XfqF5bP+hWS11mAKoOQ==
+      integrity: sha512-m9zXmifkZsMHZBOyxZWilMwmTlpC8x5Ty360JKTiXvlXZfBWYpsg9ZZvP/Ye+iZUh+Q+MxDLjItVTWIsfwz+8Q==
   /balanced-match/1.0.0:
     dev: true
     resolution:
@@ -66,7 +66,7 @@ packages:
   /rollup/0.61.2:
     dependencies:
       '@types/estree': 0.0.39
-      '@types/node': 10.5.1
+      '@types/node': 10.5.2
     dev: true
     hasBin: true
     resolution:
@@ -79,16 +79,18 @@ packages:
     dev: true
     engines:
       node: '>=0.8.0'
+    hasBin: true
     resolution:
       integrity: sha1-tHXW4N/wv1DyluXKbvn7tccyDx4=
   /typescript/2.9.2:
     dev: true
     engines:
       node: '>=4.2.0'
+    hasBin: true
     resolution:
       integrity: sha512-Gr4p6nFNaoufRIY4NMdpQRNmgxVIGMs4Fcu/ujdYk3nAZqk7supzBE9idmvfZIlH/Cuj//dvi+019qEue9lV0w==
 registry: 'https://registry.npmjs.org/'
-shrinkwrapMinorVersion: 7
+shrinkwrapMinorVersion: 8
 shrinkwrapVersion: 3
 specifiers:
   rollup: ^0.61.2

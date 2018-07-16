@@ -1,0 +1,26 @@
+{
+	"name": "@stardazed/streams-fetch-adapter",
+	"description": "Patch fetch and Response to work with custom stream implementations",
+	"version": "1.0.1",
+	"author": {
+		"name": "Arthur Langereis"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/stardazed/sd-streams-fetch-adapter.git"
+	},
+	"main": "dist/sd-streams-fetch-adapter.umd.js",
+	"browser": "dist/sd-streams-fetch-adapter.esm.js",
+	"module": "dist/sd-streams-fetch-adapter.esm.js",
+	"types": "dist/sd-streams-fetch-adapter.d.ts",
+	"scripts": {
+		"build": "rollup -c",
+		"prepublishOnly": "npm run build"
+	},
+	"devDependencies": {
+		"rollup": "^0.62.0",
+		"rollup-plugin-typescript": "^0.8.1",
+		"typescript": "^2.9.2"
+	}
+}

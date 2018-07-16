@@ -1,0 +1,27 @@
+{
+	"name": "@stardazed/streams-polyfill",
+	"description": "Drop-in polyfill for Web Streams with fetch integration",
+	"version": "1.0.1",
+	"author": {
+		"name": "Arthur Langereis"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/stardazed/sd-streams-polyfill.git"
+	},
+	"main": "dist/sd-streams-polyfill.min.js",
+	"scripts": {
+		"build": "rollup -c",
+		"prepublishOnly": "npm run build"
+	},
+	"devDependencies": {
+		"@stardazed/streams": "^1.0.2",
+		"@stardazed/streams-fetch-adapter": "^1.0.1",
+		"rollup": "^0.62.0",
+		"rollup-plugin-node-resolve": "^3.3.0",
+		"rollup-plugin-terser": "^1.0.1",
+		"rollup-plugin-typescript": "^0.8.1",
+		"typescript": "^2.9.2"
+	}
+}

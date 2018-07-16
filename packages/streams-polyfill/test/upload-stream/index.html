@@ -1,0 +1,44 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Simple upload example</title>
+    <script src="../../dist/sd-streams-polyfill.min.js"></script>
+</head>
+<body>
+<h1>Simple upload example</h1>
+<p>This example requires the postsink server to be running, it is in the node directory.</p>
+
+<h2>Results</h2>
+
+<pre></pre>
+
+<script>
+const output = document.querySelector("pre");
+
+const objectToSend = { x: 1, y: { z: ["a", "b"]}, upload: true };
+const encoder = new TextEncoder();
+const dataToSend = encoder.encode(JSON.stringify(objectToSend));
+
+const stream = new ReadableStream({
+	start(controller) {
+		setTimeout(function() {
+			controller.enqueue(dataToSend);
+			controller.close();
+		}, 500);
+	}
+});
+
+fetch("http://localhost:8123", {
+	method: "POST",
+	body: stream,
+	headers: {
+		"Content-Type": "application/json"
+	}
+})
+.then(response => response.text())
+.then(text => {
+	output.textContent = text;
+});
+</script>
+</body>
+</html>
