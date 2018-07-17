@@ -8,6 +8,7 @@
 import * as ws from "./writable-internals";
 import * as shared from "./shared-internals";
 import * as q from "./queue-mixin";
+import { Queue } from "./queue";
 
 export class WritableStreamDefaultController implements ws.WritableStreamDefaultController {
 	[ws.abortAlgorithm_]: ws.AbortAlgorithm;
@@ -18,7 +19,7 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 	[ws.strategySizeAlgorithm_]: shared.SizeAlgorithm;
 	[ws.writeAlgorithm_]: ws.WriteAlgorithm;
 
-	[q.queue_]: q.QueueElement<ws.WriteRecord | "close">[];
+	[q.queue_]: Queue<q.QueueElement<ws.WriteRecord | "close">>;
 	[q.queueTotalSize_]: number;
 
 	constructor() {

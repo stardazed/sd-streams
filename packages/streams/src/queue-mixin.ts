@@ -5,6 +5,7 @@
  * https://github.com/stardazed/sd-streams
  */
 
+import { Queue, QueueImpl } from "./queue";
 import { isFiniteNonNegativeNumber } from "./shared-internals";
 
 export const queue_ = Symbol("queue_");
@@ -16,12 +17,12 @@ export interface QueueElement<V> {
 }
 
 export interface QueueContainer<V> {
-	[queue_]: QueueElement<V>[];
+	[queue_]: Queue<QueueElement<V>>;
 	[queueTotalSize_]: number;
 }
 
 export interface ByteQueueContainer {
-	[queue_]: { buffer: ArrayBufferLike, byteOffset: number, byteLength: number }[];
+	[queue_]: Queue<{ buffer: ArrayBufferLike, byteOffset: number, byteLength: number }>;
 	[queueTotalSize_]: number;
 }
 
@@ -46,10 +47,14 @@ export function enqueueValueWithSize<V>(container: QueueContainer<V>, value: V, 
 export function peekQueueValue<V>(container: QueueContainer<V>) {
 	// Assert: container has[[queue]] and[[queueTotalSize]] internal slots.
 	// Assert: container.[[queue]] is not empty.
-	return container[queue_][0].value;
+	return container[queue_].front()!.value;
 }
 
 export function resetQueue<V>(container: ByteQueueContainer | QueueContainer<V>) {
-	container[queue_] = [];
+	container[queue_] = new QueueImpl<any>();
+	// const q = [] as any;
+	// q.front = function() { return this[0]; };
+	// container[queue_] = q;
+
 	container[queueTotalSize_] = 0;
 }

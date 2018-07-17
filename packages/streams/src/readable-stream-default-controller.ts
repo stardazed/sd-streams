@@ -8,6 +8,7 @@
 import * as rs from "./readable-internals";
 import * as shared from "./shared-internals";
 import * as q from "./queue-mixin";
+import { Queue } from "./queue";
 
 export class ReadableStreamDefaultController implements rs.ReadableStreamDefaultController {
 	[rs.cancelAlgorithm_]: rs.CancelAlgorithm;
@@ -20,7 +21,7 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 	[rs.strategySizeAlgorithm_]: shared.SizeAlgorithm;
 	[rs.started_]: boolean;
 
-	[q.queue_]: q.QueueElement<any>[];
+	[q.queue_]: Queue<q.QueueElement<any>>;
 	[q.queueTotalSize_]: number;
 
 	constructor() {

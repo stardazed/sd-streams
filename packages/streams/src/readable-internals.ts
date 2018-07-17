@@ -760,7 +760,7 @@ export function readableByteStreamControllerFillPullIntoDescriptorFromQueue(cont
 	const queue = controller[q.queue_];
 
 	while (totalBytesToCopyRemaining > 0) {
-		const headOfQueue = queue[0];
+		const headOfQueue = queue.front()!;
 		const bytesToCopy = Math.min(totalBytesToCopyRemaining, headOfQueue.byteLength);
 		const destStart = pullIntoDescriptor.byteOffset + pullIntoDescriptor.bytesFilled;
 		shared.copyDataBlockBytes(pullIntoDescriptor.buffer, destStart, headOfQueue.buffer, headOfQueue.byteOffset, bytesToCopy);

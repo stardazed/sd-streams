@@ -9,6 +9,7 @@ import * as rs from "./readable-internals";
 import * as q from "./queue-mixin";
 import * as shared from "./shared-internals";
 import { ReadableStreamBYOBRequest } from "./readable-stream-byob-request";
+import { Queue } from "./queue";
 
 export class ReadableByteStreamController implements rs.ReadableByteStreamController {
 	[rs.autoAllocateChunkSize_]: number | undefined;
@@ -23,7 +24,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 	[rs.started_]: boolean;
 	[rs.strategyHWM_]: number;
 
-	[q.queue_]: { buffer: ArrayBufferLike, byteOffset: number, byteLength: number }[];
+	[q.queue_]: Queue<{ buffer: ArrayBufferLike, byteOffset: number, byteLength: number }>;
 	[q.queueTotalSize_]: number;
 
 	constructor() {
