@@ -51,7 +51,15 @@ export function peekQueueValue<V>(container: QueueContainer<V>) {
 }
 
 export function resetQueue<V>(container: ByteQueueContainer | QueueContainer<V>) {
+	// Chrome (as of v67) has a steep performance cliff with large arrays
+	// and shift(), around about 50k elements. While this is an unusual case
+	// we use a simple wrapper around shift and push that is chunked to 
+	// avoid this pitfall.
+	// @see: https://github.com/stardazed/sd-streams/issues/1
 	container[queue_] = new QueueImpl<any>();
+	
+	// The code below can be used as a plain array implementation of the
+	// Queue interface.
 	// const q = [] as any;
 	// q.front = function() { return this[0]; };
 	// container[queue_] = q;
