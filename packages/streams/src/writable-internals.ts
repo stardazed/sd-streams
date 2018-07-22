@@ -514,6 +514,14 @@ export function isWritableStreamDefaultController(value: any): value is Writable
 	return controlledWritableStream_ in value;
 }
 
+export function writableStreamDefaultControllerClearAlgorithms(controller: WritableStreamDefaultController) {
+	// Use ! assertions to override type check here, this way we don't
+	// have to perform type checks/assertions everywhere else.
+	controller[writeAlgorithm_] = undefined!;
+	controller[closeAlgorithm_] = undefined!;
+	controller[abortAlgorithm_] = undefined!;
+}
+
 export function writableStreamDefaultControllerClose(controller: WritableStreamDefaultController) {
 	q.enqueueValueWithSize(controller, "close", 0);
 	writableStreamDefaultControllerAdvanceQueueIfNeeded(controller);
@@ -590,7 +598,9 @@ export function writableStreamDefaultControllerProcessClose(controller: Writable
 	writableStreamMarkCloseRequestInFlight(stream);
 	q.dequeueValue(controller);
 	// Assert: controller.[[queue]] is empty.
-	controller[closeAlgorithm_]().then(
+	const sinkClosePromise = controller[closeAlgorithm_]();
+	writableStreamDefaultControllerClearAlgorithms(controller);
+	sinkClosePromise.then(
 		_ => {
 			writableStreamFinishInFlightClose(stream);
 		},
@@ -616,6 +626,9 @@ export function writableStreamDefaultControllerProcessWrite(controller: Writable
 			writableStreamDefaultControllerAdvanceQueueIfNeeded(controller);
 		},
 		error => {
+			if (stream[shared.state_] === "writable") {
+				writableStreamDefaultControllerClearAlgorithms(controller);
+			}
 			writableStreamFinishInFlightWriteWithError(stream, error);
 		}
 	);
@@ -629,5 +642,6 @@ export function writableStreamDefaultControllerGetBackpressure(controller: Writa
 export function writableStreamDefaultControllerError(controller: WritableStreamDefaultController, error: any) {
 	const stream = controller[controlledWritableStream_];
 	// Assert: stream.[[state]] is "writable".
+	writableStreamDefaultControllerClearAlgorithms(controller);
 	writableStreamStartErroring(stream, error);
 }

@@ -38,7 +38,9 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 	}
 
 	[ws.abortSteps_](reason: any) {
-		return this[ws.abortAlgorithm_](reason);
+		const result = this[ws.abortAlgorithm_](reason);
+		ws.writableStreamDefaultControllerClearAlgorithms(this);
+		return result;
 	}
 
 	[ws.errorSteps_]() {
