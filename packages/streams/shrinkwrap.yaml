@@ -1,5 +1,5 @@
 devDependencies:
-  rollup: 0.61.2
+  rollup: 0.63.4
   rollup-plugin-typescript: 0.8.1
   typescript: 2.9.2
 packages:
@@ -63,14 +63,14 @@ packages:
     dev: true
     resolution:
       integrity: sha1-HhVud4+UtyVb+hs9AXi+j1xVJAg=
-  /rollup/0.61.2:
+  /rollup/0.63.4:
     dependencies:
       '@types/estree': 0.0.39
       '@types/node': 10.5.2
     dev: true
     hasBin: true
     resolution:
-      integrity: sha512-NN7GaX3c9I3oz+CjEex7+JbnSxrLMTBXNRThI4qdN2Tq0K/7RiedlEzOHyuVAHPZKvQeoPiRioTWL3xhmN+oCg==
+      integrity: sha512-IGTH7u0P6bmu7cXL0g11UDYTR9WKku70cYlqVyOYdqLoQopBGmCbGC3SMeheqHymnehHe/5yf6BJ6BEoxQBVTQ==
   /tippex/2.3.1:
     dev: true
     resolution:
@@ -93,6 +93,6 @@ registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 8
 shrinkwrapVersion: 3
 specifiers:
-  rollup: ^0.61.2
+  rollup: ^0.63.4
   rollup-plugin-typescript: ^0.8.1
   typescript: ^2.9.2

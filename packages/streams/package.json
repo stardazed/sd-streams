@@ -19,7 +19,7 @@
 		"prepublishOnly": "npm run build"
 	},
 	"devDependencies": {
-		"rollup": "^0.61.2",
+		"rollup": "^0.63.4",
 		"rollup-plugin-typescript": "^0.8.1",
 		"typescript": "^2.9.2"
 	}
