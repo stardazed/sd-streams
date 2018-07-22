@@ -1,7 +1,7 @@
 {
 	"name": "@stardazed/streams-polyfill",
 	"description": "Drop-in polyfill for Web Streams with fetch integration",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"author": {
 		"name": "Arthur Langereis"
 	},
