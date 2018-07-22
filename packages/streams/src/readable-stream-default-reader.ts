@@ -49,7 +49,7 @@ export class ReadableStreamDefaultReader implements rs.ReadableStreamReader {
 		if (this[rs.ownerReadableStream_] === undefined) {
 			return Promise.reject(new TypeError("Reader is not associated with a stream"));
 		}
-		return rs.readableStreamDefaultReaderRead(this);
+		return rs.readableStreamDefaultReaderRead(this, true);
 	}
 
 	releaseLock() {
