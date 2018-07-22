@@ -87,9 +87,13 @@ export function createAlgorithmFromUnderlyingMethod<O extends object, K extends 
 	};
 }
 
-export function createIterResultObject(value: any, done: boolean) {
+/*
+Deprecated for now, all usages replaced by readableStreamCreateReadResult
+
+function createIterResultObject<T>(value: T, done: boolean): IteratorResult<T> {
 	return { value, done };
 }
+*/
 
 export function validateAndNormalizeHighWaterMark(hwm: any) {
 	const highWaterMark = Number(hwm);

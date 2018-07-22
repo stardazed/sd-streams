@@ -64,7 +64,7 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 		return this[rs.cancelAlgorithm_](reason);
 	}
 
-	[rs.pullSteps_]() {
+	[rs.pullSteps_](forAuthorCode: boolean) {
 		const stream = this[rs.controlledReadableStream_];
 		if (this[q.queue_].length > 0) {
 			const chunk = q.dequeueValue(this);
@@ -74,10 +74,10 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 			else {
 				rs.readableStreamDefaultControllerCallPullIfNeeded(this);
 			}
-			return Promise.resolve(shared.createIterResultObject(chunk, false));
+			return Promise.resolve(rs.readableStreamCreateReadResult(chunk, false, forAuthorCode));
 		}
 
-		const pendingPromise = rs.readableStreamAddReadRequest(stream);
+		const pendingPromise = rs.readableStreamAddReadRequest(stream, forAuthorCode);
 		rs.readableStreamDefaultControllerCallPullIfNeeded(this);
 		return pendingPromise;
 	}

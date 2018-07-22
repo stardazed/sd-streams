@@ -59,7 +59,7 @@ export class ReadableStreamBYOBReader implements rs.ReadableStreamReader {
 		if (view.byteLength === 0) {
 			return Promise.reject(new TypeError("supplied buffer view must be > 0 bytes"));
 		}
-		return rs.readableStreamBYOBReaderRead(this, view);
+		return rs.readableStreamBYOBReaderRead(this, view, true);
 	}
 
 	releaseLock(): void {

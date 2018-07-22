@@ -98,7 +98,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 		return this[rs.cancelAlgorithm_](reason);
 	}
 
-	[rs.pullSteps_]() {
+	[rs.pullSteps_](forAuthorCode: boolean) {
 		const stream = this[rs.controlledReadableByteStream_];
 		// Assert: ! ReadableStreamHasDefaultReader(stream) is true.
 		if (this[q.queueTotalSize_] > 0) {
@@ -107,7 +107,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 			this[q.queueTotalSize_] -= entry.byteLength;
 			rs.readableByteStreamControllerHandleQueueDrain(this);
 			const view = new Uint8Array(entry.buffer, entry.byteOffset, entry.byteLength);
-			return Promise.resolve(shared.createIterResultObject(view, false));
+			return Promise.resolve(rs.readableStreamCreateReadResult(view, false, forAuthorCode));
 		}
 		const autoAllocateChunkSize = this[rs.autoAllocateChunkSize_];
 		if (autoAllocateChunkSize !== undefined) {
