@@ -110,6 +110,7 @@ export function transformStreamError(stream: TransformStream, error: any) {
 }
 
 export function transformStreamErrorWritableAndUnblockWrite(stream: TransformStream, error: any) {
+	transformStreamDefaultControllerClearAlgorithms(stream[transformStreamController_]);
 	ws.writableStreamDefaultControllerErrorIfNeeded(stream[writable_][ws.writableStreamController_]!, error);
 	if (stream[backpressure_]) {
 		transformStreamSetBackpressure(stream, false);
@@ -142,6 +143,13 @@ export function setUpTransformStreamDefaultController(stream: TransformStream, c
 	stream[transformStreamController_] = controller;
 	controller[transformAlgorithm_] = transformAlgorithm;
 	controller[flushAlgorithm_] = flushAlgorithm;
+}
+
+export function transformStreamDefaultControllerClearAlgorithms(controller: TransformStreamDefaultController) {
+	// Use ! assertions to override type check here, this way we don't
+	// have to perform type checks/assertions everywhere else.
+	controller[transformAlgorithm_] = undefined!;
+	controller[flushAlgorithm_] = undefined!;
 }
 
 export function transformStreamDefaultControllerEnqueue(controller: TransformStreamDefaultController, chunk: any) {
@@ -207,7 +215,10 @@ export function transformStreamDefaultSinkAbortAlgorithm(stream: TransformStream
 
 export function transformStreamDefaultSinkCloseAlgorithm(stream: TransformStream) {
 	const readable = stream[readable_];
-	const flushPromise = stream[transformStreamController_][flushAlgorithm_]();
+	const controller = stream[transformStreamController_];
+	const flushPromise = controller[flushAlgorithm_]();
+	transformStreamDefaultControllerClearAlgorithms(controller);
+
 	return flushPromise.then(
 		_ => {
 			if (readable[shared.state_] === "errored") {
