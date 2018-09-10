@@ -1,5 +1,9 @@
 # @stardazed/streams changelog
 
+## 1.0.5
+_2018-09-10_
+* Incorporate changes to streams spec up to 2018-09-10
+
 ## 1.0.4
 _2018-07-23_
 * Fix bug where public read request objects were marked as internal
