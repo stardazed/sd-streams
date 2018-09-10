@@ -95,7 +95,9 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 			firstDescriptor.bytesFilled = 0;
 		}
 		q.resetQueue(this);
-		return this[rs.cancelAlgorithm_](reason);
+		const result = this[rs.cancelAlgorithm_](reason);
+		rs.readableByteStreamControllerClearAlgorithms(this);
+		return result;
 	}
 
 	[rs.pullSteps_](forAuthorCode: boolean) {

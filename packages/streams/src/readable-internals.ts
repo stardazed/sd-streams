@@ -491,6 +491,7 @@ export function readableStreamDefaultControllerClose(controller: ReadableStreamD
 	controller[closeRequested_] = true;
 	const stream = controller[controlledReadableStream_];
 	if (controller[q.queue_].length === 0) {
+		readableStreamDefaultControllerClearAlgorithms(controller);
 		readableStreamClose(stream);
 	}
 }
@@ -530,6 +531,7 @@ export function readableStreamDefaultControllerError(controller: ReadableStreamD
 		return;
 	}
 	q.resetQueue(controller);
+	readableStreamDefaultControllerClearAlgorithms(controller);
 	readableStreamError(stream, error);
 }
 
@@ -576,6 +578,11 @@ export function readableStreamDefaultControllerShouldCallPull(controller: Readab
 		throw new RangeError("Stream is in an invalid state.");
 	}
 	return desiredSize > 0;
+}
+
+export function readableStreamDefaultControllerClearAlgorithms(controller: ReadableStreamDefaultController) {
+	(controller[pullAlgorithm_] as any) = undefined;
+	(controller[cancelAlgorithm_] as any) = undefined;
 }
 
 
@@ -660,6 +667,11 @@ export function readableByteStreamControllerCallPullIfNeeded(controller: Readabl
 	);
 }
 
+export function readableByteStreamControllerClearAlgorithms(controller: ReadableByteStreamController) {
+	(controller[pullAlgorithm_] as any) = undefined;
+	(controller[cancelAlgorithm_] as any) = undefined;
+}
+
 export function readableByteStreamControllerClearPendingPullIntos(controller: ReadableByteStreamController) {
 	readableByteStreamControllerInvalidateBYOBRequest(controller);
 	controller[pendingPullIntos_] = [];
@@ -681,6 +693,7 @@ export function readableByteStreamControllerClose(controller: ReadableByteStream
 			throw error;
 		}
 	}
+	readableByteStreamControllerClearAlgorithms(controller);
 	readableStreamClose(stream);
 }
 
@@ -749,6 +762,7 @@ export function readableByteStreamControllerError(controller: ReadableByteStream
 	}
 	readableByteStreamControllerClearPendingPullIntos(controller);
 	q.resetQueue(controller);
+	readableByteStreamControllerClearAlgorithms(controller);
 	readableStreamError(stream, error);
 }
 
@@ -812,6 +826,7 @@ export function readableByteStreamControllerGetDesiredSize(controller: ReadableB
 export function readableByteStreamControllerHandleQueueDrain(controller: ReadableByteStreamController) {
 	// Assert: controller.[[controlledReadableByteStream]].[[state]] is "readable".
 	if (controller[q.queueTotalSize_] === 0 && controller[closeRequested_]) {
+		readableByteStreamControllerClearAlgorithms(controller);
 		readableStreamClose(controller[controlledReadableByteStream_]);
 	}
 	else {

@@ -61,7 +61,9 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 
 	[rs.cancelSteps_](reason: any) {
 		q.resetQueue(this);
-		return this[rs.cancelAlgorithm_](reason);
+		const result = this[rs.cancelAlgorithm_](reason);
+		rs.readableStreamDefaultControllerClearAlgorithms(this);
+		return result;
 	}
 
 	[rs.pullSteps_](forAuthorCode: boolean) {
@@ -69,6 +71,7 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 		if (this[q.queue_].length > 0) {
 			const chunk = q.dequeueValue(this);
 			if (this[rs.closeRequested_] && this[q.queue_].length === 0) {
+				rs.readableStreamDefaultControllerClearAlgorithms(this);
 				rs.readableStreamClose(stream);
 			}
 			else {
