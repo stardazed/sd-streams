@@ -1,5 +1,5 @@
 devDependencies:
-  rollup: 0.63.4
+  rollup: 0.65.2
   rollup-plugin-typescript: 0.8.1
   typescript: 2.9.2
 packages:
@@ -7,10 +7,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
-  /@types/node/10.5.2:
+  /@types/node/10.9.4:
     dev: true
     resolution:
-      integrity: sha512-m9zXmifkZsMHZBOyxZWilMwmTlpC8x5Ty360JKTiXvlXZfBWYpsg9ZZvP/Ye+iZUh+Q+MxDLjItVTWIsfwz+8Q==
+      integrity: sha512-fCHV45gS+m3hH17zgkgADUSi2RR1Vht6wOZ0jyHP8rjiQra9f+mIcgwPQHllmDocYOstIEbKlxbFDYlgrTPYqw==
   /balanced-match/1.0.0:
     dev: true
     resolution:
@@ -63,14 +63,14 @@ packages:
     dev: true
     resolution:
       integrity: sha1-HhVud4+UtyVb+hs9AXi+j1xVJAg=
-  /rollup/0.63.4:
+  /rollup/0.65.2:
     dependencies:
       '@types/estree': 0.0.39
-      '@types/node': 10.5.2
+      '@types/node': 10.9.4
     dev: true
     hasBin: true
     resolution:
-      integrity: sha512-IGTH7u0P6bmu7cXL0g11UDYTR9WKku70cYlqVyOYdqLoQopBGmCbGC3SMeheqHymnehHe/5yf6BJ6BEoxQBVTQ==
+      integrity: sha512-BbXOrpxVbx0MpElI6vVLR2B6vnWHvYU/QAMw3GcEXvs601bvgrozuaW30cnvt43B96a6DeoYA0i9T5THanN+Rw==
   /tippex/2.3.1:
     dev: true
     resolution:
@@ -90,9 +90,9 @@ packages:
     resolution:
       integrity: sha512-Gr4p6nFNaoufRIY4NMdpQRNmgxVIGMs4Fcu/ujdYk3nAZqk7supzBE9idmvfZIlH/Cuj//dvi+019qEue9lV0w==
 registry: 'https://registry.npmjs.org/'
-shrinkwrapMinorVersion: 8
+shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
 specifiers:
-  rollup: ^0.63.4
+  rollup: ^0.65.2
   rollup-plugin-typescript: ^0.8.1
   typescript: ^2.9.2
