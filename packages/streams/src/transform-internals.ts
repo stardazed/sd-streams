@@ -176,6 +176,15 @@ export function transformStreamDefaultControllerError(controller: TransformStrea
 	transformStreamError(controller[controlledTransformStream_], error);
 }
 
+export function transformStreamDefaultControllerPerformTransform(controller: TransformStreamDefaultController, chunk: any) {
+	const transformPromise = controller[transformAlgorithm_](chunk);
+	return transformPromise.catch(error => {
+		transformStreamError(controller[controlledTransformStream_], error);
+		throw error;
+	});
+}
+
+
 export function transformStreamDefaultControllerTerminate(controller: TransformStreamDefaultController) {
 	const stream = controller[controlledTransformStream_];
 	const readableController = stream[readable_][rs.readableStreamController_] as rs.ReadableStreamDefaultController;
@@ -202,10 +211,10 @@ export function transformStreamDefaultSinkWriteAlgorithm(stream: TransformStream
 				throw writable[shared.storedError_];
 			}
 			// Assert: state is "writable".
-			return controller[transformAlgorithm_](chunk);
+			return transformStreamDefaultControllerPerformTransform(controller, chunk);
 		});
 	}
-	return controller[transformAlgorithm_](chunk);
+	return transformStreamDefaultControllerPerformTransform(controller, chunk);
 }
 
 export function transformStreamDefaultSinkAbortAlgorithm(stream: TransformStream, reason: any) {

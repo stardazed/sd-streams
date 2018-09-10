@@ -70,13 +70,7 @@ function setUpTransformStreamDefaultControllerFromTransformer(stream: TransformS
 		if (typeof transformMethod !== "function") {
 			throw new TypeError("`transform` field of the transformer must be a function");
 		}
-		transformAlgorithm = function(chunk: any) {
-			const transformPromise = shared.promiseCall(transformMethod, transformer, [chunk, controller]);
-			return transformPromise.catch(function(error) {
-				ts.transformStreamError(stream, error);
-				throw error;
-			});
-		};
+		transformAlgorithm = (chunk: any) => shared.promiseCall(transformMethod, transformer, [chunk, controller]);
 	}
 	else {
 		// use identity transform
