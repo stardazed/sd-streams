@@ -101,7 +101,7 @@ export function initializeTransformStream(stream: TransformStream, startPromise:
 	stream[backpressure_] = undefined;
 	stream[backpressureChangePromise_] = undefined;
 	transformStreamSetBackpressure(stream, true);
-	(stream as any)[transformStreamController_] = undefined; // initialize slot for brand-check
+	stream[transformStreamController_] = undefined!; // initialize slot for brand-check
 }
 
 export function transformStreamError(stream: TransformStream, error: any) {

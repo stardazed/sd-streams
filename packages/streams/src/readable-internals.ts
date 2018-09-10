@@ -209,7 +209,7 @@ export function initializeReadableStream(stream: ReadableStream) {
 	stream[shared.state_] = "readable";
 	stream[reader_] = undefined;
 	stream[shared.storedError_] = undefined;
-	(stream as any)[readableStreamController_] = undefined; // mark slot as used for brand check
+	stream[readableStreamController_] = undefined!; // mark slot as used for brand check
 }
 
 export function isReadableStream(value: any): value is ReadableStream {
@@ -581,8 +581,8 @@ export function readableStreamDefaultControllerShouldCallPull(controller: Readab
 }
 
 export function readableStreamDefaultControllerClearAlgorithms(controller: ReadableStreamDefaultController) {
-	(controller[pullAlgorithm_] as any) = undefined;
-	(controller[cancelAlgorithm_] as any) = undefined;
+	controller[pullAlgorithm_] = undefined!;
+	controller[cancelAlgorithm_] = undefined!;
 }
 
 
@@ -668,8 +668,8 @@ export function readableByteStreamControllerCallPullIfNeeded(controller: Readabl
 }
 
 export function readableByteStreamControllerClearAlgorithms(controller: ReadableByteStreamController) {
-	(controller[pullAlgorithm_] as any) = undefined;
-	(controller[cancelAlgorithm_] as any) = undefined;
+	controller[pullAlgorithm_] = undefined!;
+	controller[cancelAlgorithm_] = undefined!;
 }
 
 export function readableByteStreamControllerClearPendingPullIntos(controller: ReadableByteStreamController) {
