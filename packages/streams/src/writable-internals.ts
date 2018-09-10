@@ -520,6 +520,7 @@ export function writableStreamDefaultControllerClearAlgorithms(controller: Writa
 	controller[writeAlgorithm_] = undefined!;
 	controller[closeAlgorithm_] = undefined!;
 	controller[abortAlgorithm_] = undefined!;
+	controller[strategySizeAlgorithm_] = undefined!;
 }
 
 export function writableStreamDefaultControllerClose(controller: WritableStreamDefaultController) {

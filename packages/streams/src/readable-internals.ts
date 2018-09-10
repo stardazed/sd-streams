@@ -583,6 +583,7 @@ export function readableStreamDefaultControllerShouldCallPull(controller: Readab
 export function readableStreamDefaultControllerClearAlgorithms(controller: ReadableStreamDefaultController) {
 	controller[pullAlgorithm_] = undefined!;
 	controller[cancelAlgorithm_] = undefined!;
+	controller[strategySizeAlgorithm_] = undefined!;
 }
 
 
