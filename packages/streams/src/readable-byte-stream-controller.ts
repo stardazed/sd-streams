@@ -130,7 +130,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 			this[rs.pendingPullIntos_].push(pullIntoDescriptor);
 		}
 
-		const promise = rs.readableStreamAddReadRequest(stream);
+		const promise = rs.readableStreamAddReadRequest(stream, forAuthorCode);
 		rs.readableByteStreamControllerCallPullIfNeeded(this);
 		return promise;
 	}
