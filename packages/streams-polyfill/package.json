@@ -8,7 +8,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/stardazed/sd-streams-polyfill.git"
+		"url": "https://github.com/stardazed/sd-streams.git"
 	},
 	"main": "dist/sd-streams-polyfill.min.js",
 	"scripts": {
