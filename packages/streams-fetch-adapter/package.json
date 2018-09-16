@@ -21,6 +21,6 @@
 	"devDependencies": {
 		"rollup": "^0.65.2",
 		"rollup-plugin-typescript": "^0.8.1",
-		"typescript": "^2.9.2"
+		"typescript": "^3.0.3"
 	}
 }

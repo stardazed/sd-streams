@@ -5,7 +5,7 @@ devDependencies:
   rollup-plugin-node-resolve: 3.4.0
   rollup-plugin-terser: 1.0.1
   rollup-plugin-typescript: 0.8.1
-  typescript: 2.9.2
+  typescript: 3.0.3
 packages:
   /@babel/code-frame/7.0.0:
     dependencies:
@@ -225,13 +225,13 @@ packages:
     hasBin: true
     resolution:
       integrity: sha1-tHXW4N/wv1DyluXKbvn7tccyDx4=
-  /typescript/2.9.2:
+  /typescript/3.0.3:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-Gr4p6nFNaoufRIY4NMdpQRNmgxVIGMs4Fcu/ujdYk3nAZqk7supzBE9idmvfZIlH/Cuj//dvi+019qEue9lV0w==
+      integrity: sha512-kk80vLW9iGtjMnIv11qyxLqZm20UklzuR2tL0QAnDIygIUIemcZMxlMWudl9OOt76H3ntVzcTiddQ1/pAAJMYg==
 registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
@@ -242,4 +242,4 @@ specifiers:
   rollup-plugin-node-resolve: ^3.3.0
   rollup-plugin-terser: ^1.0.1
   rollup-plugin-typescript: ^0.8.1
-  typescript: ^2.9.2
+  typescript: ^3.0.3
