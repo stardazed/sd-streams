@@ -21,8 +21,8 @@ an implementation of the `TextDecoderStream` and `TextEncoderStream` from the
 Encoding standard, linking the two standards for best compatibility and reusability.
 
 👉 [@stardazed/streams-polyfill](https://www.npmjs.com/package/@stardazed/streams-polyfill) —
-a polyfill combining the above two packages for a seamless, drop-in integration
-of stardazed streams + fetch in modern browsers and Node.
+a polyfill combining the above three packages for a seamless, drop-in integration
+of stardazed streams + fetch + encoding in modern browsers and Node.
 
 Copyright
 ---------
