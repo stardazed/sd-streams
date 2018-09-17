@@ -1,6 +1,6 @@
 {
 	"name": "@stardazed/streams-text-encoding",
-	"description": "Text encoder and decoder streams implementation",
+	"description": "Implementation of text encoder and decoder streams",
 	"version": "1.0.0",
 	"author": {
 		"name": "Arthur Langereis"
@@ -18,6 +18,10 @@
 		"build": "rollup -c",
 		"prepublishOnly": "npm run build"
 	},
+	"files": [
+		"dist/*.d.ts",
+		"dist/*.js"
+	],
 	"devDependencies": {
 		"rollup": "^0.65.2",
 		"rollup-plugin-typescript": "^0.8.1",
