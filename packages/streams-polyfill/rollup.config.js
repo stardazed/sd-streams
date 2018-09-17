@@ -5,10 +5,10 @@ import tsc from "rollup-plugin-typescript";
 import { terser } from "rollup-plugin-terser";
 
 const banner = `/**
- * @stardazed/streams-polyfill - drop-in polyfill for Web Streams with fetch integration
+ * @stardazed/streams-polyfill - drop-in polyfill for Web Streams with fetch and encoding integration
  * Part of Stardazed
  * (c) 2018 by Arthur Langereis - @zenmumbler
- * https://github.com/stardazed/sd-streams-fetch-adapter
+ * https://github.com/stardazed/sd-streams
  */`;
 
 export default [

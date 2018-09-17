@@ -1,6 +1,7 @@
 devDependencies:
   '@stardazed/streams': 'link:../streams'
   '@stardazed/streams-fetch-adapter': 'link:../streams-fetch-adapter'
+  '@stardazed/streams-text-encoding': 'link:../stream-text-encoding'
   rollup: 0.65.2
   rollup-plugin-node-resolve: 3.4.0
   rollup-plugin-terser: 1.0.1
@@ -238,6 +239,7 @@ shrinkwrapVersion: 3
 specifiers:
   '@stardazed/streams': ^1.0.2
   '@stardazed/streams-fetch-adapter': ^1.0.1
+  '@stardazed/streams-text-encoding': ^1.0.1
   rollup: ^0.65.2
   rollup-plugin-node-resolve: ^3.3.0
   rollup-plugin-terser: ^1.0.1

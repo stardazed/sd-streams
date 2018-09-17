@@ -1,5 +1,6 @@
 import * as sds from "@stardazed/streams";
 import { ReadableStreamConstructor, ResponseConstructor, createAdaptedFetch, createAdaptedResponse } from "@stardazed/streams-fetch-adapter";
+import { TextDecoderStream, TextEncoderStream } from "@stardazed/streams-text-encoding";
 
 function getGlobal(): Record<string, any> | undefined {
 	let self;
@@ -91,7 +92,7 @@ function installStardazedStreams() {
 
 	const nativeReadableStream = getGlobalValue<ReadableStreamConstructor>("ReadableStream");
 
-	// only path fetch types when they are available
+	// only patch fetch types when they are available
 	if (nativeFetch && nativeResponse) {
 		const adaptedFetch = createAdaptedFetch(nativeFetch, nativeReadableStream, sds.ReadableStream);
 		const adaptedResponse = createAdaptedResponse(nativeResponse, nativeReadableStream, sds.ReadableStream);
@@ -107,4 +108,24 @@ function installStardazedStreams() {
 	globalObject["CountQueuingStrategy"] = sds.CountQueuingStrategy;
 }
 
+function installEncodingStreams() {
+	// this step occurs separately from the streams install as we may need to
+	// supplement a full streams implementation that does not have these types
+	const globalObject = getGlobal();
+	if (! globalObject) {
+		// this would be very unusual
+		return;
+	}
+	const nativeTDS = getGlobalValue<TextDecoderStream>("TextDecoderStream");
+	if (typeof nativeTDS !== "function") {
+		globalObject["TextDecoderStream"] = TextDecoderStream;
+	}
+
+	const nativeTES = getGlobalValue<TextEncoderStream>("TextEncoderStream");	
+	if (typeof nativeTES !== "function") {
+		globalObject["TextEncoderStream"] = TextEncoderStream;
+	}
+}
+
 installStardazedStreams();
+installEncodingStreams();
