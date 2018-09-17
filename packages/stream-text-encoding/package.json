@@ -1,7 +1,7 @@
 {
 	"name": "@stardazed/streams-text-encoding",
 	"description": "Implementation of text encoder and decoder streams",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"author": {
 		"name": "Arthur Langereis"
 	},
