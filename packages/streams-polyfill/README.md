@@ -3,7 +3,7 @@
 This package provides a full polyfill for the [Web Streams Standard](https://streams.spec.whatwg.org)
 for use in browsers, including patching the built-in `fetch` and `Response` types
 to support the `body` field for both downloading and uploading. It also provides the
-`TextEncoderStream` and `TextDecoderStream` from the [Encodings Standard](https://encoding.spec.whatwg.org/)
+`TextEncoderStream` and `TextDecoderStream` from the [Encoding Standard](https://encoding.spec.whatwg.org/)
 where necessary.
 
 This uses the fully compliant [Stardazed streams](https://www.npmjs.com/package/@stardazed/streams)

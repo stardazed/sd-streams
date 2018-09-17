@@ -1,7 +1,7 @@
 @stardazed/streams-text-encoding
 ================================
 This package provides an implementation of the `TextEncoderStream` and `TextDecoderStream`
-types from the [Encodings Standard](https://encoding.spec.whatwg.org/).
+types from the [Encoding Standard](https://encoding.spec.whatwg.org/).
 
 **⚠️ Important**: this is _NOT_ a polyfill. The classes are just normal exports.
 
