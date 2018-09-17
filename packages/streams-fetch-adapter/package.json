@@ -18,6 +18,10 @@
 		"build": "rollup -c",
 		"prepublishOnly": "npm run build"
 	},
+	"files": [
+		"dist/*.d.ts",
+		"dist/*.js"
+	],
 	"devDependencies": {
 		"rollup": "^0.65.2",
 		"rollup-plugin-typescript": "^0.8.1",
