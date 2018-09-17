@@ -1,5 +1,9 @@
 # @stardazed/streams-polyfill changelog
 
+## 1.0.5
+_2018-09-17_
+* Add TextEncoderStream and TextDecoderStream polyfills
+
 ## 1.0.4
 _2018-09-10_
 * Incorporate changes to streams spec up to 2018-09-10

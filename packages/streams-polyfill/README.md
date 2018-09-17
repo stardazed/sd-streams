@@ -2,11 +2,14 @@
 ===========================
 This package provides a full polyfill for the [Web Streams Standard](https://streams.spec.whatwg.org)
 for use in browsers, including patching the built-in `fetch` and `Response` types
-to support the `body` field for both downloading and uploading.
+to support the `body` field for both downloading and uploading. It also provides the
+`TextEncoderStream` and `TextDecoderStream` from the [Encodings Standard](https://encoding.spec.whatwg.org/)
+where necessary.
 
 This uses the fully compliant [Stardazed streams](https://www.npmjs.com/package/@stardazed/streams)
-implementation and the [streams fetch adapter](https://www.npmjs.com/package/@stardazed/streams-fetch-adapter)
-to connect the implementation to the current environment.
+and [text encoding streams](https://www.npmjs.com/package/@stardazed/streams-text-encoding)
+implementations, and the [streams fetch adapter](https://www.npmjs.com/package/@stardazed/streams-fetch-adapter)
+to connect the implementations to the current environment.
 
 💡 **NB:** if you have your own `ReadableStream` replacement — including mocks or modifications
 of the built-in type — and want to use it with `fetch`, you can use the fetch adapter
@@ -25,8 +28,12 @@ and Chrome 54+.
 I have not tested older browsers with a `fetch` polyfill. It may work, it may not.
 If you try it out, ensure the `fetch` polyfill loads before this one.
 
+The text encoding streams require a compliant `TextEncoder` and `TextDecoder` to be present
+either natively or through a polyfill. Browser support: Safari 10.1+, (iOS 10.3+),
+Firefox 19+, Chrome 38+. Edge currently does NOT support these interfaces.
+
 ### Node
-Node (as of July 2018) has no built-in fetch or web streams support. I did not do extensive
+Node (as of September 2018) has no built-in fetch or web streams support. I did not do extensive
 tests but this polyfill, when `require()`d, will install all streams types in Node's
 `global` object and they then work as expected. Like with browsers, cooperation with any
 `fetch` polyfills available has not been tested.
