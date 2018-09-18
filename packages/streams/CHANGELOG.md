@@ -1,5 +1,9 @@
 # @stardazed/streams changelog
 
+## 1.0.6
+_2018-09-18_
+* Fix broken URLs
+
 ## 1.0.5
 _2018-09-10_
 * Incorporate changes to streams spec up to 2018-09-10
