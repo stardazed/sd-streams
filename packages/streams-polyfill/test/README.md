@@ -9,5 +9,5 @@ I also added a `node` folder and added a modified version of the
 simple-random-stream example. Node generally does not make use of polyfills,
 but this was mainly there to show that it does work in principle.
 
-See the [main readme](https://github.com/stardazed/sd-streams-polyfill)
+See the [main readme](https://github.com/stardazed/sd-streams/tree/master/packages/streams-polyfill)
 of this repo for more info on compatibility and usage.

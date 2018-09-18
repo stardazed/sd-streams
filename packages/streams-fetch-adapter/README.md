@@ -17,8 +17,8 @@ user-agent and cannot be simulated.
 **⚠️ Important**: this is _NOT_ a polyfill. This package only provides helper
 functions that can be used to make adapted types for a streams implementation.
 
-👉 If you want a polyfill for the [Stardazed streams](https://github.com/stardazed/sd-streams)
-implementation, use the ⭐️[Stardazed streams polyfill](https://github.com/stardazed/sd-streams-polyfill)⭐️.
+👉 If you want a polyfill for the [Stardazed streams](https://www.npmjs.com/package/@stardazed/streams)
+implementation, use the ⭐️[Stardazed streams polyfill](https://www.npmjs.com/package/@stardazed/streams-polyfill)⭐️.
 
 Installation
 ------------
@@ -34,7 +34,7 @@ Usage
 -----
 Use this package if you want to adapt `fetch` and `Response` to support your custom
 `ReadableStream` implementation, this may be for things like mocks or modified versions
-of built-in streams or for a full replacement, like [Stardazed streams](https://github.com/stardazed/sd-streams).
+of built-in streams or for a full replacement, like [Stardazed streams](https://www.npmjs.com/package/@stardazed/streams).
 
 You only need to adapt the `Response` class if you want to manually construct a `Response`
 with your custom `ReadableStream` instance as the body. If you just want to use your

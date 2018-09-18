@@ -27,11 +27,11 @@ the `body` of a `fetch` call, which may either not be implemented at all or retu
 internal `ReadableStream`. Due to implementation details of streams, you cannot mix and
 match the types in this implementation with those provided by the browser.
 
-👉 The [streams fetch adapter](https://github.com/stardazed/sd-streams-fetch-adapter) package
+👉 The [streams fetch adapter](https://www.npmjs.com/package/@stardazed/streams-fetch-adapter) package
 can be used to create modified versions of `fetch` and `Response` to work with this or
 any other `ReadableStream` implementation.
 
-👉 The [Stardazed streams polyfill](https://github.com/stardazed/sd-streams-polyfill)
+👉 The [Stardazed streams polyfill](https://www.npmjs.com/package/@stardazed/streams-polyfill)
 package provides a full replacement for streams, `fetch` and `Response` as a global polyfill.
 Use this if you just want a drop-in, make-it-work version of Stardazed streams.
 

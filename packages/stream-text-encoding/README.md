@@ -6,7 +6,7 @@ types from the [Encoding Standard](https://encoding.spec.whatwg.org/).
 **⚠️ Important**: this is _NOT_ a polyfill. The classes are just normal exports.
 
 👉 If you want an all-in-one polyfill for streams, fetch interop and text encoding streams,
-use the ⭐️[Stardazed streams polyfill](https://github.com/stardazed/sd-streams-polyfill)⭐️!
+use the ⭐️[Stardazed streams polyfill](https://www.npmjs.com/package/@stardazed/streams-polyfill)⭐️!
 
 Installation
 ------------
