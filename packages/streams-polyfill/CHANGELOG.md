@@ -1,5 +1,9 @@
 # @stardazed/streams-polyfill changelog
 
+## 1.0.6
+_2018_09_19_
+* Add combined TypeScript types to this package so they will be accessible when using polyfill only
+
 ## 1.0.5
 _2018-09-17_
 * Add TextEncoderStream and TextDecoderStream polyfills

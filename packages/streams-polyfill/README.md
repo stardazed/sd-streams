@@ -79,6 +79,20 @@ import "@stardazed/streams-polyfill";
 
 All stream types are available globally after that point, no further actions are needed.
 
+⚠️ For TypeScript users, until the TS standard lib definitions fix the type constructor for
+`ReadableStream`, you will get an error when providing any params to the `ReadableStream`
+constructor. You will have to add a ts ignore directive on the preceding line and also
+explicitly type the source object, as follows:
+
+```ts
+// @ts-ignore
+const myReadable = new ReadableStream({
+	start(controller) {
+		controller.enqueue("stuff");
+	}
+} as ReadableStreamSource);
+```
+
 API Usage
 ---------
 See the following resources for more info on using the Streams standard.
