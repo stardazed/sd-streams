@@ -87,9 +87,9 @@ explicitly type the source object, as follows:
 ```ts
 // @ts-ignore
 const myReadable = new ReadableStream({
-	start(controller) {
-		controller.enqueue("stuff");
-	}
+    start(controller) {
+        controller.enqueue("stuff");
+    }
 } as ReadableStreamSource);
 ```
 
