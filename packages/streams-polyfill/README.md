@@ -6,6 +6,8 @@ to support the `body` field for both downloading and uploading. It also provides
 `TextEncoderStream` and `TextDecoderStream` from the [Encoding Standard](https://encoding.spec.whatwg.org/)
 where necessary.
 
+Download size: 11KiB gzipped, 59KiB uncompressed.
+
 This uses the fully compliant [Stardazed streams](https://www.npmjs.com/package/@stardazed/streams)
 and [text encoding streams](https://www.npmjs.com/package/@stardazed/streams-text-encoding)
 implementations, and the [streams fetch adapter](https://www.npmjs.com/package/@stardazed/streams-fetch-adapter)
