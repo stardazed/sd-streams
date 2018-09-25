@@ -5,9 +5,7 @@
  * https://github.com/stardazed/sd-streams
  */
 
-import { ReadableStream } from "./readable-stream";
-import { WritableStream } from "./writable-stream";
-import { TransformStream } from "./transform-stream";
-import { ByteLengthQueuingStrategy, CountQueuingStrategy } from "./strategies";
-
-export { ReadableStream, WritableStream, TransformStream, ByteLengthQueuingStrategy, CountQueuingStrategy };
+export { ReadableStream, ReadableStreamTee } from "./readable-stream";
+export { WritableStream } from "./writable-stream";
+export { TransformStream } from "./transform-stream";
+export { ByteLengthQueuingStrategy, CountQueuingStrategy } from "./strategies";

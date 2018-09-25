@@ -102,6 +102,8 @@ export interface StreamTransform {
 	writable: WritableStream;
 }
 
+export declare function ReadableStreamTee(stream: ReadableStream, cloneForBranch2: boolean): ReadableStream[]
+
 export declare class ReadableStream {
 	constructor(source?: ReadableStreamSource, strategy?: StreamStrategy);
 
@@ -130,7 +132,7 @@ export interface Transformer {
 	start?(controller: TransformStreamDefaultController): void | Promise<void>;
 	transform?(chunk: any, controller: TransformStreamDefaultController): void | Promise<void>;
 	flush?(controller: TransformStreamDefaultController): void | Promise<void>;
-	
+
 	readableType?: undefined; // for future spec changes
 	writableType?: undefined; // for future spec changes
 }
