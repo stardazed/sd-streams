@@ -51,7 +51,7 @@ export class ReadableStream implements rs.ReadableStream {
 	}
 
 	getReader(options: rs.ReadableStreamReaderOptions = {}): rs.ReadableStreamReader {
-		if (! rs.isReadableStream(this)) {
+		if (!rs.isReadableStream(this)) {
 			throw new TypeError();
 		}
 		const { mode } = options;
@@ -65,7 +65,7 @@ export class ReadableStream implements rs.ReadableStream {
 	}
 
 	cancel(reason: any): Promise<void> {
-		if (! rs.isReadableStream(this)) {
+		if (!rs.isReadableStream(this)) {
 			return Promise.reject(new TypeError());
 		}
 		if (rs.isReadableStreamLocked(this)) {
@@ -75,81 +75,7 @@ export class ReadableStream implements rs.ReadableStream {
 	}
 
 	tee(): ReadableStream[] {
-		if (! rs.isReadableStream(this)) {
-			throw new TypeError();
-		}
-		// Assert: Type(cloneForBranch2) is Boolean.
-
-		const reader = new ReadableStreamDefaultReader(this);
-		let closedOrErrored = false;
-		let canceled1 = false;
-		let canceled2 = false;
-		let reason1: string | undefined;
-		let reason2: string | undefined;
-		let branch1: ReadableStream;
-		let branch2: ReadableStream;
-
-		let cancelResolve: (reason: any) => void;
-		const cancelPromise = new Promise<void>(resolve => cancelResolve = resolve);
-
-		const pullAlgorithm = () => {
-			return rs.readableStreamDefaultReaderRead(reader).then(
-				({ value, done }) => {
-					if (done && !closedOrErrored) {
-						if (! canceled1) {
-							rs.readableStreamDefaultControllerClose(branch1![rs.readableStreamController_] as ReadableStreamDefaultController);
-						}
-						if (! canceled2) {
-							rs.readableStreamDefaultControllerClose(branch2![rs.readableStreamController_] as ReadableStreamDefaultController);
-						}
-						closedOrErrored = true;
-					}
-					if (closedOrErrored) {
-						return;
-					}
-					const value1 = value, value2 = value;
-					if (! canceled1) {
-						rs.readableStreamDefaultControllerEnqueue(branch1![rs.readableStreamController_] as ReadableStreamDefaultController, value1);
-					}
-					if (! canceled2) {
-						rs.readableStreamDefaultControllerEnqueue(branch2![rs.readableStreamController_] as ReadableStreamDefaultController, value2);
-					}
-				});
-		};
-
-		const cancel1Algorithm = (reason: any) => {
-			canceled1 = true;
-			reason1 = reason;
-			if (canceled2) {
-				const cancelResult = rs.readableStreamCancel(this, [reason1, reason2]);
-				cancelResolve(cancelResult);
-			}
-			return cancelPromise;
-		};
-
-		const cancel2Algorithm = (reason: any) => {
-			canceled2 = true;
-			reason2 = reason;
-			if (canceled1) {
-				const cancelResult = rs.readableStreamCancel(this, [reason1, reason2]);
-				cancelResolve(cancelResult);
-			}
-			return cancelPromise;
-		};
-
-		const startAlgorithm = () => undefined;
-		branch1 = createReadableStream(startAlgorithm, pullAlgorithm, cancel1Algorithm);
-		branch2 = createReadableStream(startAlgorithm, pullAlgorithm, cancel2Algorithm);
-
-		reader[rs.closedPromise_].promise.catch(error => {
-			if (! closedOrErrored) {
-				rs.readableStreamDefaultControllerError(branch1![rs.readableStreamController_] as ReadableStreamDefaultController, error);
-				rs.readableStreamDefaultControllerError(branch2![rs.readableStreamController_] as ReadableStreamDefaultController, error);
-				closedOrErrored = true;
-			}
-		});
-
-		return [branch1, branch2];
+		return ReadableStreamTee(this, false)
 	}
 
 	pipeThrough(transform: rs.StreamTransform, options?: rs.PipeToOptions): ReadableStream {
@@ -161,16 +87,16 @@ export class ReadableStream implements rs.ReadableStream {
 
 		// not sure why the spec is so pedantic about the authenticity of only this particular promise, but hey
 		try {
-			Promise.prototype.then.call(pipeResult, undefined, () => {});
-		} catch (_e) {}
+			Promise.prototype.then.call(pipeResult, undefined, () => { });
+		} catch (_e) { }
 		return readable;
 	}
 
 	pipeTo(dest: ws.WritableStream, options: rs.PipeToOptions = {}): Promise<void> {
-		if (! rs.isReadableStream(this)) {
+		if (!rs.isReadableStream(this)) {
 			return Promise.reject(new TypeError());
 		}
-		if (! ws.isWritableStream(dest)) {
+		if (!ws.isWritableStream(dest)) {
 			return Promise.reject(new TypeError());
 		}
 		if (rs.isReadableStreamLocked(this)) {
@@ -179,7 +105,7 @@ export class ReadableStream implements rs.ReadableStream {
 		if (ws.isWritableStreamLocked(dest)) {
 			return Promise.reject(new TypeError("Cannot pipe to a locked stream"));
 		}
-		
+
 		return pipeTo(this, dest, options);
 	}
 }
@@ -208,7 +134,7 @@ export function createReadableByteStream(startAlgorithm: rs.StartAlgorithm, pull
 	}
 	// Assert: ! IsNonNegativeNumber(highWaterMark) is true.
 	if (autoAllocateChunkSize !== undefined) {
-		if (! shared.isInteger(autoAllocateChunkSize) || autoAllocateChunkSize <= 0) {
+		if (!shared.isInteger(autoAllocateChunkSize) || autoAllocateChunkSize <= 0) {
 			throw new RangeError("autoAllocateChunkSize must be a positive, finite integer");
 		}
 	}
@@ -218,4 +144,83 @@ export function createReadableByteStream(startAlgorithm: rs.StartAlgorithm, pull
 	const controller = Object.create(ReadableByteStreamController.prototype) as ReadableByteStreamController;
 	rs.setUpReadableByteStreamController(stream, controller, startAlgorithm, pullAlgorithm, cancelAlgorithm, highWaterMark, autoAllocateChunkSize);
 	return stream;
+}
+
+export function ReadableStreamTee(stream: ReadableStream, cloneForBranch2: boolean) {
+	if (!rs.isReadableStream(stream)) {
+		throw new TypeError();
+	}
+	if (typeof cloneForBranch2 !== 'boolean')
+		throw new TypeError();
+
+	const reader = new ReadableStreamDefaultReader(stream);
+	let closedOrErrored = false;
+	let canceled1 = false;
+	let canceled2 = false;
+	let reason1: string | undefined;
+	let reason2: string | undefined;
+	let branch1: ReadableStream;
+	let branch2: ReadableStream;
+
+	let cancelResolve: (reason: any) => void;
+	const cancelPromise = new Promise<void>(resolve => cancelResolve = resolve);
+
+	const pullAlgorithm = () => {
+		return rs.readableStreamDefaultReaderRead(reader).then(
+			({ value, done }) => {
+				if (done && !closedOrErrored) {
+					if (!canceled1) {
+						rs.readableStreamDefaultControllerClose(branch1![rs.readableStreamController_] as ReadableStreamDefaultController);
+					}
+					if (!canceled2) {
+						rs.readableStreamDefaultControllerClose(branch2![rs.readableStreamController_] as ReadableStreamDefaultController);
+					}
+					closedOrErrored = true;
+				}
+				if (closedOrErrored) {
+					return;
+				}
+				const value1 = value, value2 = value;
+				if (!canceled1) {
+					rs.readableStreamDefaultControllerEnqueue(branch1![rs.readableStreamController_] as ReadableStreamDefaultController, value1);
+				}
+				if (!canceled2) {
+					rs.readableStreamDefaultControllerEnqueue(branch2![rs.readableStreamController_] as ReadableStreamDefaultController, cloneForBranch2 ? value2.slice(0) : value2);
+				}
+			});
+	};
+
+	const cancel1Algorithm = (reason: any) => {
+		canceled1 = true;
+		reason1 = reason;
+		if (canceled2) {
+			const cancelResult = rs.readableStreamCancel(stream, [reason1, reason2]);
+			cancelResolve(cancelResult);
+		}
+		return cancelPromise;
+	};
+
+	const cancel2Algorithm = (reason: any) => {
+		canceled2 = true;
+		reason2 = reason;
+		if (canceled1) {
+			const cancelResult = rs.readableStreamCancel(stream, [reason1, reason2]);
+			cancelResolve(cancelResult);
+		}
+		return cancelPromise;
+	};
+
+	const startAlgorithm = () => undefined;
+	branch1 = createReadableStream(startAlgorithm, pullAlgorithm, cancel1Algorithm);
+	branch2 = createReadableStream(startAlgorithm, pullAlgorithm, cancel2Algorithm);
+
+	reader[rs.closedPromise_].promise.catch(error => {
+		if (!closedOrErrored) {
+			rs.readableStreamDefaultControllerError(branch1![rs.readableStreamController_] as ReadableStreamDefaultController, error);
+			rs.readableStreamDefaultControllerError(branch2![rs.readableStreamController_] as ReadableStreamDefaultController, error);
+			closedOrErrored = true;
+		}
+	});
+
+	return [branch1, branch2];
 }
