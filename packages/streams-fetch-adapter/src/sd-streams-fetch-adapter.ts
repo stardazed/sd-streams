@@ -6,7 +6,7 @@
  */
 
 // Minimal declarations needed to have things compile
-// TypeScript's declarations as of 2.9.2 are incomplete
+// TypeScript's declarations as of 3.1.1 are incomplete
 interface StreamStrategy {
 	size?(chunk?: any): number;
 	highWaterMark?: number;
@@ -51,6 +51,8 @@ declare class ReadableStream {
 interface ReadableStreamConstructor {
 	new(source?: ReadableStreamSource, strategy?: StreamStrategy): ReadableStream;
 }
+
+type ReadableStreamTeeFunction = (stream: ReadableStream, cloneForBranch2: boolean) => ReadableStream[];
 
 type FetchBody = Blob | BufferSource | FormData | ReadableStream | string | null;
 type AdaptedFetch = (input?: Request | string, init?: RequestInit) => Promise<Response>;
@@ -274,7 +276,7 @@ function readAllBytesFromStream(reader: ReadableStreamDefaultReader, mimeType: s
  * @param body The ReadableStream passed to the Response's constructor as body
  * @param init The ResponseInit options passed to the Response's constructor
  */
-function createResponseProxyWithStreamBody(nativeResponse: ResponseConstructor, body: ReadableStream, init?: ResponseInit): Response {
+function createResponseProxyWithStreamBody(nativeResponse: ResponseConstructor, customReadableStreamTee: ReadableStreamTeeFunction, body: ReadableStream, init?: ResponseInit): Response {
 	const tempResponse = new nativeResponse("fake", init);
 	const mimeType = getMIMETypeFromHeadersInit(tempResponse.headers);
 	let finalResponse: Promise<Response> | undefined;
@@ -313,9 +315,9 @@ function createResponseProxyWithStreamBody(nativeResponse: ResponseConstructor, 
 		get headers() { return tempResponse.headers; }
 
 		clone() {
-			const [body1, body2] = body.tee();
+			const [body1, body2] = customReadableStreamTee(body, true);
 			body = body1;
-			return createResponseProxyWithStreamBody(nativeResponse, body2, init);
+			return createResponseProxyWithStreamBody(nativeResponse, customReadableStreamTee, body2, init);
 		}
 
 		// Body mixin
@@ -336,12 +338,18 @@ function createResponseProxyWithStreamBody(nativeResponse: ResponseConstructor, 
  * @param nativeResponse The constructor function of the browser's built in Response class
  * @param nativeReadableStream The constructor function of the browser's built in ReadableStream class, if available
  * @param customReadableStream The constructor function of your custom ReadableStream
+ * @param customReadableStreamTee The `ReadableStreamTee` method implementation for the custom ReadableStream
  */
-export function createAdaptedResponse(nativeResponse: ResponseConstructor, nativeReadableStream: ReadableStreamConstructor | undefined, customReadableStream: ReadableStreamConstructor): ResponseConstructor {
+export function createAdaptedResponse(
+	nativeResponse: ResponseConstructor,
+	nativeReadableStream: ReadableStreamConstructor | undefined,
+	customReadableStream: ReadableStreamConstructor,
+	customReadableStreamTee: ReadableStreamTeeFunction
+): ResponseConstructor {
 	const wrappedResponse = function(body?: any, init?: ResponseInit) {
 		if (body instanceof customReadableStream) {
 			if (nativeReadableStream === undefined || !("body" in nativeResponse)) {
-				return createResponseProxyWithStreamBody(nativeResponse, body, init);
+				return createResponseProxyWithStreamBody(nativeResponse, customReadableStreamTee, body, init);
 			}
 			body = wrapReadableStream(body, nativeReadableStream);
 		}

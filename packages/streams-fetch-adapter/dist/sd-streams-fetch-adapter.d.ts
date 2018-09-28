@@ -27,6 +27,8 @@ interface ReadableStreamConstructor {
 	new(source?: any, strategy?: any): ReadableStream;
 }
 
+type ReadableStreamTeeFunction = (stream: ReadableStream, cloneForBranch2: boolean) => ReadableStream[];
+
 interface ResponseConstructor {
 	new(body?: Blob | BufferSource | FormData | ReadableStream | string | null, init?: ResponseInit): Response;
 }
@@ -54,13 +56,22 @@ export type AdaptedFetch = (input?: Request | string, init?: RequestInit) => Pro
  * @param nativeFetch A reference to the browser native fetch function to patch
  * @param customReadableStream The constructor function of your custom ReadableStream
  */
-export declare function createAdaptedFetch(nativeFetch: GlobalFetch["fetch"], nativeReadableStream: ReadableStreamConstructor | undefined, customReadableStream: ReadableStreamConstructor): AdaptedFetch
+export declare function createAdaptedFetch(
+	nativeFetch: GlobalFetch["fetch"],
+	nativeReadableStream: ReadableStreamConstructor | undefined,
+	customReadableStream: ReadableStreamConstructor
+): AdaptedFetch;
 
 /**
- * Wrap the Response constructor to add or patch handling of ReadableStream
- * body objects.
+ * Wrap the Response constructor to add or patch handling of ReadableStream body objects.
  * @param nativeResponse The constructor function of the browser's built in Response class
  * @param nativeReadableStream The constructor function of the browser's built in ReadableStream class, if available
  * @param customReadableStream The constructor function of your custom ReadableStream
+ * @param customReadableStreamTee The `ReadableStreamTee` method implementation for the custom ReadableStream
  */
-export declare function createAdaptedResponse(nativeResponse: ResponseConstructor, nativeReadableStream: ReadableStreamConstructor | undefined, customReadableStream: ReadableStreamConstructor): ResponseConstructor;
+export declare function createAdaptedResponse(
+	nativeResponse: ResponseConstructor,
+	nativeReadableStream: ReadableStreamConstructor | undefined,
+	customReadableStream: ReadableStreamConstructor,
+	customReadableStreamTee: ReadableStreamTeeFunction
+): ResponseConstructor;
