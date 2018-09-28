@@ -15,7 +15,7 @@
 	"module": "dist/sd-streams-text-encoding.esm.js",
 	"types": "dist/sd-streams-text-encoding.d.ts",
 	"scripts": {
-		"build": "rollup -c",
+		"build": "tsc --noEmit -p . && rollup -c",
 		"prepublishOnly": "npm run build"
 	},
 	"files": [
