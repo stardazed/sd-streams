@@ -64,12 +64,87 @@ export function copyDataBlockBytes(toBlock: ArrayBufferLike, toIndex: number, fr
 	new Uint8Array(toBlock, toIndex, count).set(new Uint8Array(fromBlock, fromIndex, count));
 }
 
+// helper memoisation map for object values
+// weak so it doesn't keep memoized versions of old objects indefinitely.
+const objectCloneMemo = new WeakMap<object, object>();
+
 /**
  * Implement a method of value cloning that is reasonably close to performing `StructuredSerialize(StructuredDeserialize(value))`
- * from the HTML standard. Used only by the internal `readableStreamTee` method to clone values for connected implementations.
+ * from the HTML standard. Used by the internal `readableStreamTee` method to clone values for connected implementations.
+ * @see https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeinternal
  */
-export function cloneValue<T>(value: T) {
-	return value;
+export function cloneValue(value: any): any {
+	const valueType = typeof value;
+	switch (valueType) {
+		case "number":
+		case "string":
+		case "boolean":
+		case "undefined":
+		// @ts-ignore
+		case "bigint":
+			return value;
+		case "object": {
+			if (objectCloneMemo.has(value)) {
+				return objectCloneMemo.get(value);
+			}
+			if (value === null) {
+				return value;
+			}
+			if (value instanceof Date) {
+				return new Date(value.valueOf());
+			}
+			if (value instanceof RegExp) {
+				return new RegExp(value);
+			}
+			if (value instanceof SharedArrayBuffer) {
+				return value;
+			}
+			if (value instanceof ArrayBuffer) {
+				const cloned = cloneArrayBuffer(value, 0, value.byteLength, ArrayBuffer);
+				objectCloneMemo.set(value, cloned);
+				return cloned;
+			}
+			if (ArrayBuffer.isView(value)) {
+				const clonedBuffer = cloneValue(value.buffer) as ArrayBufferLike;
+				// Use DataViewConstructor type purely for type-checking, can be a DataView or TypedArray.
+				// They use the same constructor signature, only DataView has a length in bytes and TypedArrays
+				// use a length in terms of elements, so we adjust for that.
+				let length: number;
+				if (value instanceof DataView) {
+					length = value.byteLength;
+				}
+				else {
+					length = (value as Uint8Array).length;
+				}
+				return new (value.constructor as DataViewConstructor)(clonedBuffer, value.byteOffset, length);
+			}
+			if (value instanceof Map) {
+				const clonedMap = new Map();
+				objectCloneMemo.set(value, clonedMap);
+				value.forEach((v, k) => clonedMap.set(k, cloneValue(v)));
+				return clonedMap;
+			}
+			if (value instanceof Set) {
+				const clonedSet = new Map();
+				objectCloneMemo.set(value, clonedSet);
+				value.forEach((v, k) => clonedSet.set(k, cloneValue(v)));
+				return clonedSet;
+			}
+			
+			// generic object
+			const clonedObj = {} as any;
+			objectCloneMemo.set(value, clonedObj);
+			const sourceKeys = Object.getOwnPropertyNames(value);
+			for (const key of sourceKeys) {
+				clonedObj[key] = cloneValue(value[key]);
+			}
+			return clonedObj;
+		}
+		case "symbol":
+		case "function":
+		default:
+			throw new DOMException("Uncloneable value in stream", "DataCloneError");
+	}
 }
 
 export function promiseCall<F extends Function>(f: F, v: object | undefined, args: any[]) { // tslint:disable-line:ban-types
