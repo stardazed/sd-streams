@@ -2,7 +2,7 @@ import * as sds from "@stardazed/streams";
 import { ReadableStreamConstructor, ResponseConstructor, createAdaptedFetch, createAdaptedResponse } from "@stardazed/streams-fetch-adapter";
 import { TextDecoderStream, TextEncoderStream } from "@stardazed/streams-text-encoding";
 
-function getGlobal(): Record<string, any> | undefined {
+function getGlobal(): Record<string, unknown> | undefined {
 	let self;
 	if (self === undefined) {
 		try {
@@ -22,7 +22,7 @@ function getGlobal(): Record<string, any> | undefined {
 
 function getGlobalValue<T>(name: string): T | undefined {
 	const global = getGlobal();
-	let value: any;
+	let value: unknown;
 	if (global !== undefined) {
 		value = global[name];
 	}
@@ -31,13 +31,13 @@ function getGlobalValue<T>(name: string): T | undefined {
 
 function getGlobalOrContextualValue<T>(name: string): T | undefined {
 	const global = getGlobal();
-	let value: any;
+	let value: unknown;
 	if (global !== undefined) {
 		value = global[name];
 	}
 	if (value === undefined) {
 		try {
-			// try a direct fetch of 
+			// try to use contextual name resolution as final recourse
 			value = eval(name); // tslint:disable-line
 		}
 		catch (e) {}
@@ -52,7 +52,7 @@ function hasCompleteStreamsImplementation() {
 	const blqs = getGlobalValue<object>("ByteLengthQueuingStrategy");
 	const cqs = getGlobalValue<object>("CountQueuingStrategy");
 
-	const isFunc = (f: any): f is Function => typeof f === "function"; // tslint:disable-line:ban-types
+	const isFunc = (f: unknown): f is Function => typeof f === "function"; // tslint:disable-line:ban-types
 
 	if (! (isFunc(rs) && isFunc(ws) && isFunc(ts) && isFunc(blqs) && isFunc(cqs))) {
 		return false;
