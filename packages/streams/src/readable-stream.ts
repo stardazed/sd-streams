@@ -75,81 +75,7 @@ export class ReadableStream implements rs.ReadableStream {
 	}
 
 	tee(): ReadableStream[] {
-		if (! rs.isReadableStream(this)) {
-			throw new TypeError();
-		}
-		// Assert: Type(cloneForBranch2) is Boolean.
-
-		const reader = new ReadableStreamDefaultReader(this);
-		let closedOrErrored = false;
-		let canceled1 = false;
-		let canceled2 = false;
-		let reason1: string | undefined;
-		let reason2: string | undefined;
-		let branch1: ReadableStream;
-		let branch2: ReadableStream;
-
-		let cancelResolve: (reason: any) => void;
-		const cancelPromise = new Promise<void>(resolve => cancelResolve = resolve);
-
-		const pullAlgorithm = () => {
-			return rs.readableStreamDefaultReaderRead(reader).then(
-				({ value, done }) => {
-					if (done && !closedOrErrored) {
-						if (! canceled1) {
-							rs.readableStreamDefaultControllerClose(branch1![rs.readableStreamController_] as ReadableStreamDefaultController);
-						}
-						if (! canceled2) {
-							rs.readableStreamDefaultControllerClose(branch2![rs.readableStreamController_] as ReadableStreamDefaultController);
-						}
-						closedOrErrored = true;
-					}
-					if (closedOrErrored) {
-						return;
-					}
-					const value1 = value, value2 = value;
-					if (! canceled1) {
-						rs.readableStreamDefaultControllerEnqueue(branch1![rs.readableStreamController_] as ReadableStreamDefaultController, value1);
-					}
-					if (! canceled2) {
-						rs.readableStreamDefaultControllerEnqueue(branch2![rs.readableStreamController_] as ReadableStreamDefaultController, value2);
-					}
-				});
-		};
-
-		const cancel1Algorithm = (reason: any) => {
-			canceled1 = true;
-			reason1 = reason;
-			if (canceled2) {
-				const cancelResult = rs.readableStreamCancel(this, [reason1, reason2]);
-				cancelResolve(cancelResult);
-			}
-			return cancelPromise;
-		};
-
-		const cancel2Algorithm = (reason: any) => {
-			canceled2 = true;
-			reason2 = reason;
-			if (canceled1) {
-				const cancelResult = rs.readableStreamCancel(this, [reason1, reason2]);
-				cancelResolve(cancelResult);
-			}
-			return cancelPromise;
-		};
-
-		const startAlgorithm = () => undefined;
-		branch1 = createReadableStream(startAlgorithm, pullAlgorithm, cancel1Algorithm);
-		branch2 = createReadableStream(startAlgorithm, pullAlgorithm, cancel2Algorithm);
-
-		reader[rs.closedPromise_].promise.catch(error => {
-			if (! closedOrErrored) {
-				rs.readableStreamDefaultControllerError(branch1![rs.readableStreamController_] as ReadableStreamDefaultController, error);
-				rs.readableStreamDefaultControllerError(branch2![rs.readableStreamController_] as ReadableStreamDefaultController, error);
-				closedOrErrored = true;
-			}
-		});
-
-		return [branch1, branch2];
+		return readableStreamTee(this, false);
 	}
 
 	pipeThrough(transform: rs.StreamTransform, options?: rs.PipeToOptions): ReadableStream {
@@ -184,7 +110,6 @@ export class ReadableStream implements rs.ReadableStream {
 	}
 }
 
-
 export function createReadableStream(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, sizeAlgorithm?: shared.SizeAlgorithm) {
 	if (highWaterMark === undefined) {
 		highWaterMark = 1;
@@ -200,7 +125,6 @@ export function createReadableStream(startAlgorithm: rs.StartAlgorithm, pullAlgo
 	rs.setUpReadableStreamDefaultController(stream, controller, startAlgorithm, pullAlgorithm, cancelAlgorithm, highWaterMark, sizeAlgorithm);
 	return stream;
 }
-
 
 export function createReadableByteStream(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, autoAllocateChunkSize?: number) {
 	if (highWaterMark === undefined) {
@@ -218,4 +142,85 @@ export function createReadableByteStream(startAlgorithm: rs.StartAlgorithm, pull
 	const controller = Object.create(ReadableByteStreamController.prototype) as ReadableByteStreamController;
 	rs.setUpReadableByteStreamController(stream, controller, startAlgorithm, pullAlgorithm, cancelAlgorithm, highWaterMark, autoAllocateChunkSize);
 	return stream;
+}
+
+export function readableStreamTee(stream: ReadableStream, cloneForBranch2: boolean) {
+	if (! rs.isReadableStream(stream)) {
+		throw new TypeError();
+	}
+
+	const reader = new ReadableStreamDefaultReader(stream);
+	let closedOrErrored = false;
+	let canceled1 = false;
+	let canceled2 = false;
+	let reason1: string | undefined;
+	let reason2: string | undefined;
+	let branch1: ReadableStream;
+	let branch2: ReadableStream;
+
+	let cancelResolve: (reason: any) => void;
+	const cancelPromise = new Promise<void>(resolve => cancelResolve = resolve);
+
+	const pullAlgorithm = () => {
+		return rs.readableStreamDefaultReaderRead(reader).then(
+			({ value, done }) => {
+				if (done && !closedOrErrored) {
+					if (! canceled1) {
+						rs.readableStreamDefaultControllerClose(branch1![rs.readableStreamController_] as ReadableStreamDefaultController);
+					}
+					if (! canceled2) {
+						rs.readableStreamDefaultControllerClose(branch2![rs.readableStreamController_] as ReadableStreamDefaultController);
+					}
+					closedOrErrored = true;
+				}
+				if (closedOrErrored) {
+					return;
+				}
+				const value1 = value;
+				let value2 = value;
+				if (! canceled1) {
+					rs.readableStreamDefaultControllerEnqueue(branch1![rs.readableStreamController_] as ReadableStreamDefaultController, value1);
+				}
+				if (! canceled2) {
+					if (cloneForBranch2) {
+						value2 = shared.cloneValue(value2);
+					}
+					rs.readableStreamDefaultControllerEnqueue(branch2![rs.readableStreamController_] as ReadableStreamDefaultController, value2);
+				}
+			});
+	};
+
+	const cancel1Algorithm = (reason: any) => {
+		canceled1 = true;
+		reason1 = reason;
+		if (canceled2) {
+			const cancelResult = rs.readableStreamCancel(stream, [reason1, reason2]);
+			cancelResolve(cancelResult);
+		}
+		return cancelPromise;
+	};
+
+	const cancel2Algorithm = (reason: any) => {
+		canceled2 = true;
+		reason2 = reason;
+		if (canceled1) {
+			const cancelResult = rs.readableStreamCancel(stream, [reason1, reason2]);
+			cancelResolve(cancelResult);
+		}
+		return cancelPromise;
+	};
+
+	const startAlgorithm = () => undefined;
+	branch1 = createReadableStream(startAlgorithm, pullAlgorithm, cancel1Algorithm);
+	branch2 = createReadableStream(startAlgorithm, pullAlgorithm, cancel2Algorithm);
+
+	reader[rs.closedPromise_].promise.catch(error => {
+		if (! closedOrErrored) {
+			rs.readableStreamDefaultControllerError(branch1![rs.readableStreamController_] as ReadableStreamDefaultController, error);
+			rs.readableStreamDefaultControllerError(branch2![rs.readableStreamController_] as ReadableStreamDefaultController, error);
+			closedOrErrored = true;
+		}
+	});
+
+	return [branch1, branch2];
 }
