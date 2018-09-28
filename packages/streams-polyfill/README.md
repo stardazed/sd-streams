@@ -6,7 +6,7 @@ to support the `body` field for both downloading and uploading. It also provides
 `TextEncoderStream` and `TextDecoderStream` from the [Encoding Standard](https://encoding.spec.whatwg.org/)
 where necessary.
 
-Download size: 11KiB gzipped, 59KiB uncompressed.
+Download size: 11KiB gzipped, 58KiB uncompressed.
 
 Usage
 -----
