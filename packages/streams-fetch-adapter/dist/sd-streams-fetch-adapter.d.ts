@@ -15,10 +15,23 @@ interface ReadableStreamDefaultReader extends ReadableStreamReader {
 	read(): Promise<IteratorResult<any>>;
 }
 
+interface PipeToOptions {
+	preventClose?: boolean;
+	preventAbort?: boolean;
+	preventCancel?: boolean;
+}
+
+interface StreamTransform {
+	readable: ReadableStream;
+	writable: ws.WritableStream;
+}
+
 interface ReadableStream {
 	cancel(reason?: any): Promise<void>;
 	getReader(options?: any): ReadableStreamDefaultReader;
 	tee(): ReadableStream[];
+	pipeThrough(transform: StreamTransform, options?: PipeToOptions): ReadableStream;
+	pipeTo(dest: WritableStream, options?: PipeToOptions): Promise<void>;
 	readonly locked: boolean;
 }
 

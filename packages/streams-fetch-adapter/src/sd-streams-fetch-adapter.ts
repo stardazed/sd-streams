@@ -40,11 +40,24 @@ interface ReadableStreamSource {
 	autoAllocateChunkSize?: number; // only for "bytes" type sources
 }
 
+interface PipeToOptions {
+	preventClose?: boolean;
+	preventAbort?: boolean;
+	preventCancel?: boolean;
+}
+
+interface StreamTransform {
+	readable: ReadableStream;
+	writable: WritableStream;
+}
+
 declare class ReadableStream {
 	constructor(source?: ReadableStreamSource, strategy?: StreamStrategy);
 	cancel(reason?: any): Promise<void>;
 	getReader(): ReadableStreamDefaultReader;
 	tee(): ReadableStream[];
+	pipeThrough(transform: StreamTransform, options?: PipeToOptions): ReadableStream;
+	pipeTo(dest: WritableStream, options?: PipeToOptions): Promise<void>;
 	readonly locked: boolean;
 }
 
