@@ -155,3 +155,13 @@ export declare class CountQueuingStrategy {
 	size(): number;
 	highWaterMark: number;
 }
+
+
+// ---- Internal helpers for other standards
+
+/**
+ * Internal function for use in other web standard implementations.
+ * Don't use this unless you are implementing web standards.
+ * @private
+ */
+export function internal_readableStreamTee(stream: ReadableStream, cloneForBranch2: boolean): ReadableStream[];

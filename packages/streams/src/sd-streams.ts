@@ -5,9 +5,14 @@
  * https://github.com/stardazed/sd-streams
  */
 
-import { ReadableStream } from "./readable-stream";
-import { WritableStream } from "./writable-stream";
-import { TransformStream } from "./transform-stream";
-import { ByteLengthQueuingStrategy, CountQueuingStrategy } from "./strategies";
+export { ReadableStream } from "./readable-stream";
+export { WritableStream } from "./writable-stream";
+export { TransformStream } from "./transform-stream";
+export { ByteLengthQueuingStrategy, CountQueuingStrategy } from "./strategies";
 
-export { ReadableStream, WritableStream, TransformStream, ByteLengthQueuingStrategy, CountQueuingStrategy };
+// only for linked web standard implementations
+export {
+	createReadableStream as internal_createReadableStream,
+	createReadableByteStream as internal_createReadableByteStream,
+	readableStreamTee as internal_readableStreamTee
+} from "./readable-stream";
