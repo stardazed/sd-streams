@@ -95,7 +95,7 @@ function installStardazedStreams() {
 	// only patch fetch types when they are available
 	if (nativeFetch && nativeResponse) {
 		const adaptedFetch = createAdaptedFetch(nativeFetch, nativeReadableStream, sds.ReadableStream);
-		const adaptedResponse = createAdaptedResponse(nativeResponse, nativeReadableStream, sds.ReadableStream);
+		const adaptedResponse = createAdaptedResponse(nativeResponse, nativeReadableStream, sds.ReadableStream, sds.internal_readableStreamTee);
 
 		globalObject["fetch"] = adaptedFetch;
 		globalObject["Response"] = adaptedResponse;
