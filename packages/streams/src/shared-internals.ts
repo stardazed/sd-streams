@@ -64,6 +64,14 @@ export function copyDataBlockBytes(toBlock: ArrayBufferLike, toIndex: number, fr
 	new Uint8Array(toBlock, toIndex, count).set(new Uint8Array(fromBlock, fromIndex, count));
 }
 
+/**
+ * Implement a method of value cloning that is reasonably close to performing `StructuredSerialize(StructuredDeserialize(value))`
+ * from the HTML standard. Used only by the internal `readableStreamTee` method to clone values for connected implementations.
+ */
+export function cloneValue<T>(value: T) {
+	return value;
+}
+
 export function promiseCall<F extends Function>(f: F, v: object | undefined, args: any[]) { // tslint:disable-line:ban-types
 	try {
 		const result = Function.prototype.apply.call(f, v, args);
