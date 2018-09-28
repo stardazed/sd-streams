@@ -2,11 +2,11 @@ devDependencies:
   '@stardazed/streams': 'link:../streams'
   '@stardazed/streams-fetch-adapter': 'link:../streams-fetch-adapter'
   '@stardazed/streams-text-encoding': 'link:../stream-text-encoding'
-  rollup: 0.65.2
+  rollup: 0.66.2
   rollup-plugin-node-resolve: 3.4.0
   rollup-plugin-terser: 1.0.1
   rollup-plugin-typescript: 0.8.1
-  typescript: 3.0.3
+  typescript: 3.1.1
 packages:
   /@babel/code-frame/7.0.0:
     dependencies:
@@ -26,10 +26,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
-  /@types/node/10.9.4:
+  /@types/node/10.11.2:
     dev: true
     resolution:
-      integrity: sha512-fCHV45gS+m3hH17zgkgADUSi2RR1Vht6wOZ0jyHP8rjiQra9f+mIcgwPQHllmDocYOstIEbKlxbFDYlgrTPYqw==
+      integrity: sha512-XubfQDIg88PGJ7netQPf3QOKHF7Xht4WXGtg5W7cGBeQs9ETbYKwfchR9o+tRRA9iLTQ7nAre85M205JbYsjJA==
   /ansi-styles/3.2.1:
     dependencies:
       color-convert: 1.9.3
@@ -175,14 +175,14 @@ packages:
     dev: true
     resolution:
       integrity: sha1-HhVud4+UtyVb+hs9AXi+j1xVJAg=
-  /rollup/0.65.2:
+  /rollup/0.66.2:
     dependencies:
       '@types/estree': 0.0.39
-      '@types/node': 10.9.4
+      '@types/node': 10.11.2
     dev: true
     hasBin: true
     resolution:
-      integrity: sha512-BbXOrpxVbx0MpElI6vVLR2B6vnWHvYU/QAMw3GcEXvs601bvgrozuaW30cnvt43B96a6DeoYA0i9T5THanN+Rw==
+      integrity: sha512-+rOLjWO170M3Y2jyyGU4ZJuTu1T1KuKNyH+RszHRzQdsuI5TulRbkSM4vlaMnwcxHm4XdgBNZ1mmNzhQIImbiQ==
   /source-map-support/0.5.9:
     dependencies:
       buffer-from: 1.1.1
@@ -226,13 +226,13 @@ packages:
     hasBin: true
     resolution:
       integrity: sha1-tHXW4N/wv1DyluXKbvn7tccyDx4=
-  /typescript/3.0.3:
+  /typescript/3.1.1:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-kk80vLW9iGtjMnIv11qyxLqZm20UklzuR2tL0QAnDIygIUIemcZMxlMWudl9OOt76H3ntVzcTiddQ1/pAAJMYg==
+      integrity: sha512-Veu0w4dTc/9wlWNf2jeRInNodKlcdLgemvPsrNpfu5Pq39sgfFjvIIgTsvUHCoLBnMhPoUA+tFxsXjU6VexVRQ==
 registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
@@ -240,8 +240,8 @@ specifiers:
   '@stardazed/streams': ^1.0.2
   '@stardazed/streams-fetch-adapter': ^1.0.1
   '@stardazed/streams-text-encoding': ^1.0.1
-  rollup: ^0.65.2
+  rollup: ^0.66.2
   rollup-plugin-node-resolve: ^3.3.0
   rollup-plugin-terser: ^1.0.1
   rollup-plugin-typescript: ^0.8.1
-  typescript: ^3.0.3
+  typescript: ^3.1.1

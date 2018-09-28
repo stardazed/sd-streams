@@ -1,7 +1,7 @@
 devDependencies:
-  rollup: registry.npmjs.org/rollup/0.65.2
+  rollup: registry.npmjs.org/rollup/0.66.2
   rollup-plugin-typescript: registry.npmjs.org/rollup-plugin-typescript/0.8.1
-  typescript: registry.npmjs.org/typescript/3.0.3
+  typescript: registry.npmjs.org/typescript/3.1.1
 packages:
   registry.npmjs.org/@types/estree/0.0.39:
     dev: true
@@ -11,14 +11,14 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/@types/estree/-/estree-0.0.39.tgz'
     version: 0.0.39
-  registry.npmjs.org/@types/node/10.9.4:
+  registry.npmjs.org/@types/node/10.11.2:
     dev: true
     name: '@types/node'
     resolution:
-      integrity: sha512-fCHV45gS+m3hH17zgkgADUSi2RR1Vht6wOZ0jyHP8rjiQra9f+mIcgwPQHllmDocYOstIEbKlxbFDYlgrTPYqw==
+      integrity: sha512-XubfQDIg88PGJ7netQPf3QOKHF7Xht4WXGtg5W7cGBeQs9ETbYKwfchR9o+tRRA9iLTQ7nAre85M205JbYsjJA==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/@types/node/-/node-10.9.4.tgz'
-    version: 10.9.4
+      tarball: 'https://registry.npmjs.org/@types/node/-/node-10.11.2.tgz'
+    version: 10.11.2
   registry.npmjs.org/balanced-match/1.0.0:
     dev: true
     name: balanced-match
@@ -107,18 +107,18 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/rollup-pluginutils/-/rollup-pluginutils-1.5.2.tgz'
     version: 1.5.2
-  registry.npmjs.org/rollup/0.65.2:
+  registry.npmjs.org/rollup/0.66.2:
     dependencies:
       '@types/estree': registry.npmjs.org/@types/estree/0.0.39
-      '@types/node': registry.npmjs.org/@types/node/10.9.4
+      '@types/node': registry.npmjs.org/@types/node/10.11.2
     dev: true
     hasBin: true
     name: rollup
     resolution:
-      integrity: sha512-BbXOrpxVbx0MpElI6vVLR2B6vnWHvYU/QAMw3GcEXvs601bvgrozuaW30cnvt43B96a6DeoYA0i9T5THanN+Rw==
+      integrity: sha512-+rOLjWO170M3Y2jyyGU4ZJuTu1T1KuKNyH+RszHRzQdsuI5TulRbkSM4vlaMnwcxHm4XdgBNZ1mmNzhQIImbiQ==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/rollup/-/rollup-0.65.2.tgz'
-    version: 0.65.2
+      tarball: 'https://registry.npmjs.org/rollup/-/rollup-0.66.2.tgz'
+    version: 0.66.2
   registry.npmjs.org/tippex/2.3.1:
     dev: true
     name: tippex
@@ -138,21 +138,21 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'http://registry.npmjs.org/typescript/-/typescript-1.8.10.tgz'
     version: 1.8.10
-  registry.npmjs.org/typescript/3.0.3:
+  registry.npmjs.org/typescript/3.1.1:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     name: typescript
     resolution:
-      integrity: sha512-kk80vLW9iGtjMnIv11qyxLqZm20UklzuR2tL0QAnDIygIUIemcZMxlMWudl9OOt76H3ntVzcTiddQ1/pAAJMYg==
+      integrity: sha512-Veu0w4dTc/9wlWNf2jeRInNodKlcdLgemvPsrNpfu5Pq39sgfFjvIIgTsvUHCoLBnMhPoUA+tFxsXjU6VexVRQ==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/typescript/-/typescript-3.0.3.tgz'
-    version: 3.0.3
+      tarball: 'https://registry.npmjs.org/typescript/-/typescript-3.1.1.tgz'
+    version: 3.1.1
 registry: 'https://registry.npmjs.com/'
 shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
 specifiers:
-  rollup: ^0.65.2
+  rollup: ^0.66.2
   rollup-plugin-typescript: ^0.8.1
-  typescript: ^3.0.3
+  typescript: ^3.1.1
