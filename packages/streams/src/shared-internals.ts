@@ -68,6 +68,20 @@ export function copyDataBlockBytes(toBlock: ArrayBufferLike, toIndex: number, fr
 // weak so it doesn't keep memoized versions of old objects indefinitely.
 const objectCloneMemo = new WeakMap<object, object>();
 
+let sharedArrayBufferSupported_: boolean | undefined;
+function supportsSharedArrayBuffer(): boolean {
+	if (sharedArrayBufferSupported_ === undefined) {
+		try {
+			new SharedArrayBuffer(16);
+			sharedArrayBufferSupported_ = true;
+		}
+		catch (e) {
+			sharedArrayBufferSupported_ = false;
+		}
+	}
+	return sharedArrayBufferSupported_;
+}
+
 /**
  * Implement a method of value cloning that is reasonably close to performing `StructuredSerialize(StructuredDeserialize(value))`
  * from the HTML standard. Used by the internal `readableStreamTee` method to clone values for connected implementations.
@@ -96,7 +110,7 @@ export function cloneValue(value: any): any {
 			if (value instanceof RegExp) {
 				return new RegExp(value);
 			}
-			if (value instanceof SharedArrayBuffer) {
+			if (supportsSharedArrayBuffer() && value instanceof SharedArrayBuffer) {
 				return value;
 			}
 			if (value instanceof ArrayBuffer) {
