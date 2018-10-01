@@ -177,19 +177,27 @@ function resolveRequestInitStream(init: RequestInit | undefined, nativeReadableS
  * Create and return a fetch function that will add or patch the body property
  * of the Response returned by fetch to return your custom stream instance.
  * @param nativeFetch A reference to the browser native fetch function to patch
+ * @param nativeResponse The constructor function of the browser's built in Response class
  * @param nativeReadableStream The constructor function of the browser's built in ReadableStream class, if available
  * @param customReadableStream The constructor function of your custom ReadableStream
+ * @param customReadableStreamTee The `ReadableStreamTee` method implementation for the custom ReadableStream
  */
-export function createAdaptedFetch(nativeFetch: GlobalFetch["fetch"], nativeReadableStream: ReadableStreamConstructor | undefined, customReadableStream: ReadableStreamConstructor): AdaptedFetch {
+export function createAdaptedFetch(
+	nativeFetch: GlobalFetch["fetch"],
+	nativeResponse: ResponseConstructor,
+	nativeReadableStream: ReadableStreamConstructor | undefined,
+	customReadableStream: ReadableStreamConstructor,
+	customReadableStreamTee: ReadableStreamTeeFunction
+): AdaptedFetch {
 	return function fetch(input?: Request | string, init?: RequestInit) {
 		// if the body passed into the request init is a ReadableStream (either native or custom)
 		// then first read it out completely before we pass it onto the native fetch as a Blob
 		return resolveRequestInitStream(init, nativeReadableStream, customReadableStream).then(
 			resolvedInit => nativeFetch.call(undefined, input, resolvedInit).then(
 				(response: any) => {
-					// No streams integration in Fetch at all, just add a simple
-					// non-streaming stream to the Response object
 					if (! ("body" in response)) {
+						// No streams integration in Fetch at all, just add a simple
+						// non-streaming stream to the Response object
 						response.body = new customReadableStream({
 							pull(controller) {
 								return response.arrayBuffer().then(
@@ -203,32 +211,54 @@ export function createAdaptedFetch(nativeFetch: GlobalFetch["fetch"], nativeRead
 								);
 							}
 						});
+
+						response.clone = function() {
+							const [body1, body2] = customReadableStreamTee(response.body, /* cloneForBranch2: */true);
+							response.body = body1;
+							return createResponseProxyWithStreamBody(nativeResponse, customReadableStreamTee, body2, init);
+						};
 					}
 					else {
 						// Body is exposed as a ReadableStream, we cannot replace the
 						// body property as it is non-configurable, so we wrap it in a Proxy.
 						const origResponse = response;
 						let wrappedBody: ReadableStream;
+						let customClone: () => Response;
+
 						response = new Proxy(origResponse, {
 							get(target, prop, _receiver) {
+								let value: any;
 								if (prop === "body") {
 									if (wrappedBody === undefined) {
 										wrappedBody = wrapReadableStream(origResponse.body, customReadableStream);
 									}
-									return wrappedBody;
+									value = wrappedBody;
 								}
-								else {
-									const value = target[prop];
-									if (typeof value === "function") {
-										return function(...args: any[]) {
-											return value.apply(target, args);
+								else if (prop === "clone") {
+									if (customClone === undefined) {
+										// the response.body accessor here will pass through this Proxy to do the right thing
+										customClone = function() {
+											const [body1, body2] = customReadableStreamTee(response.body, /* cloneForBranch2: */true);
+											wrappedBody = body1;
+											return createResponseProxyWithStreamBody(nativeResponse, customReadableStreamTee, body2, init);
 										};
 									}
-									return value;
+									value = customClone;
 								}
+								else {
+									value = target[prop];
+								}
+								
+								if (typeof value === "function") {
+									return function(...args: any[]) {
+										return value.apply(target, args);
+									};
+								}
+								return value;
 							},
 						});
 					}
+					
 					return response;
 				}
 			)
@@ -328,7 +358,7 @@ function createResponseProxyWithStreamBody(nativeResponse: ResponseConstructor, 
 		get headers() { return tempResponse.headers; }
 
 		clone() {
-			const [body1, body2] = customReadableStreamTee(body, true);
+			const [body1, body2] = customReadableStreamTee(body, /* cloneForBranch2: */true);
 			body = body1;
 			return createResponseProxyWithStreamBody(nativeResponse, customReadableStreamTee, body2, init);
 		}

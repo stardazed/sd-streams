@@ -67,12 +67,17 @@ export type AdaptedFetch = (input?: Request | string, init?: RequestInit) => Pro
  * Create and return a fetch function that will add or patch the body property
  * of the Response returned by fetch to return your custom stream instance.
  * @param nativeFetch A reference to the browser native fetch function to patch
+ * @param nativeResponse The constructor function of the browser's built in Response class
+ * @param nativeReadableStream The constructor function of the browser's built in ReadableStream class, if available
  * @param customReadableStream The constructor function of your custom ReadableStream
+ * @param customReadableStreamTee The `ReadableStreamTee` method implementation for the custom ReadableStream
  */
 export declare function createAdaptedFetch(
 	nativeFetch: GlobalFetch["fetch"],
+	nativeResponse: ResponseConstructor,
 	nativeReadableStream: ReadableStreamConstructor | undefined,
-	customReadableStream: ReadableStreamConstructor
+	customReadableStream: ReadableStreamConstructor,
+	customReadableStreamTee: ReadableStreamTeeFunction
 ): AdaptedFetch;
 
 /**
