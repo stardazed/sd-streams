@@ -1,0 +1,69 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Transform binary chunks to strings</title>
+  <script src="../../dist/sd-streams-polyfill.min.js"></script>
+</head>
+<body>
+  <h1>Response Clone Test</h1>
+  <section id="section"></section>
+  <script>
+  function print(msg, isError) {
+    const message = document.createElement('p');
+    message.textContent = msg;
+    if (isError) {
+      message.style.color = 'red';
+    }
+    document.getElementById('section').appendChild(message);
+  }
+  async function main() {
+      // Fetch the text file
+      const response = await fetch('goethe-faust-1.txt')
+      const response2 = response.clone();
+      // Get a ReadableStream on the text file's body
+      const rs = response.body
+      const rs2 = response2.body
+      // Read the stream of strings
+      const reader = rs.getReader()
+      const reader2 = rs2.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        const { done: done2, value: value2 } = await reader2.read();
+
+        console.info(done, done2, value, value2);
+
+        if (done !== done2) {
+          print("Streams flow mismatch, this should not be possible in a conforming stream", true);
+        }
+        else if (! done) {
+          if (value === value2) {
+            print("The stream chunks were not cloned.", true);
+          }
+          else {
+            if (value.length !== value2.length) {
+              print("Streams chunk mismatch, this should not be possible in a conforming stream", true);
+            }
+            else {
+              print("Got 2 separate chunks of size " + value.length);
+            }
+          }
+        }
+
+        if (done || done2) {
+          print("Done.");
+          break;
+        }
+      }
+    }
+
+    main().catch(() => {
+      if (typeof TransformStream === 'undefined') {
+        print('TransformStream is not available in your browser. Activate it in Chrome with chrome://flags/#enable-experimental-web-platform-features', true);
+      }
+    })
+  </script>
+</body>
+</html>
