@@ -1,5 +1,9 @@
 # @stardazed/streams changelog
 
+## 1.0.7
+_2018-10-01_
+* Expose internal stream tee method for linked implementations to use ([#2](https://github.com/stardazed/sd-streams/issues/2))
+
 ## 1.0.6
 _2018-09-18_
 * Fix broken URLs

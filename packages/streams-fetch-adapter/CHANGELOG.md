@@ -1,5 +1,9 @@
 # @stardazed/streams-fetch-adapter changelog
 
+## 2.0.0
+_2018-10-01_
+* BREAKING: changed external APIs to support proper Response cloning for fetches ([#2](https://github.com/stardazed/sd-streams/issues/2))
+
 ## 1.0.2
 _2018-09-18_
 * Fix broken URLs

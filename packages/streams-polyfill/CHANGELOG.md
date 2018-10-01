@@ -1,5 +1,9 @@
 # @stardazed/streams-polyfill changelog
 
+## 1.0.7
+_2018-10-01_
+* Fetched Response bodies now correctly clone values when the Response is cloned ([#2](https://github.com/stardazed/sd-streams/issues/2))
+
 ## 1.0.6
 _2018_09_19_
 * Add combined TypeScript types to this package so they will be accessible when using polyfill only

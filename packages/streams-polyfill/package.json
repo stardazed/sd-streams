@@ -1,7 +1,7 @@
 {
 	"name": "@stardazed/streams-polyfill",
 	"description": "Drop-in polyfill for Web Streams with fetch and encoding integration",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"author": {
 		"name": "Arthur Langereis"
 	},
@@ -21,9 +21,9 @@
 		"dist/*.js"
 	],
 	"devDependencies": {
-		"@stardazed/streams": "^1.0.2",
-		"@stardazed/streams-fetch-adapter": "^1.0.1",
-		"@stardazed/streams-text-encoding": "^1.0.1",
+		"@stardazed/streams": "^1.0.7",
+		"@stardazed/streams-fetch-adapter": "^2.0.0",
+		"@stardazed/streams-text-encoding": "^1.0.2",
 		"rollup": "^0.66.2",
 		"rollup-plugin-node-resolve": "^3.3.0",
 		"rollup-plugin-terser": "^1.0.1",

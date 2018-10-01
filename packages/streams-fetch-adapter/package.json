@@ -1,7 +1,7 @@
 {
 	"name": "@stardazed/streams-fetch-adapter",
 	"description": "Patch fetch and Response to work with custom stream implementations",
-	"version": "1.0.2",
+	"version": "2.0.0",
 	"author": {
 		"name": "Arthur Langereis"
 	},
