@@ -12,7 +12,7 @@ export interface TextEncoderCommon {
 	readonly encoding: string;
 }
 
-class TextEncodeTransformer implements Transformer {
+class TextEncodeTransformer implements Transformer<string, Uint8Array> {
 	private encoder_: TextEncoder;
 	private partial_: string | undefined;
 
@@ -21,7 +21,7 @@ class TextEncodeTransformer implements Transformer {
 		this.partial_ = undefined;
 	}
 
-	transform(chunk: unknown, controller: TransformStreamDefaultController) {
+	transform(chunk: string, controller: TransformStreamDefaultController<Uint8Array>) {
 		let stringChunk = String(chunk);
 		if (this.partial_ !== undefined) {
 			stringChunk = this.partial_ + stringChunk;
@@ -41,7 +41,7 @@ class TextEncodeTransformer implements Transformer {
 		}
 	}
 
-	flush(controller: TransformStreamDefaultController) {
+	flush(controller: TransformStreamDefaultController<Uint8Array>) {
 		if (this.partial_) {
 			controller.enqueue(this.encoder_.encode(this.partial_));
 			this.partial_ = undefined;
@@ -51,7 +51,7 @@ class TextEncodeTransformer implements Transformer {
 
 export class TextEncoderStream implements GenericTransformStream, TextEncoderCommon {
 	private [encEncoder]: TextEncoder;
-	private [encTransform]: TransformStream;
+	private [encTransform]: TransformStream<string, Uint8Array>;
 
 	constructor() {
 		this[encEncoder] = new TextEncoder();

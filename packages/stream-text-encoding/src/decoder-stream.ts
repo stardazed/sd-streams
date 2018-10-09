@@ -14,14 +14,14 @@ export interface TextDecoderCommon {
 	readonly ignoreBOM: boolean;
 }
 
-class TextDecodeTransformer implements Transformer {
+class TextDecodeTransformer implements Transformer<ArrayBuffer | Uint8Array, string> {
 	private decoder_: TextDecoder;
 
 	constructor(decoder: TextDecoder) {
 		this.decoder_ = decoder;
 	}
 
-	transform(chunk: unknown, controller: TransformStreamDefaultController) {
+	transform(chunk: ArrayBuffer | Uint8Array, controller: TransformStreamDefaultController<string>) {
 		if (! (chunk instanceof ArrayBuffer || ArrayBuffer.isView(chunk))) {
 			throw new TypeError("Input data must be a BufferSource");
 		}
@@ -31,7 +31,7 @@ class TextDecodeTransformer implements Transformer {
 		}
 	}
 
-	flush(controller: TransformStreamDefaultController) {
+	flush(controller: TransformStreamDefaultController<string>) {
 		const text = this.decoder_.decode();
 		if (text.length !== 0) {
 			controller.enqueue(text);
@@ -41,7 +41,7 @@ class TextDecodeTransformer implements Transformer {
 
 export class TextDecoderStream implements GenericTransformStream, TextDecoderCommon {
 	private [decDecoder]: TextDecoder;
-	private [decTransform]: TransformStream;
+	private [decTransform]: TransformStream<ArrayBuffer | Uint8Array, string>;
 
 	constructor(label?: string, options?: TextDecoderOptions) {
 		this[decDecoder] = new TextDecoder(label, options);

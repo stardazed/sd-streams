@@ -6,29 +6,29 @@
  */
 
 interface StreamStrategy {
-	size?(chunk?: any): number;
+	size?(chunk?: unknown): number;
 	highWaterMark?: number;
 }
 
-interface TransformStreamDefaultController {
-	enqueue(chunk: any): void;
+interface TransformStreamDefaultController<ChunkType> {
+	enqueue(chunk: ChunkType): void;
 	error(reason: any): void;
 	terminate(): void;
 
 	readonly desiredSize: number | null;
 }
 
-interface Transformer {
-	start?(controller: TransformStreamDefaultController): void | Promise<void>;
-	transform?(chunk: any, controller: TransformStreamDefaultController): void | Promise<void>;
-	flush?(controller: TransformStreamDefaultController): void | Promise<void>;
+interface Transformer<TIn, TOut> {
+	start?(controller: TransformStreamDefaultController<TOut>): void | Promise<void>;
+	transform?(chunk: TIn, controller: TransformStreamDefaultController<TOut>): void | Promise<void>;
+	flush?(controller: TransformStreamDefaultController<TOut>): void | Promise<void>;
 	
 	readableType?: undefined; // for future spec changes
 	writableType?: undefined; // for future spec changes
 }
 
-class TransformStream {
-	constructor(transformer?: Transformer, writableStrategy?: StreamStrategy, readableStrategy?: StreamStrategy);
+class TransformStream<TIn, TOut> {
+	constructor(transformer?: Transformer<TIn, TOut>, writableStrategy?: StreamStrategy, readableStrategy?: StreamStrategy);
 
 	readonly readable: ReadableStream;
 	readonly writable: WritableStream;
