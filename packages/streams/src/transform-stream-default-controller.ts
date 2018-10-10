@@ -8,10 +8,10 @@
 import * as rs from "./readable-internals";
 import * as ts from "./transform-internals";
 
-export class TransformStreamDefaultController implements ts.TransformStreamDefaultController {
-	[ts.controlledTransformStream_]: ts.TransformStream;
+export class TransformStreamDefaultController<InputType, OutputType> implements ts.TransformStreamDefaultController<InputType, OutputType> {
+	[ts.controlledTransformStream_]: ts.TransformStream<InputType, OutputType>;
 	[ts.flushAlgorithm_]: ts.FlushAlgorithm;
-	[ts.transformAlgorithm_]: ts.TransformAlgorithm;
+	[ts.transformAlgorithm_]: ts.TransformAlgorithm<InputType>;
 
 	constructor() {
 		throw new TypeError();
@@ -26,7 +26,7 @@ export class TransformStreamDefaultController implements ts.TransformStreamDefau
 
 	}
 
-	enqueue(chunk: any): void {
+	enqueue(chunk: OutputType): void {
 		if (! ts.isTransformStreamDefaultController(this)) {
 			throw new TypeError();
 		}
