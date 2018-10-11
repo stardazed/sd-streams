@@ -137,7 +137,7 @@ export function initializeWritableStream<InputType>(stream: WritableStream<Input
 }
 
 export function isWritableStream(value: unknown): value is WritableStream<any> {
-	if (typeof value !== "object" || value == null) {
+	if (typeof value !== "object" || value === null) {
 		return false;
 	}
 	return writableStreamController_ in value;

@@ -68,7 +68,7 @@ export declare class TransformStream<InputType, OutputType> {
 // ---- TransformStream
 
 export function isTransformStream(value: unknown): value is TransformStream<any, any> {
-	if (typeof value !== "object" || value == null) {
+	if (typeof value !== "object" || value === null) {
 		return false;
 	}
 	return transformStreamController_ in value;
@@ -130,7 +130,7 @@ export function transformStreamSetBackpressure<InputType, OutputType>(stream: Tr
 // ---- TransformStreamDefaultController
 
 export function isTransformStreamDefaultController(value: unknown): value is TransformStreamDefaultController<any, any> {
-	if (typeof value !== "object" || value == null) {
+	if (typeof value !== "object" || value === null) {
 		return false;
 	}
 	return controlledTransformStream_ in value;
