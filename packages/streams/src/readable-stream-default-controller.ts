@@ -21,7 +21,7 @@ export class ReadableStreamDefaultController<OutputType> implements rs.ReadableS
 	[rs.strategySizeAlgorithm_]: shared.SizeAlgorithm;
 	[rs.started_]: boolean;
 
-	[q.queue_]: Queue<q.QueueElement<any>>;
+	[q.queue_]: Queue<q.QueueElement<OutputType>>;
 	[q.queueTotalSize_]: number;
 
 	constructor() {
@@ -42,7 +42,7 @@ export class ReadableStreamDefaultController<OutputType> implements rs.ReadableS
 		rs.readableStreamDefaultControllerClose(this);
 	}
 
-	enqueue(chunk?: any) {
+	enqueue(chunk?: OutputType) {
 		if (! rs.isReadableStreamDefaultController(this)) {
 			throw new TypeError();
 		}

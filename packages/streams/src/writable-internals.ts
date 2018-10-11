@@ -445,7 +445,7 @@ export function writableStreamDefaultWriterRelease<InputType>(writer: WritableSt
 	writer[ownerWritableStream_] = undefined;
 }
 
-export function writableStreamDefaultWriterWrite<InputType>(writer: WritableStreamDefaultWriter<InputType>, chunk: any) {
+export function writableStreamDefaultWriterWrite<InputType>(writer: WritableStreamDefaultWriter<InputType>, chunk: InputType) {
 	const stream = writer[ownerWritableStream_]!;
 	// Assert: stream is not undefined.
 	const controller = stream[writableStreamController_]!;

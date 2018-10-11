@@ -90,7 +90,7 @@ export class WritableStreamDefaultWriter<InputType> implements ws.WritableStream
 		ws.writableStreamDefaultWriterRelease(this);
 	}
 
-	write(chunk: any): Promise<void> {
+	write(chunk: InputType): Promise<void> {
 		if (! ws.isWritableStreamDefaultWriter(this)) {
 			return Promise.reject(new TypeError());
 		}

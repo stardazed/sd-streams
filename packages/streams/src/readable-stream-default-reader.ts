@@ -11,7 +11,7 @@ import * as shared from "./shared-internals";
 export class ReadableStreamDefaultReader<OutputType> implements rs.ReadableStreamReader<OutputType> {
 	[rs.closedPromise_]: shared.ControlledPromise<void>;
 	[rs.ownerReadableStream_]: rs.ReadableStream<OutputType> | undefined;
-	[rs.readRequests_]: rs.ReadRequest<IteratorResult<any>>[];
+	[rs.readRequests_]: rs.ReadRequest<IteratorResult<OutputType>>[];
 
 	constructor(stream: rs.ReadableStream<OutputType>) {
 		if (! rs.isReadableStream(stream)) {
