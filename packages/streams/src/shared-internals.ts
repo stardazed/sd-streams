@@ -12,8 +12,8 @@ export const storedError_ = Symbol("storedError_");
 
 // ---------
 
-/** Type used to avoid having `any` all over the place */
-export type ErrorResult = any;
+/** An error can be anything, but internally we use `unknown` as we don't want to operate on error values */
+export type ErrorResult = unknown;
 
 // ---------
 
