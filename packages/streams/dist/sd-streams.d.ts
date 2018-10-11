@@ -18,30 +18,30 @@ export interface WritableStreamDefaultController {
 	error(e?: any): void;
 }
 
-export interface WritableStreamDefaultWriter {
+export interface WritableStreamDefaultWriter<InputType> {
 	abort(reason: any): Promise<void>;
 	close(): Promise<void>;
 	releaseLock(): void;
-	write(chunk: any): Promise<void>;
+	write(chunk: InputType): Promise<void>;
 
 	readonly closed: Promise<void>;
 	readonly desiredSize: number | null;
 	readonly ready: Promise<void>;
 }
 
-export interface WritableStreamSink {
+export interface WritableStreamSink<InputType> {
 	start?(controller: WritableStreamDefaultController): void | Promise<void>;
-	write?(chunk: any, controller: WritableStreamDefaultController): void | Promise<void>;
+	write?(chunk: InputType, controller: WritableStreamDefaultController): void | Promise<void>;
 	close?(): void | Promise<void>;
 	abort?(reason?: any): void;
 
 	type?: undefined; // unused, for future revisions
 }
 
-export declare class WritableStream {
-	constructor(underlyingSink?: WritableStreamSink, strategy?: StreamStrategy);
+export declare class WritableStream<InputType> {
+	constructor(underlyingSink?: WritableStreamSink<InputType>, strategy?: StreamStrategy);
 	abort(reason?: any): Promise<void>;
-	getWriter(): WritableStreamDefaultWriter;
+	getWriter(): WritableStreamDefaultWriter<InputType>;
 
 	readonly locked: boolean;
 }
@@ -54,12 +54,12 @@ export interface ReadableStreamController {
 	readonly desiredSize: number | null;
 }
 
-export interface ReadableStreamDefaultController extends ReadableStreamController {
-	enqueue(chunk: any): void;
+export interface ReadableStreamDefaultController<OutputType> extends ReadableStreamController {
+	enqueue(chunk: OutputType): void;
 }
 
 export interface ReadableByteStreamController extends ReadableStreamController {
-	enqueue(chunk: any): void;
+	enqueue(chunk: ArrayBufferView): void;
 	readonly byobRequest: ReadableStreamBYOBRequest | undefined;
 }
 
@@ -75,15 +75,15 @@ export interface ReadableStreamReader {
 	readonly closed: Promise<void>;
 }
 
-export interface ReadableStreamDefaultReader extends ReadableStreamReader {
-	read(): Promise<IteratorResult<any>>;
+export interface ReadableStreamDefaultReader<OutputType> extends ReadableStreamReader {
+	read(): Promise<IteratorResult<OutputType>>;
 }
 
 export interface ReadableStreamBYOBReader extends ReadableStreamReader {
 	read(view: ArrayBufferView): Promise<IteratorResult<ArrayBufferView>>;
 }
 
-interface ReadableStreamSource<Controller extends ReadableStreamController = ReadableStreamDefaultController> {
+interface ReadableStreamSource<OutputType, Controller extends ReadableStreamController = ReadableStreamDefaultController<OutputType>> {
 	start?(controller: Controller): void | Promise<void>;
 	pull?(controller: Controller): void | Promise<void>;
 	cancel?(reason?: any): void;
@@ -97,49 +97,49 @@ export interface PipeToOptions {
 	preventCancel?: boolean;
 }
 
-export interface StreamTransform {
-	readable: ReadableStream;
-	writable: WritableStream;
+export interface StreamTransform<InputType, OutputType> {
+	readable: ReadableStream<OutputType>;
+	writable: WritableStream<InputType>;
 }
 
-export declare class ReadableStream {
-	constructor(source?: ReadableStreamSource, strategy?: StreamStrategy);
+export declare class ReadableStream<OutputType> {
+	constructor(source?: ReadableStreamSource<OutputType>, strategy?: StreamStrategy);
 
 	cancel(reason?: any): Promise<void>;
-	getReader(): ReadableStreamDefaultReader;
+	getReader(): ReadableStreamDefaultReader<OutputType>;
 	getReader(options: { mode: "byob" }): ReadableStreamBYOBReader;
-	tee(): ReadableStream[];
+	tee(): ReadableStream<OutputType>[];
 
-	pipeThrough(transform: StreamTransform, options?: PipeToOptions): ReadableStream;
-	pipeTo(dest: WritableStream, options?: PipeToOptions): Promise<void>;
+	pipeThrough<ResultType>(transform: StreamTransform<OutputType, ResultType>, options?: PipeToOptions): ReadableStream<ResultType>;
+	pipeTo(dest: WritableStream<OutputType>, options?: PipeToOptions): Promise<void>;
 
 	readonly locked: boolean;
 }
 
 // ---- TransformStream
 
-export interface TransformStreamDefaultController {
-	enqueue(chunk: any): void;
+export interface TransformStreamDefaultController<OutputType> {
+	enqueue(chunk: OutputType): void;
 	error(reason: any): void;
 	terminate(): void;
 
 	readonly desiredSize: number | null;
 }
 
-export interface Transformer {
-	start?(controller: TransformStreamDefaultController): void | Promise<void>;
-	transform?(chunk: any, controller: TransformStreamDefaultController): void | Promise<void>;
-	flush?(controller: TransformStreamDefaultController): void | Promise<void>;
+export interface Transformer<InputType, OutputType> {
+	start?(controller: TransformStreamDefaultController<OutputType>): void | Promise<void>;
+	transform?(chunk: InputType, controller: TransformStreamDefaultController<OutputType>): void | Promise<void>;
+	flush?(controller: TransformStreamDefaultController<OutputType>): void | Promise<void>;
 	
 	readableType?: undefined; // for future spec changes
 	writableType?: undefined; // for future spec changes
 }
 
-export declare class TransformStream {
-	constructor(transformer?: Transformer, writableStrategy?: StreamStrategy, readableStrategy?: StreamStrategy);
+export declare class TransformStream<InputType, OutputType> {
+	constructor(transformer?: Transformer<InputType, OutputType>, writableStrategy?: StreamStrategy, readableStrategy?: StreamStrategy);
 
-	readonly readable: ReadableStream;
-	readonly writable: WritableStream;
+	readonly readable: ReadableStream<OutputType>;
+	readonly writable: WritableStream<InputType>;
 }
 
 // ---- Built-in Strategies
@@ -164,4 +164,4 @@ export declare class CountQueuingStrategy {
  * Don't use this unless you are implementing web standards.
  * @private
  */
-export function internal_readableStreamTee(stream: ReadableStream, cloneForBranch2: boolean): ReadableStream[];
+export function internal_readableStreamTee<T>(stream: ReadableStream<T>, cloneForBranch2: boolean): ReadableStream<T>[];
