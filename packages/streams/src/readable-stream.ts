@@ -92,7 +92,7 @@ export class ReadableStream<OutputType> implements rs.ReadableStream<OutputType>
 		return readable;
 	}
 
-	pipeTo<InputType>(dest: ws.WritableStream<InputType>, options: rs.PipeToOptions = {}): Promise<void> {
+	pipeTo(dest: ws.WritableStream<OutputType>, options: rs.PipeToOptions = {}): Promise<void> {
 		if (! rs.isReadableStream(this)) {
 			return Promise.reject(new TypeError());
 		}
@@ -179,13 +179,13 @@ export function readableStreamTee<OutputType>(stream: ReadableStream<OutputType>
 				const value1 = value;
 				let value2 = value;
 				if (! canceled1) {
-					rs.readableStreamDefaultControllerEnqueue(branch1![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>, value1);
+					rs.readableStreamDefaultControllerEnqueue(branch1![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>, value1!);
 				}
 				if (! canceled2) {
 					if (cloneForBranch2) {
 						value2 = shared.cloneValue(value2);
 					}
-					rs.readableStreamDefaultControllerEnqueue(branch2![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>, value2);
+					rs.readableStreamDefaultControllerEnqueue(branch2![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>, value2!);
 				}
 			});
 	};

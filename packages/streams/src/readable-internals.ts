@@ -141,7 +141,7 @@ export declare class ReadableStreamDefaultReader<OutputType> implements Readable
 	readonly closed: Promise<void>;
 	cancel(reason: shared.ErrorResult): Promise<void>;
 	releaseLock(): void;
-	read(): Promise<IteratorResult<OutputType>>;
+	read(): Promise<IteratorResult<OutputType | undefined>>;
 
 	[ownerReadableStream_]: ReadableStream<OutputType> | undefined;
 	[closedPromise_]: shared.ControlledPromise<void>;

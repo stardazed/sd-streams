@@ -49,7 +49,7 @@ export class ReadableStreamDefaultController<OutputType> implements rs.ReadableS
 		if (!rs.readableStreamDefaultControllerCanCloseOrEnqueue(this)) {
 			throw new TypeError("Cannot enqueue, the stream is closing or not readable");
 		}
-		rs.readableStreamDefaultControllerEnqueue(this, chunk);
+		rs.readableStreamDefaultControllerEnqueue(this, chunk!);
 	}
 
 	error(e?: shared.ErrorResult) {
