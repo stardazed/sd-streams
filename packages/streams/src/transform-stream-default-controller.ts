@@ -11,7 +11,7 @@ import * as ts from "./transform-internals";
 export class TransformStreamDefaultController<InputType, OutputType> implements ts.TransformStreamDefaultController<InputType, OutputType> {
 	[ts.controlledTransformStream_]: ts.TransformStream<InputType, OutputType>;
 	[ts.flushAlgorithm_]: ts.FlushAlgorithm;
-	[ts.transformAlgorithm_]: ts.TransformAlgorithm<InputType>;
+	[ts.transformAlgorithm_]: ts.TransformAlgorithm<OutputType>;
 
 	constructor() {
 		throw new TypeError();

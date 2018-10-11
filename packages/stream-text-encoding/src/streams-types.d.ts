@@ -10,18 +10,18 @@ interface StreamStrategy {
 	highWaterMark?: number;
 }
 
-interface TransformStreamDefaultController<ChunkType> {
-	enqueue(chunk: ChunkType): void;
+interface TransformStreamDefaultController<OutputType> {
+	enqueue(chunk: OutputType): void;
 	error(reason: any): void;
 	terminate(): void;
 
 	readonly desiredSize: number | null;
 }
 
-interface Transformer<TIn, TOut> {
-	start?(controller: TransformStreamDefaultController<TOut>): void | Promise<void>;
-	transform?(chunk: TIn, controller: TransformStreamDefaultController<TOut>): void | Promise<void>;
-	flush?(controller: TransformStreamDefaultController<TOut>): void | Promise<void>;
+interface Transformer<InputType, OutputType> {
+	start?(controller: TransformStreamDefaultController<OutputType>): void | Promise<void>;
+	transform?(chunk: InputType, controller: TransformStreamDefaultController<OutputType>): void | Promise<void>;
+	flush?(controller: TransformStreamDefaultController<OutputType>): void | Promise<void>;
 	
 	readableType?: undefined; // for future spec changes
 	writableType?: undefined; // for future spec changes

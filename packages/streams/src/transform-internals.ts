@@ -26,7 +26,7 @@ export const transformAlgorithm_ = Symbol("transformAlgorithm_");
 // ----
 
 export type TransformFunction<InputType, OutputType> = (chunk: InputType, controller: TransformStreamDefaultController<InputType, OutputType>) => void | Promise<void>;
-export type TransformAlgorithm<InputType> = (chunk: InputType) => Promise<void>;
+export type TransformAlgorithm<OutputType> = (chunk: OutputType) => Promise<void>;
 export type FlushFunction<InputType, OutputType> = (controller: TransformStreamDefaultController<InputType, OutputType>) => void | Promise<void>;
 export type FlushAlgorithm = () => Promise<void>;
 
@@ -40,7 +40,7 @@ export interface TransformStreamDefaultController<InputType, OutputType> {
 
 	[controlledTransformStream_]: TransformStream<InputType, OutputType>; // The TransformStream instance controlled; also used for the IsTransformStreamDefaultController brand check
 	[flushAlgorithm_]: FlushAlgorithm; // A promise - returning algorithm which communicates a requested close to the transformer
-	[transformAlgorithm_]: TransformAlgorithm<InputType>; // A promise - returning algorithm, taking one argument(the chunk to transform), which requests the transformer perform its transformation
+	[transformAlgorithm_]: TransformAlgorithm<OutputType>; // A promise - returning algorithm, taking one argument(the chunk to transform), which requests the transformer perform its transformation
 }
 
 export interface Transformer<InputType, OutputType> {
@@ -136,7 +136,7 @@ export function isTransformStreamDefaultController(value: unknown): value is Tra
 	return controlledTransformStream_ in value;
 }
 
-export function setUpTransformStreamDefaultController<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, controller: TransformStreamDefaultController<InputType, OutputType>, transformAlgorithm: TransformAlgorithm<InputType>, flushAlgorithm: FlushAlgorithm) {
+export function setUpTransformStreamDefaultController<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, controller: TransformStreamDefaultController<InputType, OutputType>, transformAlgorithm: TransformAlgorithm<OutputType>, flushAlgorithm: FlushAlgorithm) {
 	// Assert: ! IsTransformStream(stream) is true.
 	// Assert: stream.[[transformStreamController]] is undefined.
 	controller[controlledTransformStream_] = stream;
@@ -152,7 +152,7 @@ export function transformStreamDefaultControllerClearAlgorithms<InputType, Outpu
 	controller[flushAlgorithm_] = undefined!;
 }
 
-export function transformStreamDefaultControllerEnqueue<InputType, OutputType>(controller: TransformStreamDefaultController<InputType, OutputType>, chunk: InputType) {
+export function transformStreamDefaultControllerEnqueue<InputType, OutputType>(controller: TransformStreamDefaultController<InputType, OutputType>, chunk: OutputType) {
 	const stream = controller[controlledTransformStream_];
 	const readableController = stream[readable_][rs.readableStreamController_] as rs.ReadableStreamDefaultController;
 	if (! rs.readableStreamDefaultControllerCanCloseOrEnqueue(readableController)) {
@@ -176,7 +176,7 @@ export function transformStreamDefaultControllerError<InputType, OutputType>(con
 	transformStreamError(controller[controlledTransformStream_], error);
 }
 
-export function transformStreamDefaultControllerPerformTransform<InputType, OutputType>(controller: TransformStreamDefaultController<InputType, OutputType>, chunk: InputType) {
+export function transformStreamDefaultControllerPerformTransform<InputType, OutputType>(controller: TransformStreamDefaultController<InputType, OutputType>, chunk: OutputType) {
 	const transformPromise = controller[transformAlgorithm_](chunk);
 	return transformPromise.catch(error => {
 		transformStreamError(controller[controlledTransformStream_], error);

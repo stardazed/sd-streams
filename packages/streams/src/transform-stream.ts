@@ -63,18 +63,18 @@ export class TransformStream<InputType, OutputType> {
 
 function setUpTransformStreamDefaultControllerFromTransformer<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, transformer: ts.Transformer<InputType, OutputType>) {
 	const controller = Object.create(TransformStreamDefaultController.prototype) as TransformStreamDefaultController<InputType, OutputType>;
-	let transformAlgorithm: ts.TransformAlgorithm<InputType>;
+	let transformAlgorithm: ts.TransformAlgorithm<OutputType>;
 
 	const transformMethod = transformer.transform;
 	if (transformMethod !== undefined) {
 		if (typeof transformMethod !== "function") {
 			throw new TypeError("`transform` field of the transformer must be a function");
 		}
-		transformAlgorithm = (chunk: InputType) => shared.promiseCall(transformMethod, transformer, [chunk, controller]);
+		transformAlgorithm = (chunk: OutputType) => shared.promiseCall(transformMethod, transformer, [chunk, controller]);
 	}
 	else {
 		// use identity transform
-		transformAlgorithm = function(chunk: InputType) {
+		transformAlgorithm = function(chunk: OutputType) {
 			try {
 				ts.transformStreamDefaultControllerEnqueue(controller, chunk);
 			}
