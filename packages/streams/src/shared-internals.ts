@@ -12,8 +12,8 @@ export const storedError_ = Symbol("storedError_");
 
 // ---------
 
-/** An error can be anything, but internally we use `unknown` as we don't want to operate on error values */
-export type ErrorResult = unknown;
+/** An error reason / result can be anything */
+export type ErrorResult = any;
 
 // ---------
 

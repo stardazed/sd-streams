@@ -153,8 +153,8 @@ export function readableStreamTee<OutputType>(stream: ReadableStream<OutputType>
 	let closedOrErrored = false;
 	let canceled1 = false;
 	let canceled2 = false;
-	let reason1: string | undefined;
-	let reason2: string | undefined;
+	let reason1: shared.ErrorResult;
+	let reason2: shared.ErrorResult;
 	let branch1: ReadableStream<OutputType>;
 	let branch2: ReadableStream<OutputType>;
 
