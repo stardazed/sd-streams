@@ -12,6 +12,11 @@ export const storedError_ = Symbol("storedError_");
 
 // ---------
 
+/** Type used to avoid having `any` all over the place */
+export type ErrorResult = any;
+
+// ---------
+
 export type SizeAlgorithm = (this: void, chunk?: any) => number;
 
 export interface StreamStrategy {

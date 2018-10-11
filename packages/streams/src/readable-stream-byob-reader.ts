@@ -8,12 +8,12 @@
 import * as rs from "./readable-internals";
 import * as shared from "./shared-internals";
 
-export class ReadableStreamBYOBReader implements rs.ReadableStreamReader {
+export class ReadableStreamBYOBReader implements rs.ReadableStreamReader<ArrayBufferView> {
 	[rs.closedPromise_]: shared.ControlledPromise<void>;
-	[rs.ownerReadableStream_]: rs.ReadableStream | undefined;
+	[rs.ownerReadableStream_]: rs.ReadableStream<ArrayBufferView> | undefined;
 	[rs.readIntoRequests_]: shared.ControlledPromise<IteratorResult<ArrayBufferView>>[];
 
-	constructor(stream: rs.ReadableStream) {
+	constructor(stream: rs.ReadableStream<ArrayBufferView>) {
 		if (! rs.isReadableStream(stream)) {
 			throw new TypeError();
 		}

@@ -16,13 +16,13 @@ import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 import { ReadableByteStreamController, setUpReadableByteStreamControllerFromUnderlyingSource } from "./readable-byte-stream-controller";
 import { ReadableStreamBYOBReader } from "./readable-stream-byob-reader";
 
-export class ReadableStream implements rs.ReadableStream {
+export class ReadableStream<OutputType> implements rs.ReadableStream<OutputType> {
 	[shared.state_]: rs.ReadableStreamState;
 	[shared.storedError_]: any;
-	[rs.reader_]: rs.ReadableStreamReader | undefined;
-	[rs.readableStreamController_]: rs.ReadableStreamController;
+	[rs.reader_]: rs.ReadableStreamReader<OutputType> | undefined;
+	[rs.readableStreamController_]: rs.ReadableStreamController<OutputType>;
 
-	constructor(source: rs.ReadableStreamSource = {}, strategy: shared.StreamStrategy = {}) {
+	constructor(source: rs.ReadableStreamSource<OutputType> = {}, strategy: shared.StreamStrategy = {}) {
 		rs.initializeReadableStream(this);
 
 		const sizeFunc = strategy.size;
@@ -39,7 +39,7 @@ export class ReadableStream implements rs.ReadableStream {
 				throw new RangeError("bytes streams cannot have a strategy with a `size` field");
 			}
 			const highWaterMark = shared.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 0 : stratHWM);
-			setUpReadableByteStreamControllerFromUnderlyingSource(this, source, highWaterMark);
+			setUpReadableByteStreamControllerFromUnderlyingSource(this as unknown as ReadableStream<ArrayBufferView>, source as unknown as rs.ReadableStreamSource<ArrayBufferView>, highWaterMark);
 		}
 		else {
 			throw new RangeError("The underlying source's `type` field must be undefined or 'bytes'");
@@ -50,7 +50,7 @@ export class ReadableStream implements rs.ReadableStream {
 		return rs.isReadableStreamLocked(this);
 	}
 
-	getReader(options: rs.ReadableStreamReaderOptions = {}): rs.ReadableStreamReader {
+	getReader(options: rs.ReadableStreamReaderOptions = {}): rs.ReadableStreamReader<OutputType> {
 		if (! rs.isReadableStream(this)) {
 			throw new TypeError();
 		}
@@ -59,7 +59,7 @@ export class ReadableStream implements rs.ReadableStream {
 			return new ReadableStreamDefaultReader(this);
 		}
 		else if (String(mode) === "byob") {
-			return new ReadableStreamBYOBReader(this);
+			return new ReadableStreamBYOBReader(this as unknown as ReadableStream<ArrayBufferView>) as rs.ReadableStreamReader<OutputType>;
 		}
 		throw RangeError("mode option must be undefined or `byob`");
 	}
@@ -74,11 +74,11 @@ export class ReadableStream implements rs.ReadableStream {
 		return rs.readableStreamCancel(this, reason);
 	}
 
-	tee(): ReadableStream[] {
+	tee(): ReadableStream<OutputType>[] {
 		return readableStreamTee(this, false);
 	}
 
-	pipeThrough(transform: rs.StreamTransform, options?: rs.PipeToOptions): ReadableStream {
+	pipeThrough<ResultType>(transform: rs.StreamTransform<OutputType, ResultType>, options?: rs.PipeToOptions): rs.ReadableStream<ResultType> {
 		const { readable, writable } = transform;
 		if (readable === undefined || writable === undefined) {
 			throw new TypeError("Both a readable and writable stream must be provided");
@@ -92,7 +92,7 @@ export class ReadableStream implements rs.ReadableStream {
 		return readable;
 	}
 
-	pipeTo(dest: ws.WritableStream, options: rs.PipeToOptions = {}): Promise<void> {
+	pipeTo<InputType>(dest: ws.WritableStream<InputType>, options: rs.PipeToOptions = {}): Promise<void> {
 		if (! rs.isReadableStream(this)) {
 			return Promise.reject(new TypeError());
 		}
@@ -110,7 +110,7 @@ export class ReadableStream implements rs.ReadableStream {
 	}
 }
 
-export function createReadableStream(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, sizeAlgorithm?: shared.SizeAlgorithm) {
+export function createReadableStream<OutputType>(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm<OutputType>, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, sizeAlgorithm?: shared.SizeAlgorithm) {
 	if (highWaterMark === undefined) {
 		highWaterMark = 1;
 	}
@@ -119,14 +119,14 @@ export function createReadableStream(startAlgorithm: rs.StartAlgorithm, pullAlgo
 	}
 	// Assert: ! IsNonNegativeNumber(highWaterMark) is true.
 
-	const stream = Object.create(ReadableStream.prototype) as ReadableStream;
+	const stream = Object.create(ReadableStream.prototype) as ReadableStream<OutputType>;
 	rs.initializeReadableStream(stream);
-	const controller = Object.create(ReadableStreamDefaultController.prototype) as ReadableStreamDefaultController;
+	const controller = Object.create(ReadableStreamDefaultController.prototype) as ReadableStreamDefaultController<OutputType>;
 	rs.setUpReadableStreamDefaultController(stream, controller, startAlgorithm, pullAlgorithm, cancelAlgorithm, highWaterMark, sizeAlgorithm);
 	return stream;
 }
 
-export function createReadableByteStream(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, autoAllocateChunkSize?: number) {
+export function createReadableByteStream<OutputType>(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm<OutputType>, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, autoAllocateChunkSize?: number) {
 	if (highWaterMark === undefined) {
 		highWaterMark = 0;
 	}
@@ -137,14 +137,14 @@ export function createReadableByteStream(startAlgorithm: rs.StartAlgorithm, pull
 		}
 	}
 
-	const stream = Object.create(ReadableStream.prototype) as ReadableStream;
+	const stream = Object.create(ReadableStream.prototype) as ReadableStream<OutputType>;
 	rs.initializeReadableStream(stream);
 	const controller = Object.create(ReadableByteStreamController.prototype) as ReadableByteStreamController;
-	rs.setUpReadableByteStreamController(stream, controller, startAlgorithm, pullAlgorithm, cancelAlgorithm, highWaterMark, autoAllocateChunkSize);
+	rs.setUpReadableByteStreamController(stream as unknown as ReadableStream<ArrayBufferView>, controller, startAlgorithm, pullAlgorithm as unknown as rs.PullAlgorithm<ArrayBufferView>, cancelAlgorithm, highWaterMark, autoAllocateChunkSize);
 	return stream;
 }
 
-export function readableStreamTee(stream: ReadableStream, cloneForBranch2: boolean) {
+export function readableStreamTee<OutputType>(stream: ReadableStream<OutputType>, cloneForBranch2: boolean) {
 	if (! rs.isReadableStream(stream)) {
 		throw new TypeError();
 	}
@@ -155,8 +155,8 @@ export function readableStreamTee(stream: ReadableStream, cloneForBranch2: boole
 	let canceled2 = false;
 	let reason1: string | undefined;
 	let reason2: string | undefined;
-	let branch1: ReadableStream;
-	let branch2: ReadableStream;
+	let branch1: ReadableStream<OutputType>;
+	let branch2: ReadableStream<OutputType>;
 
 	let cancelResolve: (reason: any) => void;
 	const cancelPromise = new Promise<void>(resolve => cancelResolve = resolve);
@@ -166,10 +166,10 @@ export function readableStreamTee(stream: ReadableStream, cloneForBranch2: boole
 			({ value, done }) => {
 				if (done && !closedOrErrored) {
 					if (! canceled1) {
-						rs.readableStreamDefaultControllerClose(branch1![rs.readableStreamController_] as ReadableStreamDefaultController);
+						rs.readableStreamDefaultControllerClose(branch1![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>);
 					}
 					if (! canceled2) {
-						rs.readableStreamDefaultControllerClose(branch2![rs.readableStreamController_] as ReadableStreamDefaultController);
+						rs.readableStreamDefaultControllerClose(branch2![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>);
 					}
 					closedOrErrored = true;
 				}
@@ -179,13 +179,13 @@ export function readableStreamTee(stream: ReadableStream, cloneForBranch2: boole
 				const value1 = value;
 				let value2 = value;
 				if (! canceled1) {
-					rs.readableStreamDefaultControllerEnqueue(branch1![rs.readableStreamController_] as ReadableStreamDefaultController, value1);
+					rs.readableStreamDefaultControllerEnqueue(branch1![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>, value1);
 				}
 				if (! canceled2) {
 					if (cloneForBranch2) {
 						value2 = shared.cloneValue(value2);
 					}
-					rs.readableStreamDefaultControllerEnqueue(branch2![rs.readableStreamController_] as ReadableStreamDefaultController, value2);
+					rs.readableStreamDefaultControllerEnqueue(branch2![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>, value2);
 				}
 			});
 	};
@@ -216,8 +216,8 @@ export function readableStreamTee(stream: ReadableStream, cloneForBranch2: boole
 
 	reader[rs.closedPromise_].promise.catch(error => {
 		if (! closedOrErrored) {
-			rs.readableStreamDefaultControllerError(branch1![rs.readableStreamController_] as ReadableStreamDefaultController, error);
-			rs.readableStreamDefaultControllerError(branch2![rs.readableStreamController_] as ReadableStreamDefaultController, error);
+			rs.readableStreamDefaultControllerError(branch1![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>, error);
+			rs.readableStreamDefaultControllerError(branch2![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>, error);
 			closedOrErrored = true;
 		}
 	});

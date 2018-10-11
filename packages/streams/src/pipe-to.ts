@@ -17,7 +17,7 @@ interface ErrorWrapper {
 	actualError: any;
 }
 
-export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, options: rs.PipeToOptions) {
+export function pipeTo<OutputType, InputType>(source: rs.ReadableStream<OutputType>, dest: ws.WritableStream<InputType>, options: rs.PipeToOptions) {
 	const preventClose = !!options.preventClose;
 	const preventAbort = !!options.preventAbort;
 	const preventCancel = !!options.preventCancel;
@@ -31,7 +31,7 @@ export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, optio
 	const reader = new ReadableStreamDefaultReader(source);
 	const writer = new WritableStreamDefaultWriter(dest);
 
-	function onStreamErrored(stream: rs.ReadableStream | ws.WritableStream, promise: Promise<void>, action: (error: any) => void) {
+	function onStreamErrored(stream: rs.ReadableStream<OutputType> | ws.WritableStream<InputType>, promise: Promise<void>, action: (error: shared.ErrorResult) => void) {
 		if (stream[shared.state_] === "errored") {
 			action(stream[shared.storedError_]);
 		} else {
@@ -39,7 +39,7 @@ export function pipeTo(source: rs.ReadableStream, dest: ws.WritableStream, optio
 		}
 	}
 
-	function onStreamClosed(stream: rs.ReadableStream | ws.WritableStream, promise: Promise<void>, action: () => void) {
+	function onStreamClosed(stream: rs.ReadableStream<OutputType> | ws.WritableStream<InputType>, promise: Promise<void>, action: () => void) {
 		if (stream[shared.state_] === "closed") {
 			action();
 		} else {

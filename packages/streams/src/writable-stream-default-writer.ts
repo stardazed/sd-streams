@@ -8,12 +8,12 @@
 import * as ws from "./writable-internals";
 import * as shared from "./shared-internals";
 
-export class WritableStreamDefaultWriter implements ws.WritableStreamDefaultWriter {
-	[ws.ownerWritableStream_]: ws.WritableStream | undefined;
+export class WritableStreamDefaultWriter<InputType> implements ws.WritableStreamDefaultWriter<InputType> {
+	[ws.ownerWritableStream_]: ws.WritableStream<InputType> | undefined;
 	[ws.readyPromise_]: shared.ControlledPromise<void>;
 	[ws.closedPromise_]: shared.ControlledPromise<void>;
 
-	constructor(stream: ws.WritableStream) {
+	constructor(stream: ws.WritableStream<InputType>) {
 		if (! ws.isWritableStream(stream)) {
 			throw new TypeError();
 		}

@@ -16,9 +16,9 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 	[rs.byobRequest_]: rs.ReadableStreamBYOBRequest | undefined;
 	[rs.cancelAlgorithm_]: rs.CancelAlgorithm;
 	[rs.closeRequested_]: boolean;
-	[rs.controlledReadableByteStream_]: rs.ReadableStream;
+	[rs.controlledReadableByteStream_]: rs.ReadableStream<ArrayBufferView>;
 	[rs.pullAgain_]: boolean;
-	[rs.pullAlgorithm_]: rs.PullAlgorithm;
+	[rs.pullAlgorithm_]: rs.PullAlgorithm<ArrayBufferView>;
 	[rs.pulling_]: boolean;
 	[rs.pendingPullIntos_]: rs.PullIntoDescriptor[];
 	[rs.started_]: boolean;
@@ -138,7 +138,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 	}
 }
 
-export function setUpReadableByteStreamControllerFromUnderlyingSource(stream: rs.ReadableStream, underlyingByteSource: rs.ReadableStreamSource, highWaterMark: number) {
+export function setUpReadableByteStreamControllerFromUnderlyingSource(stream: rs.ReadableStream<ArrayBufferView>, underlyingByteSource: rs.ReadableStreamSource<ArrayBufferView>, highWaterMark: number) {
 	// Assert: underlyingByteSource is not undefined.
 	const controller = Object.create(ReadableByteStreamController.prototype) as ReadableByteStreamController;
 

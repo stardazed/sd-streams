@@ -14,9 +14,9 @@ import { TransformStreamDefaultController } from "./transform-stream-default-con
 export class TransformStream<InputType, OutputType> {
 	[ts.backpressure_]: boolean | undefined; // Whether there was backpressure on [[readable]] the last time it was observed
 	[ts.backpressureChangePromise_]: shared.ControlledPromise<void>; // A promise which is fulfilled and replaced every time the value of[[backpressure]] changes
-	[ts.readable_]: rs.ReadableStream; // The ReadableStream instance controlled by this object
+	[ts.readable_]: rs.ReadableStream<OutputType>; // The ReadableStream instance controlled by this object
 	[ts.transformStreamController_]: TransformStreamDefaultController<InputType, OutputType>; // A TransformStreamDefaultController created with the ability to control[[readable]] and[[writable]]; also used for the IsTransformStream brand check
-	[ts.writable_]: ws.WritableStream; // The WritableStream instance controlled by this object
+	[ts.writable_]: ws.WritableStream<InputType>; // The WritableStream instance controlled by this object
 
 	constructor(transformer: ts.Transformer<InputType, OutputType> = {}, writableStrategy: shared.StreamStrategy = {}, readableStrategy: shared.StreamStrategy = {}) {
 		const writableSizeFunction = writableStrategy.size;
@@ -46,14 +46,14 @@ export class TransformStream<InputType, OutputType> {
 		startPromise.resolve(startResult);
 	}
 
-	get readable(): rs.ReadableStream {
+	get readable(): rs.ReadableStream<OutputType> {
 		if (! ts.isTransformStream(this)) {
 			throw new TypeError();
 		}
 		return this[ts.readable_];
 	}
 
-	get writable(): ws.WritableStream {
+	get writable(): ws.WritableStream<InputType> {
 		if (! ts.isTransformStream(this)) {
 			throw new TypeError();
 		}
@@ -63,20 +63,21 @@ export class TransformStream<InputType, OutputType> {
 
 function setUpTransformStreamDefaultControllerFromTransformer<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, transformer: ts.Transformer<InputType, OutputType>) {
 	const controller = Object.create(TransformStreamDefaultController.prototype) as TransformStreamDefaultController<InputType, OutputType>;
-	let transformAlgorithm: ts.TransformAlgorithm<OutputType>;
+	let transformAlgorithm: ts.TransformAlgorithm<InputType>;
 
 	const transformMethod = transformer.transform;
 	if (transformMethod !== undefined) {
 		if (typeof transformMethod !== "function") {
 			throw new TypeError("`transform` field of the transformer must be a function");
 		}
-		transformAlgorithm = (chunk: OutputType) => shared.promiseCall(transformMethod, transformer, [chunk, controller]);
+		transformAlgorithm = (chunk: InputType) => shared.promiseCall(transformMethod, transformer, [chunk, controller]);
 	}
 	else {
 		// use identity transform
-		transformAlgorithm = function(chunk: OutputType) {
+		transformAlgorithm = function(chunk: InputType) {
 			try {
-				ts.transformStreamDefaultControllerEnqueue(controller, chunk);
+				// OutputType and InputType are the same here
+				ts.transformStreamDefaultControllerEnqueue(controller, chunk as unknown as OutputType);
 			}
 			catch (error) {
 				return Promise.reject(error);

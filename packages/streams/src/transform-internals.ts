@@ -26,7 +26,7 @@ export const transformAlgorithm_ = Symbol("transformAlgorithm_");
 // ----
 
 export type TransformFunction<InputType, OutputType> = (chunk: InputType, controller: TransformStreamDefaultController<InputType, OutputType>) => void | Promise<void>;
-export type TransformAlgorithm<OutputType> = (chunk: OutputType) => Promise<void>;
+export type TransformAlgorithm<InputType> = (chunk: InputType) => Promise<void>;
 export type FlushFunction<InputType, OutputType> = (controller: TransformStreamDefaultController<InputType, OutputType>) => void | Promise<void>;
 export type FlushAlgorithm = () => Promise<void>;
 
@@ -40,7 +40,7 @@ export interface TransformStreamDefaultController<InputType, OutputType> {
 
 	[controlledTransformStream_]: TransformStream<InputType, OutputType>; // The TransformStream instance controlled; also used for the IsTransformStreamDefaultController brand check
 	[flushAlgorithm_]: FlushAlgorithm; // A promise - returning algorithm which communicates a requested close to the transformer
-	[transformAlgorithm_]: TransformAlgorithm<OutputType>; // A promise - returning algorithm, taking one argument(the chunk to transform), which requests the transformer perform its transformation
+	[transformAlgorithm_]: TransformAlgorithm<InputType>; // A promise - returning algorithm, taking one argument(the chunk to transform), which requests the transformer perform its transformation
 }
 
 export interface Transformer<InputType, OutputType> {
@@ -55,14 +55,14 @@ export interface Transformer<InputType, OutputType> {
 export declare class TransformStream<InputType, OutputType> {
 	constructor(transformer: Transformer<InputType, OutputType>, writableStrategy: shared.StreamStrategy, readableStrategy: shared.StreamStrategy);
 
-	readonly readable: rs.ReadableStream;
-	readonly writable: ws.WritableStream;
+	readonly readable: rs.ReadableStream<OutputType>;
+	readonly writable: ws.WritableStream<InputType>;
 
 	[backpressure_]: boolean | undefined; // Whether there was backpressure on [[readable]] the last time it was observed
 	[backpressureChangePromise_]: shared.ControlledPromise<void> | undefined; // A promise which is fulfilled and replaced every time the value of[[backpressure]] changes
-	[readable_]: rs.ReadableStream; // The ReadableStream instance controlled by this object
+	[readable_]: rs.ReadableStream<OutputType>; // The ReadableStream instance controlled by this object
 	[transformStreamController_]: TransformStreamDefaultController<InputType, OutputType>; // A TransformStreamDefaultController created with the ability to control[[readable]] and[[writable]]; also used for the IsTransformStream brand check
-	[writable_]: ws.WritableStream; // The WritableStream instance controlled by this object
+	[writable_]: ws.WritableStream<InputType>; // The WritableStream instance controlled by this object
 }
 
 // ---- TransformStream
@@ -78,7 +78,7 @@ export function initializeTransformStream<InputType, OutputType>(stream: Transfo
 	const startAlgorithm = function() {
 		return startPromise;
 	};
-	const writeAlgorithm = function(chunk: OutputType) {
+	const writeAlgorithm = function(chunk: InputType) {
 		return transformStreamDefaultSinkWriteAlgorithm(stream, chunk);
 	};
 	const abortAlgorithm = function(reason: any) {
@@ -87,7 +87,7 @@ export function initializeTransformStream<InputType, OutputType>(stream: Transfo
 	const closeAlgorithm = function() {
 		return transformStreamDefaultSinkCloseAlgorithm(stream);
 	};
-	stream[writable_] = createWritableStream(startAlgorithm, writeAlgorithm, closeAlgorithm, abortAlgorithm, writableHighWaterMark, writableSizeAlgorithm);
+	stream[writable_] = createWritableStream<InputType>(startAlgorithm, writeAlgorithm, closeAlgorithm, abortAlgorithm, writableHighWaterMark, writableSizeAlgorithm);
 
 	const pullAlgorithm = function() {
 		return transformStreamDefaultSourcePullAlgorithm(stream);
@@ -105,7 +105,7 @@ export function initializeTransformStream<InputType, OutputType>(stream: Transfo
 }
 
 export function transformStreamError<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, error: any) {
-	rs.readableStreamDefaultControllerError(stream[readable_][rs.readableStreamController_] as rs.ReadableStreamDefaultController, error);
+	rs.readableStreamDefaultControllerError(stream[readable_][rs.readableStreamController_] as rs.ReadableStreamDefaultController<OutputType>, error);
 	transformStreamErrorWritableAndUnblockWrite(stream, error);
 }
 
@@ -136,7 +136,7 @@ export function isTransformStreamDefaultController(value: unknown): value is Tra
 	return controlledTransformStream_ in value;
 }
 
-export function setUpTransformStreamDefaultController<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, controller: TransformStreamDefaultController<InputType, OutputType>, transformAlgorithm: TransformAlgorithm<OutputType>, flushAlgorithm: FlushAlgorithm) {
+export function setUpTransformStreamDefaultController<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, controller: TransformStreamDefaultController<InputType, OutputType>, transformAlgorithm: TransformAlgorithm<InputType>, flushAlgorithm: FlushAlgorithm) {
 	// Assert: ! IsTransformStream(stream) is true.
 	// Assert: stream.[[transformStreamController]] is undefined.
 	controller[controlledTransformStream_] = stream;
@@ -154,7 +154,7 @@ export function transformStreamDefaultControllerClearAlgorithms<InputType, Outpu
 
 export function transformStreamDefaultControllerEnqueue<InputType, OutputType>(controller: TransformStreamDefaultController<InputType, OutputType>, chunk: OutputType) {
 	const stream = controller[controlledTransformStream_];
-	const readableController = stream[readable_][rs.readableStreamController_] as rs.ReadableStreamDefaultController;
+	const readableController = stream[readable_][rs.readableStreamController_] as rs.ReadableStreamDefaultController<OutputType>;
 	if (! rs.readableStreamDefaultControllerCanCloseOrEnqueue(readableController)) {
 		throw new TypeError();
 	}
@@ -176,7 +176,7 @@ export function transformStreamDefaultControllerError<InputType, OutputType>(con
 	transformStreamError(controller[controlledTransformStream_], error);
 }
 
-export function transformStreamDefaultControllerPerformTransform<InputType, OutputType>(controller: TransformStreamDefaultController<InputType, OutputType>, chunk: OutputType) {
+export function transformStreamDefaultControllerPerformTransform<InputType, OutputType>(controller: TransformStreamDefaultController<InputType, OutputType>, chunk: InputType) {
 	const transformPromise = controller[transformAlgorithm_](chunk);
 	return transformPromise.catch(error => {
 		transformStreamError(controller[controlledTransformStream_], error);
@@ -187,7 +187,7 @@ export function transformStreamDefaultControllerPerformTransform<InputType, Outp
 
 export function transformStreamDefaultControllerTerminate<InputType, OutputType>(controller: TransformStreamDefaultController<InputType, OutputType>) {
 	const stream = controller[controlledTransformStream_];
-	const readableController = stream[readable_][rs.readableStreamController_] as rs.ReadableStreamDefaultController;
+	const readableController = stream[readable_][rs.readableStreamController_] as rs.ReadableStreamDefaultController<OutputType>;
 	if (rs.readableStreamDefaultControllerCanCloseOrEnqueue(readableController)) {
 		rs.readableStreamDefaultControllerClose(readableController);
 	}
@@ -198,7 +198,7 @@ export function transformStreamDefaultControllerTerminate<InputType, OutputType>
 
 // ---- Transform Sinks
 
-export function transformStreamDefaultSinkWriteAlgorithm<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, chunk: OutputType) {
+export function transformStreamDefaultSinkWriteAlgorithm<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, chunk: InputType) {
 	// Assert: stream.[[writable]].[[state]] is "writable".
 	const controller = stream[transformStreamController_];
 	if (stream[backpressure_]) {
@@ -233,7 +233,7 @@ export function transformStreamDefaultSinkCloseAlgorithm<InputType, OutputType>(
 			if (readable[shared.state_] === "errored") {
 				throw readable[shared.storedError_];
 			}
-			const readableController = readable[rs.readableStreamController_] as rs.ReadableStreamDefaultController;
+			const readableController = readable[rs.readableStreamController_] as rs.ReadableStreamDefaultController<OutputType>;
 			if (rs.readableStreamDefaultControllerCanCloseOrEnqueue(readableController)) {
 				rs.readableStreamDefaultControllerClose(readableController);
 			}

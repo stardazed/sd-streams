@@ -10,12 +10,12 @@ import * as shared from "./shared-internals";
 import * as q from "./queue-mixin";
 import { Queue } from "./queue";
 
-export class ReadableStreamDefaultController implements rs.ReadableStreamDefaultController {
+export class ReadableStreamDefaultController<OutputType> implements rs.ReadableStreamDefaultController<OutputType> {
 	[rs.cancelAlgorithm_]: rs.CancelAlgorithm;
 	[rs.closeRequested_]: boolean;
-	[rs.controlledReadableStream_]: rs.ReadableStream;
+	[rs.controlledReadableStream_]: rs.ReadableStream<OutputType>;
 	[rs.pullAgain_]: boolean;
-	[rs.pullAlgorithm_]: rs.PullAlgorithm;
+	[rs.pullAlgorithm_]: rs.PullAlgorithm<OutputType>;
 	[rs.pulling_]: boolean;
 	[rs.strategyHWM_]: number;
 	[rs.strategySizeAlgorithm_]: shared.SizeAlgorithm;
@@ -87,7 +87,7 @@ export class ReadableStreamDefaultController implements rs.ReadableStreamDefault
 }
 
 
-export function setUpReadableStreamDefaultControllerFromUnderlyingSource(stream: rs.ReadableStream, underlyingSource: rs.ReadableStreamSource, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
+export function setUpReadableStreamDefaultControllerFromUnderlyingSource<OutputType>(stream: rs.ReadableStream<OutputType>, underlyingSource: rs.ReadableStreamSource<OutputType>, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
 	// Assert: underlyingSource is not undefined.
 	const controller = Object.create(ReadableStreamDefaultController.prototype);
 	const startAlgorithm = () => {

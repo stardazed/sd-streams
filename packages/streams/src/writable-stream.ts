@@ -10,7 +10,7 @@ import * as shared from "./shared-internals";
 import { WritableStreamDefaultController, setUpWritableStreamDefaultControllerFromUnderlyingSink } from "./writable-stream-default-controller";
 import { WritableStreamDefaultWriter } from "./writable-stream-default-writer";
 
-export class WritableStream {
+export class WritableStream<InputType> {
 	[shared.state_]: ws.WritableStreamState;
 	[shared.storedError_]: any;
 	[ws.backpressure_]: boolean;
@@ -18,11 +18,11 @@ export class WritableStream {
 	[ws.inFlightWriteRequest_]: shared.ControlledPromise<void> | undefined;
 	[ws.inFlightCloseRequest_]: shared.ControlledPromise<void> | undefined;
 	[ws.pendingAbortRequest_]: ws.AbortRequest | undefined;
-	[ws.writableStreamController_]: ws.WritableStreamDefaultController | undefined;
-	[ws.writer_]: ws.WritableStreamDefaultWriter | undefined;
+	[ws.writableStreamController_]: ws.WritableStreamDefaultController<InputType> | undefined;
+	[ws.writer_]: ws.WritableStreamDefaultWriter<InputType> | undefined;
 	[ws.writeRequests_]: shared.ControlledPromise<any>[];
 
-	constructor(sink: ws.WritableStreamSink = {}, strategy: shared.StreamStrategy = {}) {
+	constructor(sink: ws.WritableStreamSink<InputType> = {}, strategy: shared.StreamStrategy = {}) {
 		ws.initializeWritableStream(this);
 		const sizeFunc = strategy.size;
 		const stratHWM = strategy.highWaterMark;
@@ -53,7 +53,7 @@ export class WritableStream {
 		return ws.writableStreamAbort(this, reason);
 	}
 
-	getWriter(): ws.WritableStreamWriter {
+	getWriter(): ws.WritableStreamWriter<InputType> {
 		if (! ws.isWritableStream(this)) {
 			throw new TypeError();
 		}
@@ -61,7 +61,7 @@ export class WritableStream {
 	}
 }
 
-export function createWritableStream(startAlgorithm: ws.StartAlgorithm, writeAlgorithm: ws.WriteAlgorithm, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark?: number, sizeAlgorithm?: shared.SizeAlgorithm) {
+export function createWritableStream<InputType>(startAlgorithm: ws.StartAlgorithm, writeAlgorithm: ws.WriteAlgorithm<InputType>, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark?: number, sizeAlgorithm?: shared.SizeAlgorithm) {
 	if (highWaterMark === undefined) {
 		highWaterMark = 1;
 	}
@@ -70,9 +70,9 @@ export function createWritableStream(startAlgorithm: ws.StartAlgorithm, writeAlg
 	}
 	// Assert: ! IsNonNegativeNumber(highWaterMark) is true.
 
-	const stream = Object.create(WritableStream.prototype) as WritableStream;
+	const stream = Object.create(WritableStream.prototype) as WritableStream<InputType>;
 	ws.initializeWritableStream(stream);
-	const controller = Object.create(WritableStreamDefaultController.prototype) as WritableStreamDefaultController;
+	const controller = Object.create(WritableStreamDefaultController.prototype) as WritableStreamDefaultController<InputType>;
 	ws.setUpWritableStreamDefaultController(stream, controller, startAlgorithm, writeAlgorithm, closeAlgorithm, abortAlgorithm, highWaterMark, sizeAlgorithm);
 	return stream;
 }

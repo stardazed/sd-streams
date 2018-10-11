@@ -10,16 +10,16 @@ import * as shared from "./shared-internals";
 import * as q from "./queue-mixin";
 import { Queue } from "./queue";
 
-export class WritableStreamDefaultController implements ws.WritableStreamDefaultController {
+export class WritableStreamDefaultController<InputType> implements ws.WritableStreamDefaultController<InputType> {
 	[ws.abortAlgorithm_]: ws.AbortAlgorithm;
 	[ws.closeAlgorithm_]: ws.CloseAlgorithm;
-	[ws.controlledWritableStream_]: ws.WritableStream;
+	[ws.controlledWritableStream_]: ws.WritableStream<InputType>;
 	[ws.started_]: boolean;
 	[ws.strategyHWM_]: number;
 	[ws.strategySizeAlgorithm_]: shared.SizeAlgorithm;
-	[ws.writeAlgorithm_]: ws.WriteAlgorithm;
+	[ws.writeAlgorithm_]: ws.WriteAlgorithm<InputType>;
 
-	[q.queue_]: Queue<q.QueueElement<ws.WriteRecord | "close">>;
+	[q.queue_]: Queue<q.QueueElement<ws.WriteRecord<InputType> | "close">>;
 	[q.queueTotalSize_]: number;
 
 	constructor() {
@@ -48,9 +48,9 @@ export class WritableStreamDefaultController implements ws.WritableStreamDefault
 	}
 }
 
-export function setUpWritableStreamDefaultControllerFromUnderlyingSink(stream: ws.WritableStream, underlyingSink: ws.WritableStreamSink, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
+export function setUpWritableStreamDefaultControllerFromUnderlyingSink<InputType>(stream: ws.WritableStream<InputType>, underlyingSink: ws.WritableStreamSink<InputType>, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
 	// Assert: underlyingSink is not undefined.
-	const controller = Object.create(WritableStreamDefaultController.prototype) as WritableStreamDefaultController;
+	const controller = Object.create(WritableStreamDefaultController.prototype) as WritableStreamDefaultController<InputType>;
 
 	const startAlgorithm = function() {
 		return shared.invokeOrNoop(underlyingSink, "start", [controller]);
