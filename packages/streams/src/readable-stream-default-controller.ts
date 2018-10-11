@@ -52,14 +52,14 @@ export class ReadableStreamDefaultController<OutputType> implements rs.ReadableS
 		rs.readableStreamDefaultControllerEnqueue(this, chunk);
 	}
 
-	error(e?: any) {
+	error(e?: shared.ErrorResult) {
 		if (! rs.isReadableStreamDefaultController(this)) {
 			throw new TypeError();
 		}
 		rs.readableStreamDefaultControllerError(this, e);
 	}
 
-	[rs.cancelSteps_](reason: any) {
+	[rs.cancelSteps_](reason: shared.ErrorResult) {
 		q.resetQueue(this);
 		const result = this[rs.cancelAlgorithm_](reason);
 		rs.readableStreamDefaultControllerClearAlgorithms(this);

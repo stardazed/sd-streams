@@ -46,18 +46,18 @@ export const readableStreamController_ = Symbol("readableStreamController_");
 
 export type StartFunction<OutputType> = (controller: ReadableStreamController<OutputType>) => void | Promise<void>;
 export type StartAlgorithm = () => Promise<void> | void;
-export type CancelAlgorithm = (reason?: any) => Promise<void>;
 export type PullFunction<OutputType> = (controller: ReadableStreamController<OutputType>) => void | Promise<void>;
 export type PullAlgorithm<OutputType> = (controller: ReadableStreamController<OutputType>) => Promise<void>;
+export type CancelAlgorithm = (reason?: shared.ErrorResult) => Promise<void>;
 
 // ----
 
 export interface ReadableStreamController<OutputType> {
 	readonly desiredSize: number | null;
 	close(): void;
-	error(e?: any): void;
+	error(e?: shared.ErrorResult): void;
 
-	[cancelSteps_](reason: any): Promise<void>;
+	[cancelSteps_](reason: shared.ErrorResult): Promise<void>;
 	[pullSteps_](forAuthorCode: boolean): Promise<IteratorResult<OutputType>>;
 }
 
@@ -124,7 +124,7 @@ export interface ReadableStreamReaderOptions {
 
 export interface ReadableStreamReader<OutputType> {
 	readonly closed: Promise<void>;
-	cancel(reason: any): Promise<void>;
+	cancel(reason: shared.ErrorResult): Promise<void>;
 	releaseLock(): void;
 
 	[ownerReadableStream_]: ReadableStream<OutputType> | undefined;
@@ -139,7 +139,7 @@ export declare class ReadableStreamDefaultReader<OutputType> implements Readable
 	constructor(stream: ReadableStream<OutputType>);
 
 	readonly closed: Promise<void>;
-	cancel(reason: any): Promise<void>;
+	cancel(reason: shared.ErrorResult): Promise<void>;
 	releaseLock(): void;
 	read(): Promise<IteratorResult<OutputType>>;
 
@@ -153,7 +153,7 @@ export declare class ReadableStreamBYOBReader implements ReadableStreamReader<Ar
 	constructor(stream: ReadableStream<ArrayBufferView>);
 
 	readonly closed: Promise<void>;
-	cancel(reason: any): Promise<void>;
+	cancel(reason: shared.ErrorResult): Promise<void>;
 	releaseLock(): void;
 	read(view: ArrayBufferView): Promise<IteratorResult<ArrayBufferView>>;
 
@@ -170,7 +170,7 @@ export interface ReadableStreamSource<OutputType> {
 	autoAllocateChunkSize?: number; // only for "bytes" type sources
 	start?: StartFunction<OutputType>;
 	pull?: PullFunction<OutputType>;
-	cancel?(reason?: any): void;
+	cancel?(reason?: shared.ErrorResult): void;
 }
 
 export interface PipeToOptions {
@@ -190,7 +190,7 @@ export declare class ReadableStream<OutputType> {
 	constructor(source: ReadableStreamSource<OutputType>, strategy: shared.StreamStrategy);
 
 	readonly locked: boolean;
-	cancel(reason?: any): Promise<void>;
+	cancel(reason?: shared.ErrorResult): Promise<void>;
 	getReader(options?: ReadableStreamReaderOptions): ReadableStreamReader<OutputType>;
 	tee(): ReadableStream<OutputType>[];
 
@@ -198,7 +198,7 @@ export declare class ReadableStream<OutputType> {
 	pipeTo(dest: ws.WritableStream<OutputType>, options?: PipeToOptions): Promise<void>;
 
 	[shared.state_]: ReadableStreamState;
-	[shared.storedError_]: any;
+	[shared.storedError_]: shared.ErrorResult;
 	[reader_]: ReadableStreamReader<OutputType> | undefined;
 	[readableStreamController_]: ReadableStreamController<OutputType>;
 }
@@ -277,7 +277,7 @@ export function readableStreamHasDefaultReader<OutputType>(stream: ReadableStrea
 	return isReadableStreamDefaultReader(reader);
 }
 
-export function readableStreamCancel<OutputType>(stream: ReadableStream<OutputType>, reason: any) {
+export function readableStreamCancel<OutputType>(stream: ReadableStream<OutputType>, reason: shared.ErrorResult) {
 	if (stream[shared.state_] === "closed") {
 		return Promise.resolve(undefined);
 	}
@@ -308,7 +308,7 @@ export function readableStreamClose<OutputType>(stream: ReadableStream<OutputTyp
 	reader[closedPromise_].promise.catch(() => {});
 }
 
-export function readableStreamError<OutputType>(stream: ReadableStream<OutputType>, error: any) {
+export function readableStreamError<OutputType>(stream: ReadableStream<OutputType>, error: shared.ErrorResult) {
 	if (stream[shared.state_] !== "readable") {
 		throw new RangeError("Stream is in an invalid state");
 	}
@@ -525,7 +525,7 @@ export function readableStreamDefaultControllerEnqueue<OutputType>(controller: R
 	readableStreamDefaultControllerCallPullIfNeeded(controller);
 }
 
-export function readableStreamDefaultControllerError<OutputType>(controller: ReadableStreamDefaultController<OutputType>, error: any) {
+export function readableStreamDefaultControllerError<OutputType>(controller: ReadableStreamDefaultController<OutputType>, error: shared.ErrorResult) {
 	const stream = controller[controlledReadableStream_];
 	if (stream[shared.state_] !== "readable") {
 		return;
@@ -756,7 +756,7 @@ export function readableByteStreamControllerEnqueueChunkToQueue(controller: Read
 	controller[q.queueTotalSize_] += byteLength;
 }
 
-export function readableByteStreamControllerError(controller: ReadableByteStreamController, error: any) {
+export function readableByteStreamControllerError(controller: ReadableByteStreamController, error: shared.ErrorResult) {
 	const stream = controller[controlledReadableByteStream_];
 	if (stream[shared.state_] !== "readable") {
 		return;
@@ -864,7 +864,7 @@ export function readableByteStreamControllerPullInto(controller: ReadableByteStr
 	const stream = controller[controlledReadableByteStream_];
 
 	const elementSize = (view as Uint8Array).BYTES_PER_ELEMENT || 1; // DataView exposes this in Webkit as 1, is not present in FF or Blink
-	const ctor = (view as any).constructor as Uint8ArrayConstructor; // the typecast here is just for TS typing, it does not influence buffer creation
+	const ctor = view.constructor as Uint8ArrayConstructor; // the typecast here is just for TS typing, it does not influence buffer creation
 
 	const byteOffset = view.byteOffset;
 	const byteLength = view.byteLength;

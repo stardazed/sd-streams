@@ -34,7 +34,7 @@ export class ReadableStreamBYOBReader implements rs.ReadableStreamReader<ArrayBu
 		return this[rs.closedPromise_].promise;
 	}
 
-	cancel(reason: any): Promise<void> {
+	cancel(reason: shared.ErrorResult): Promise<void> {
 		if (! rs.isReadableStreamBYOBReader(this)) {
 			return Promise.reject(new TypeError());
 		}

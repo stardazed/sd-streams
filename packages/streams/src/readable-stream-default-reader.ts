@@ -31,7 +31,7 @@ export class ReadableStreamDefaultReader<OutputType> implements rs.ReadableStrea
 		return this[rs.closedPromise_].promise;
 	}
 
-	cancel(reason: any): Promise<void> {
+	cancel(reason: shared.ErrorResult): Promise<void> {
 		if (! rs.isReadableStreamDefaultReader(this)) {
 			return Promise.reject(new TypeError());
 		}
@@ -42,7 +42,7 @@ export class ReadableStreamDefaultReader<OutputType> implements rs.ReadableStrea
 		return rs.readableStreamCancel(stream, reason);
 	}
 
-	read(): Promise<IteratorResult<any>> {
+	read(): Promise<IteratorResult<OutputType | undefined>> {
 		if (! rs.isReadableStreamDefaultReader(this)) {
 			return Promise.reject(new TypeError());
 		}

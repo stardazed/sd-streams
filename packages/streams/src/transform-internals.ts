@@ -35,7 +35,7 @@ export type FlushAlgorithm = () => Promise<void>;
 export interface TransformStreamDefaultController<InputType, OutputType> {
 	readonly desiredSize: number | null;
 	enqueue(chunk: OutputType): void;
-	error(reason: any): void;
+	error(reason: shared.ErrorResult): void;
 	terminate(): void;
 
 	[controlledTransformStream_]: TransformStream<InputType, OutputType>; // The TransformStream instance controlled; also used for the IsTransformStreamDefaultController brand check
@@ -81,7 +81,7 @@ export function initializeTransformStream<InputType, OutputType>(stream: Transfo
 	const writeAlgorithm = function(chunk: InputType) {
 		return transformStreamDefaultSinkWriteAlgorithm(stream, chunk);
 	};
-	const abortAlgorithm = function(reason: any) {
+	const abortAlgorithm = function(reason: shared.ErrorResult) {
 		return transformStreamDefaultSinkAbortAlgorithm(stream, reason);
 	};
 	const closeAlgorithm = function() {
@@ -92,7 +92,7 @@ export function initializeTransformStream<InputType, OutputType>(stream: Transfo
 	const pullAlgorithm = function() {
 		return transformStreamDefaultSourcePullAlgorithm(stream);
 	};
-	const cancelAlgorithm = function(reason: any) {
+	const cancelAlgorithm = function(reason: shared.ErrorResult) {
 		transformStreamErrorWritableAndUnblockWrite(stream, reason);
 		return Promise.resolve(undefined);
 	};
@@ -104,12 +104,12 @@ export function initializeTransformStream<InputType, OutputType>(stream: Transfo
 	stream[transformStreamController_] = undefined!; // initialize slot for brand-check
 }
 
-export function transformStreamError<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, error: any) {
+export function transformStreamError<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, error: shared.ErrorResult) {
 	rs.readableStreamDefaultControllerError(stream[readable_][rs.readableStreamController_] as rs.ReadableStreamDefaultController<OutputType>, error);
 	transformStreamErrorWritableAndUnblockWrite(stream, error);
 }
 
-export function transformStreamErrorWritableAndUnblockWrite<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, error: any) {
+export function transformStreamErrorWritableAndUnblockWrite<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, error: shared.ErrorResult) {
 	transformStreamDefaultControllerClearAlgorithms(stream[transformStreamController_]);
 	ws.writableStreamDefaultControllerErrorIfNeeded(stream[writable_][ws.writableStreamController_]!, error);
 	if (stream[backpressure_]) {
@@ -172,7 +172,7 @@ export function transformStreamDefaultControllerEnqueue<InputType, OutputType>(c
 	}
 }
 
-export function transformStreamDefaultControllerError<InputType, OutputType>(controller: TransformStreamDefaultController<InputType, OutputType>, error: any) {
+export function transformStreamDefaultControllerError<InputType, OutputType>(controller: TransformStreamDefaultController<InputType, OutputType>, error: shared.ErrorResult) {
 	transformStreamError(controller[controlledTransformStream_], error);
 }
 
@@ -217,7 +217,7 @@ export function transformStreamDefaultSinkWriteAlgorithm<InputType, OutputType>(
 	return transformStreamDefaultControllerPerformTransform(controller, chunk);
 }
 
-export function transformStreamDefaultSinkAbortAlgorithm<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, reason: any) {
+export function transformStreamDefaultSinkAbortAlgorithm<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, reason: shared.ErrorResult) {
 	transformStreamError(stream, reason);
 	return Promise.resolve(undefined);
 }

@@ -14,7 +14,7 @@ import { WritableStreamDefaultWriter } from "./writable-stream-default-writer";
 
 // add a wrapper to handle falsy rejections
 interface ErrorWrapper {
-	actualError: any;
+	actualError: shared.ErrorResult;
 }
 
 export function pipeTo<OutputType, InputType>(source: rs.ReadableStream<OutputType>, dest: ws.WritableStream<InputType>, options: rs.PipeToOptions) {

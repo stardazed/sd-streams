@@ -82,14 +82,14 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 		return rs.readableByteStreamControllerEnqueue(this, chunk);
 	}
 
-	error(error?: any) {
+	error(error?: shared.ErrorResult) {
 		if (! rs.isReadableByteStreamController(this)) {
 			throw new TypeError();
 		}
 		rs.readableByteStreamControllerError(this, error);
 	}
 
-	[rs.cancelSteps_](reason: any) {
+	[rs.cancelSteps_](reason: shared.ErrorResult) {
 		if (this[rs.pendingPullIntos_].length > 0) {
 			const firstDescriptor = this[rs.pendingPullIntos_][0];
 			firstDescriptor.bytesFilled = 0;

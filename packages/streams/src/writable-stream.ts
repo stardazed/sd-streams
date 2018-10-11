@@ -12,7 +12,7 @@ import { WritableStreamDefaultWriter } from "./writable-stream-default-writer";
 
 export class WritableStream<InputType> {
 	[shared.state_]: ws.WritableStreamState;
-	[shared.storedError_]: any;
+	[shared.storedError_]: shared.ErrorResult;
 	[ws.backpressure_]: boolean;
 	[ws.closeRequest_]: shared.ControlledPromise<void> | undefined;
 	[ws.inFlightWriteRequest_]: shared.ControlledPromise<void> | undefined;
@@ -20,7 +20,7 @@ export class WritableStream<InputType> {
 	[ws.pendingAbortRequest_]: ws.AbortRequest | undefined;
 	[ws.writableStreamController_]: ws.WritableStreamDefaultController<InputType> | undefined;
 	[ws.writer_]: ws.WritableStreamDefaultWriter<InputType> | undefined;
-	[ws.writeRequests_]: shared.ControlledPromise<any>[];
+	[ws.writeRequests_]: shared.ControlledPromise<void>[];
 
 	constructor(sink: ws.WritableStreamSink<InputType> = {}, strategy: shared.StreamStrategy = {}) {
 		ws.initializeWritableStream(this);
@@ -43,7 +43,7 @@ export class WritableStream<InputType> {
 		return ws.isWritableStreamLocked(this);
 	}
 
-	abort(reason?: any): Promise<void> {
+	abort(reason?: shared.ErrorResult): Promise<void> {
 		if (! ws.isWritableStream(this)) {
 			return Promise.reject(new TypeError());
 		}

@@ -18,7 +18,7 @@ import { ReadableStreamBYOBReader } from "./readable-stream-byob-reader";
 
 export class ReadableStream<OutputType> implements rs.ReadableStream<OutputType> {
 	[shared.state_]: rs.ReadableStreamState;
-	[shared.storedError_]: any;
+	[shared.storedError_]: shared.ErrorResult;
 	[rs.reader_]: rs.ReadableStreamReader<OutputType> | undefined;
 	[rs.readableStreamController_]: rs.ReadableStreamController<OutputType>;
 
@@ -64,7 +64,7 @@ export class ReadableStream<OutputType> implements rs.ReadableStream<OutputType>
 		throw RangeError("mode option must be undefined or `byob`");
 	}
 
-	cancel(reason: any): Promise<void> {
+	cancel(reason: shared.ErrorResult): Promise<void> {
 		if (! rs.isReadableStream(this)) {
 			return Promise.reject(new TypeError());
 		}
@@ -158,7 +158,7 @@ export function readableStreamTee<OutputType>(stream: ReadableStream<OutputType>
 	let branch1: ReadableStream<OutputType>;
 	let branch2: ReadableStream<OutputType>;
 
-	let cancelResolve: (reason: any) => void;
+	let cancelResolve: (reason: shared.ErrorResult) => void;
 	const cancelPromise = new Promise<void>(resolve => cancelResolve = resolve);
 
 	const pullAlgorithm = () => {
@@ -190,7 +190,7 @@ export function readableStreamTee<OutputType>(stream: ReadableStream<OutputType>
 			});
 	};
 
-	const cancel1Algorithm = (reason: any) => {
+	const cancel1Algorithm = (reason: shared.ErrorResult) => {
 		canceled1 = true;
 		reason1 = reason;
 		if (canceled2) {
@@ -200,7 +200,7 @@ export function readableStreamTee<OutputType>(stream: ReadableStream<OutputType>
 		return cancelPromise;
 	};
 
-	const cancel2Algorithm = (reason: any) => {
+	const cancel2Algorithm = (reason: shared.ErrorResult) => {
 		canceled2 = true;
 		reason2 = reason;
 		if (canceled1) {

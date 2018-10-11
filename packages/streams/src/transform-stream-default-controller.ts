@@ -7,6 +7,7 @@
 
 import * as rs from "./readable-internals";
 import * as ts from "./transform-internals";
+import { ErrorResult } from "./shared-internals";
 
 export class TransformStreamDefaultController<InputType, OutputType> implements ts.TransformStreamDefaultController<InputType, OutputType> {
 	[ts.controlledTransformStream_]: ts.TransformStream<InputType, OutputType>;
@@ -33,7 +34,7 @@ export class TransformStreamDefaultController<InputType, OutputType> implements 
 		ts.transformStreamDefaultControllerEnqueue(this, chunk);
 	}
 
-	error(reason: any): void {
+	error(reason: ErrorResult): void {
 		if (! ts.isTransformStreamDefaultController(this)) {
 			throw new TypeError();
 		}

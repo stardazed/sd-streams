@@ -14,7 +14,7 @@ export class ByteLengthQueuingStrategy implements StreamStrategy {
 		this.highWaterMark = options.highWaterMark;
 	}
 
-	size(chunk: any) {
+	size(chunk: ArrayBufferView) {
 		return chunk.byteLength;
 	} 
 }

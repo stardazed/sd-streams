@@ -57,7 +57,7 @@ export class WritableStreamDefaultWriter<InputType> implements ws.WritableStream
 		}
 	}
 
-	abort(reason: any): Promise<void> {
+	abort(reason: shared.ErrorResult): Promise<void> {
 		if (! ws.isWritableStreamDefaultWriter(this)) {
 			return Promise.reject(new TypeError());
 		}

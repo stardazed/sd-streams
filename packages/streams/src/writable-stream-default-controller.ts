@@ -26,7 +26,7 @@ export class WritableStreamDefaultController<InputType> implements ws.WritableSt
 		throw new TypeError();
 	}
 
-	error(e?: any) {
+	error(e?: shared.ErrorResult) {
 		if (! ws.isWritableStreamDefaultController(this)) {
 			throw new TypeError();
 		}
@@ -37,7 +37,7 @@ export class WritableStreamDefaultController<InputType> implements ws.WritableSt
 		ws.writableStreamDefaultControllerError(this, e);
 	}
 
-	[ws.abortSteps_](reason: any) {
+	[ws.abortSteps_](reason: shared.ErrorResult) {
 		const result = this[ws.abortAlgorithm_](reason);
 		ws.writableStreamDefaultControllerClearAlgorithms(this);
 		return result;

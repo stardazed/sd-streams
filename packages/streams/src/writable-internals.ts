@@ -37,15 +37,15 @@ export type StartAlgorithm = () => Promise<void> | void;
 export type WriteFunction<InputType> = (chunk: InputType, controller: WritableStreamController) => void | Promise<void>;
 export type WriteAlgorithm<InputType> = (chunk: InputType) => Promise<void>;
 export type CloseAlgorithm = () => Promise<void>;
-export type AbortAlgorithm = (reason?: any) => Promise<void>;
+export type AbortAlgorithm = (reason?: shared.ErrorResult) => Promise<void>;
 
 // ----
 
 export interface WritableStreamController {
-	error(e?: any): void;
+	error(e?: shared.ErrorResult): void;
 
 	[errorSteps_](): void;
-	[abortSteps_](reason: any): Promise<void>;
+	[abortSteps_](reason: shared.ErrorResult): Promise<void>;
 }
 
 export interface WriteRecord<InputType> {
@@ -69,7 +69,7 @@ export interface WritableStreamWriter<InputType> {
 	readonly desiredSize: number | null;
 	readonly ready: Promise<void>;
 
-	abort(reason: any): Promise<void>;
+	abort(reason: shared.ErrorResult): Promise<void>;
 	close(): Promise<void>;
 	releaseLock(): void;
 	write(chunk: InputType): Promise<void>;
@@ -89,24 +89,24 @@ export interface WritableStreamSink<InputType> {
 	start?: StartFunction;
 	write?: WriteFunction<InputType>;
 	close?(): void | Promise<void>;
-	abort?(reason?: any): void;
+	abort?(reason?: shared.ErrorResult): void;
 
 	type?: undefined; // unused, for future revisions
 }
 
 export interface AbortRequest {
-	reason: any;
+	reason: shared.ErrorResult;
 	wasAlreadyErroring: boolean;
 	promise: Promise<void>;
 	resolve(): void;
-	reject(error: any): void;
+	reject(error: shared.ErrorResult): void;
 }
 
 export declare class WritableStream<InputType> {
 	constructor(underlyingSink?: WritableStreamSink<InputType>, strategy?: shared.StreamStrategy);
 
 	readonly locked: boolean;
-	abort(reason?: any): Promise<void>;
+	abort(reason?: shared.ErrorResult): Promise<void>;
 	getWriter(): WritableStreamWriter<InputType>;
 
 	[shared.state_]: WritableStreamState;
@@ -115,7 +115,7 @@ export declare class WritableStream<InputType> {
 	[inFlightWriteRequest_]: shared.ControlledPromise<void> | undefined;
 	[inFlightCloseRequest_]: shared.ControlledPromise<void> | undefined;
 	[pendingAbortRequest_]: AbortRequest | undefined;
-	[shared.storedError_]: any;
+	[shared.storedError_]: shared.ErrorResult;
 	[writableStreamController_]: WritableStreamDefaultController<InputType> | undefined;
 	[writer_]: WritableStreamDefaultWriter<InputType> | undefined;
 	[writeRequests_]: shared.ControlledPromise<void>[];
@@ -147,7 +147,7 @@ export function isWritableStreamLocked<InputType>(stream: WritableStream<InputTy
 	return stream[writer_] !== undefined;
 }
 
-export function writableStreamAbort<InputType>(stream: WritableStream<InputType>, reason: any) {
+export function writableStreamAbort<InputType>(stream: WritableStream<InputType>, reason: shared.ErrorResult) {
 	const state = stream[shared.state_];
 	if (state === "closed" || state === "errored") {
 		return Promise.resolve(undefined);
@@ -187,7 +187,7 @@ export function writableStreamAddWriteRequest<InputType>(stream: WritableStream<
 	return writePromise.promise;
 }
 
-export function writableStreamDealWithRejection<InputType>(stream: WritableStream<InputType>, error: any) {
+export function writableStreamDealWithRejection<InputType>(stream: WritableStream<InputType>, error: shared.ErrorResult) {
 	const state = stream[shared.state_];
 	if (state === "writable") {
 		writableStreamStartErroring(stream, error);
@@ -198,7 +198,7 @@ export function writableStreamDealWithRejection<InputType>(stream: WritableStrea
 }
 
 
-export function writableStreamStartErroring<InputType>(stream: WritableStream<InputType>, reason: any) {
+export function writableStreamStartErroring<InputType>(stream: WritableStream<InputType>, reason: shared.ErrorResult) {
 	// Assert: stream.[[storedError]] is undefined.
 	// Assert: stream.[[state]] is "writable".
 	const controller = stream[writableStreamController_]!;
@@ -256,7 +256,7 @@ export function writableStreamFinishInFlightWrite<InputType>(stream: WritableStr
 	stream[inFlightWriteRequest_] = undefined;
 }
 
-export function writableStreamFinishInFlightWriteWithError<InputType>(stream: WritableStream<InputType>, error: any) {
+export function writableStreamFinishInFlightWriteWithError<InputType>(stream: WritableStream<InputType>, error: shared.ErrorResult) {
 	// Assert: stream.[[inFlightWriteRequest]] is not undefined.
 	stream[inFlightWriteRequest_]!.reject(error);
 	stream[inFlightWriteRequest_] = undefined;
@@ -286,7 +286,7 @@ export function writableStreamFinishInFlightClose<InputType>(stream: WritableStr
 	// Assert: stream.[[storedError]] is undefined.
 }
 
-export function writableStreamFinishInFlightCloseWithError<InputType>(stream: WritableStream<InputType>, error: any) {
+export function writableStreamFinishInFlightCloseWithError<InputType>(stream: WritableStream<InputType>, error: shared.ErrorResult) {
 	// Assert: stream.[[inFlightCloseRequest]] is not undefined.
 	stream[inFlightCloseRequest_]!.reject(error);
 	stream[inFlightCloseRequest_] = undefined;
@@ -360,7 +360,7 @@ export function isWritableStreamDefaultWriter(value: unknown): value is Writable
 	return ownerWritableStream_ in value;
 }
 
-export function writableStreamDefaultWriterAbort<InputType>(writer: WritableStreamDefaultWriter<InputType>, reason: any) {
+export function writableStreamDefaultWriterAbort<InputType>(writer: WritableStreamDefaultWriter<InputType>, reason: shared.ErrorResult) {
 	const stream = writer[ownerWritableStream_]!;
 	// Assert: stream is not undefined.
 	return writableStreamAbort(stream, reason);
@@ -398,7 +398,7 @@ export function writableStreamDefaultWriterCloseWithErrorPropagation<InputType>(
 	return writableStreamDefaultWriterClose(writer);
 }
 
-export function writableStreamDefaultWriterEnsureClosedPromiseRejected<InputType>(writer: WritableStreamDefaultWriter<InputType>, error: any) {
+export function writableStreamDefaultWriterEnsureClosedPromiseRejected<InputType>(writer: WritableStreamDefaultWriter<InputType>, error: shared.ErrorResult) {
 	const closedPromise = writer[closedPromise_];
 	if (closedPromise.state === shared.ControlledPromiseState.Pending) {
 		closedPromise.reject(error);
@@ -410,7 +410,7 @@ export function writableStreamDefaultWriterEnsureClosedPromiseRejected<InputType
 	writer[closedPromise_].promise.catch(() => {});
 }
 
-export function writableStreamDefaultWriterEnsureReadyPromiseRejected<InputType>(writer: WritableStreamDefaultWriter<InputType>, error: any) {
+export function writableStreamDefaultWriterEnsureReadyPromiseRejected<InputType>(writer: WritableStreamDefaultWriter<InputType>, error: shared.ErrorResult) {
 	const readyPromise = writer[readyPromise_];
 	if (readyPromise.state === shared.ControlledPromiseState.Pending) {
 		readyPromise.reject(error);
@@ -588,7 +588,7 @@ export function writableStreamDefaultControllerAdvanceQueueIfNeeded<InputType>(c
 	}
 }
 
-export function writableStreamDefaultControllerErrorIfNeeded<InputType>(controller: WritableStreamDefaultController<InputType>, error: any) {
+export function writableStreamDefaultControllerErrorIfNeeded<InputType>(controller: WritableStreamDefaultController<InputType>, error: shared.ErrorResult) {
 	if (controller[controlledWritableStream_][shared.state_] === "writable") {
 		writableStreamDefaultControllerError(controller, error);
 	}
@@ -640,7 +640,7 @@ export function writableStreamDefaultControllerGetBackpressure<InputType>(contro
 	return desiredSize <= 0;
 }
 
-export function writableStreamDefaultControllerError<InputType>(controller: WritableStreamDefaultController<InputType>, error: any) {
+export function writableStreamDefaultControllerError<InputType>(controller: WritableStreamDefaultController<InputType>, error: shared.ErrorResult) {
 	const stream = controller[controlledWritableStream_];
 	// Assert: stream.[[state]] is "writable".
 	writableStreamDefaultControllerClearAlgorithms(controller);
