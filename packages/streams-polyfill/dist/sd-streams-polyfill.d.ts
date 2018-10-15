@@ -5,7 +5,7 @@
  * https://github.com/stardazed/sd-streams
  */
 
-/* Types from @stardazed/streams */
+/* Types from @stardazed/streams with parameterized chunks omitted */
 
 interface ReadableStreamController {
 	close(): void;
@@ -74,7 +74,7 @@ interface ReadableStream {
 }
 
 /*
-[AL] Cannot override declared var with a differently shaped object. This will have to be fixed in the TS default lib.
+Cannot override declared var with a differently shaped object. This will have to be fixed in the TS default lib.
 
 declare var ReadableStream: {
 	prototype: ReadableStream;
