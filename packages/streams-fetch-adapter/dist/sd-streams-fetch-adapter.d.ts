@@ -23,7 +23,7 @@ interface PipeToOptions {
 
 interface StreamTransform {
 	readable: ReadableStream;
-	writable: ws.WritableStream;
+	writable: WritableStream;
 }
 
 interface ReadableStream {
