@@ -1,5 +1,11 @@
 # @stardazed/streams changelog
 
+## 2.0.0
+_2018-10-15_
+* BREAKING: the TypeScript interfaces to the streams and associated types are now parameterized by the incoming/outgoing chunk types.
+  This is both a breaking change from earlier versions and also from the TS built-in types.
+* No functional changes, the code is equal to that of 1.0.7.
+
 ## 1.0.7
 _2018-10-01_
 * Expose internal stream tee method for linked implementations to use ([#2](https://github.com/stardazed/sd-streams/issues/2))
@@ -31,7 +37,7 @@ _2018-07-01_
 ## 1.0.1
 _2018-06-28_
 * Now passes all current web platform tests for streams.
-* Fully compliant save for the detached buffers bit, because reality is cold like winter.
+* Fully compliant save for the detached buffers bit, because reality is cold like Irithyll.
 
 ## 1.0.0
 _2018-06-28_
