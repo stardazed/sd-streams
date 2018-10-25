@@ -1,13 +1,16 @@
 importers:
   packages/stream-text-encoding:
+    dependencies:
+      '@stardazed/streams-types': 'link:../streams-types'
     devDependencies:
       rollup: registry.npmjs.org/rollup/0.66.6
       rollup-plugin-typescript: registry.npmjs.org/rollup-plugin-typescript/0.8.1
       typescript: registry.npmjs.org/typescript/3.1.3
     specifiers:
-      rollup: ^0.66.2
+      '@stardazed/streams-types': ^1.0.0
+      rollup: ^0.66.6
       rollup-plugin-typescript: ^0.8.1
-      typescript: ^3.1.1
+      typescript: ^3.1.3
   packages/streams:
     devDependencies:
       rollup: registry.npmjs.org/rollup/0.66.6
@@ -309,7 +312,7 @@ packages:
   registry.npmjs.org/rollup-plugin-terser/1.0.1:
     dependencies:
       '@babel/code-frame': registry.npmjs.org/@babel/code-frame/7.0.0
-      terser: registry.npmjs.org/terser/3.10.2
+      terser: registry.npmjs.org/terser/3.10.3
     dev: true
     name: rollup-plugin-terser
     resolution:
@@ -387,7 +390,7 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/supports-color/-/supports-color-5.5.0.tgz'
     version: 5.5.0
-  registry.npmjs.org/terser/3.10.2:
+  registry.npmjs.org/terser/3.10.3:
     dependencies:
       commander: registry.npmjs.org/commander/2.17.1
       source-map: registry.npmjs.org/source-map/0.6.1
@@ -398,10 +401,10 @@ packages:
     hasBin: true
     name: terser
     resolution:
-      integrity: sha512-+QrFoqBImmsQGB4c/HvaqgZynmbNvNBwoBxuu7fYXtq5EEtlLUzph+WimDj+xMkuqawXPMl2lgCIz81CdXvt+w==
+      integrity: sha512-uyL5hwDICjnv49JANhZvQYLikt/HADWNbUFsKQpZ/i+JSOkL2T4V7WUpW7S/5QGZceVq2x0HRVhEQQuW2ZpX6g==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/terser/-/terser-3.10.2.tgz'
-    version: 3.10.2
+      tarball: 'https://registry.npmjs.org/terser/-/terser-3.10.3.tgz'
+    version: 3.10.3
   registry.npmjs.org/tippex/2.3.1:
     dev: true
     name: tippex

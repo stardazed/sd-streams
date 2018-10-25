@@ -5,6 +5,8 @@
  * https://github.com/stardazed/sd-streams
  */
 
+import { Transformer, TransformStream, TransformStreamDefaultController, GenericTransformStream } from "@stardazed/streams-types";
+
 const encEncoder = Symbol("encEncoder");
 const encTransform = Symbol("encTransform");
 
@@ -49,7 +51,7 @@ class TextEncodeTransformer implements Transformer<string, Uint8Array> {
 	}
 }
 
-export class TextEncoderStream implements GenericTransformStream, TextEncoderCommon {
+export class TextEncoderStream implements GenericTransformStream<string, Uint8Array>, TextEncoderCommon {
 	private [encEncoder]: TextEncoder;
 	private [encTransform]: TransformStream<string, Uint8Array>;
 

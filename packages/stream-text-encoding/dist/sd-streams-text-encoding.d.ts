@@ -5,6 +5,8 @@
 * https://github.com/stardazed/sd-streams
 */
 
+import { ReadableStream, WritableStream } from "@stardazed/streams-types";
+
 export class TextDecoderStream {
 	constructor(label?: string, options?: TextDecoderOptions);
 
@@ -12,8 +14,8 @@ export class TextDecoderStream {
 	readonly fatal: boolean;
 	readonly ignoreBOM: boolean;
 
-	readonly readable: ReadableStream;
-	readonly writable: WritableStream;
+	readonly readable: ReadableStream<string>;
+	readonly writable: WritableStream<ArrayBuffer | Uint8Array>;
 }
 
 export class TextEncoderStream {
@@ -21,6 +23,6 @@ export class TextEncoderStream {
 
 	readonly encoding: string;
 
-	readonly readable: ReadableStream;
-	readonly writable: WritableStream;
+	readonly readable: ReadableStream<Uint8Array>;
+	readonly writable: WritableStream<string>;
 }

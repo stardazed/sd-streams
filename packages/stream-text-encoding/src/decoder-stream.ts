@@ -5,6 +5,8 @@
  * https://github.com/stardazed/sd-streams
  */
 
+import { Transformer, TransformStream, TransformStreamDefaultController, GenericTransformStream } from "@stardazed/streams-types";
+
 const decDecoder = Symbol("decDecoder");
 const decTransform = Symbol("decTransform");
 
@@ -39,7 +41,7 @@ class TextDecodeTransformer implements Transformer<ArrayBuffer | Uint8Array, str
 	}
 }
 
-export class TextDecoderStream implements GenericTransformStream, TextDecoderCommon {
+export class TextDecoderStream implements GenericTransformStream<ArrayBuffer | Uint8Array, string>, TextDecoderCommon {
 	private [decDecoder]: TextDecoder;
 	private [decTransform]: TransformStream<ArrayBuffer | Uint8Array, string>;
 
