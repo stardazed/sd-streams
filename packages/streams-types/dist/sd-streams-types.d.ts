@@ -7,18 +7,18 @@
 
 // ---- Common
 
-export interface QueuingStrategy {
+interface QueuingStrategy {
 	size?(chunk?: any): number;
 	highWaterMark?: number;
 }
 
 // ---- WritableStream
 
-export interface WritableStreamDefaultController {
+interface WritableStreamDefaultController {
 	error(e?: any): void;
 }
 
-export interface WritableStreamDefaultWriter<InputType> {
+interface WritableStreamDefaultWriter<InputType> {
 	abort(reason: any): Promise<void>;
 	close(): Promise<void>;
 	releaseLock(): void;
@@ -29,7 +29,7 @@ export interface WritableStreamDefaultWriter<InputType> {
 	readonly ready: Promise<void>;
 }
 
-export interface WritableStreamSink<InputType> {
+interface WritableStreamSink<InputType> {
 	start?(controller: WritableStreamDefaultController): void | Promise<void>;
 	write?(chunk: InputType, controller: WritableStreamDefaultController): void | Promise<void>;
 	close?(): void | Promise<void>;
@@ -48,38 +48,38 @@ declare class WritableStream<InputType> {
 
 // ---- ReadableStream
 
-export interface ReadableStreamController {
+interface ReadableStreamController {
 	close(): void;
 	error(e?: any): void;
 	readonly desiredSize: number | null;
 }
 
-export interface ReadableStreamDefaultController<OutputType> extends ReadableStreamController {
+interface ReadableStreamDefaultController<OutputType> extends ReadableStreamController {
 	enqueue(chunk: OutputType): void;
 }
 
-export interface ReadableByteStreamController extends ReadableStreamController {
+interface ReadableByteStreamController extends ReadableStreamController {
 	enqueue(chunk: ArrayBufferView): void;
 	readonly byobRequest: ReadableStreamBYOBRequest | undefined;
 }
 
-export interface ReadableStreamBYOBRequest {
+interface ReadableStreamBYOBRequest {
 	respond(bytesWritten: number): void;
 	respondWithNewView(view: ArrayBufferView): void;
 	readonly view: ArrayBufferView;
 }
 
-export interface ReadableStreamReaderBase {
+interface ReadableStreamReaderBase {
 	cancel(reason: any): Promise<void>;
 	releaseLock(): void;
 	readonly closed: Promise<void>;
 }
 
-export interface ReadableStreamDefaultReader<OutputType> extends ReadableStreamReaderBase {
+interface ReadableStreamDefaultReader<OutputType> extends ReadableStreamReaderBase {
 	read(): Promise<IteratorResult<OutputType>>;
 }
 
-export interface ReadableStreamBYOBReader extends ReadableStreamReaderBase {
+interface ReadableStreamBYOBReader extends ReadableStreamReaderBase {
 	read(view: ArrayBufferView): Promise<IteratorResult<ArrayBufferView>>;
 }
 
@@ -97,13 +97,13 @@ interface ReadableByteStreamSource {
 	autoAllocateChunkSize?: number;
 }
 
-export interface PipeOptions {
+interface PipeOptions {
 	preventClose?: boolean;
 	preventAbort?: boolean;
 	preventCancel?: boolean;
 }
 
-export interface GenericTransformStream<InputType, OutputType> {
+interface GenericTransformStream<InputType, OutputType> {
 	readable: ReadableStream<OutputType>;
 	writable: WritableStream<InputType>;
 }
@@ -125,7 +125,7 @@ declare class ReadableStream<OutputType> {
 
 // ---- TransformStream
 
-export interface TransformStreamDefaultController<OutputType> {
+interface TransformStreamDefaultController<OutputType> {
 	enqueue(chunk: OutputType): void;
 	error(reason: any): void;
 	terminate(): void;
@@ -133,7 +133,7 @@ export interface TransformStreamDefaultController<OutputType> {
 	readonly desiredSize: number | null;
 }
 
-export interface Transformer<InputType, OutputType> {
+interface Transformer<InputType, OutputType> {
 	start?(controller: TransformStreamDefaultController<OutputType>): void | Promise<void>;
 	transform?(chunk: InputType, controller: TransformStreamDefaultController<OutputType>): void | Promise<void>;
 	flush?(controller: TransformStreamDefaultController<OutputType>): void | Promise<void>;

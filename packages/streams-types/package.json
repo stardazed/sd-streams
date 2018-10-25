@@ -10,7 +10,6 @@
 		"type": "git",
 		"url": "https://github.com/stardazed/sd-streams.git"
 	},
-	"main": "",
 	"types": "dist/sd-streams-types.d.ts",
 	"scripts": {
 		"build": "echo 'No build'",
