@@ -5,6 +5,8 @@
  * https://github.com/stardazed/sd-streams
  */
 
+declare global {
+
 // ---- Common
 
 interface QueuingStrategy {
@@ -38,7 +40,7 @@ interface WritableStreamSink<InputType> {
 	type?: undefined; // unused, for future revisions
 }
 
-declare class WritableStream<InputType> {
+class WritableStream<InputType> {
 	constructor(underlyingSink?: WritableStreamSink<InputType>, strategy?: QueuingStrategy);
 	abort(reason?: any): Promise<void>;
 	getWriter(): WritableStreamDefaultWriter<InputType>;
@@ -108,10 +110,7 @@ interface GenericTransformStream<InputType, OutputType> {
 	writable: WritableStream<InputType>;
 }
 
-declare class ReadableStream<OutputType> {
-	constructor(source?: ReadableStreamSource<OutputType>, strategy?: QueuingStrategy);
-	constructor(source?: ReadableByteStreamSource, strategy?: QueuingStrategy);
-
+interface ReadableStream<OutputType> {
 	cancel(reason?: any): Promise<void>;
 	getReader(): ReadableStreamDefaultReader<OutputType>;
 	getReader(options: { mode: "byob" }): ReadableStreamBYOBReader;
@@ -122,6 +121,11 @@ declare class ReadableStream<OutputType> {
 
 	readonly locked: boolean;
 }
+
+const ReadableStream: {
+	new<OutputType>(source?: ReadableStreamSource<OutputType>, strategy?: QueuingStrategy): ReadableStream<OutputType>;
+	new<OutputType>(source?: ReadableByteStreamSource, strategy?: QueuingStrategy): ReadableStream<OutputType>;
+};
 
 // ---- TransformStream
 
@@ -142,7 +146,7 @@ interface Transformer<InputType, OutputType> {
 	writableType?: undefined; // for future spec changes
 }
 
-declare class TransformStream<InputType, OutputType> {
+class TransformStream<InputType, OutputType> {
 	constructor(transformer?: Transformer<InputType, OutputType>, writableStrategy?: QueuingStrategy, readableStrategy?: QueuingStrategy);
 
 	readonly readable: ReadableStream<OutputType>;
@@ -151,14 +155,18 @@ declare class TransformStream<InputType, OutputType> {
 
 // ---- Built-in Strategies
 
-declare class ByteLengthQueuingStrategy implements QueuingStrategy {
+class ByteLengthQueuingStrategy implements QueuingStrategy {
 	constructor(options: { highWaterMark: number });
 	size(chunk: ArrayBufferView): number;
 	highWaterMark: number;
 }
 
-declare class CountQueuingStrategy implements QueuingStrategy {
+class CountQueuingStrategy implements QueuingStrategy {
 	constructor(options: { highWaterMark: number });
 	size(): number;
 	highWaterMark: number;
 }
+
+}
+
+export { }
