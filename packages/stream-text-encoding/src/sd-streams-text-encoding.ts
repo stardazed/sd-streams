@@ -5,5 +5,7 @@
  * https://github.com/stardazed/sd-streams
  */
 
+/// <reference types="@stardazed/streams-types" />
+
 export * from "./decoder-stream";
 export * from "./encoder-stream";
