@@ -5,49 +5,18 @@
  * https://github.com/stardazed/sd-streams-fetch-adapter
  */
 
-interface ReadableStreamReader {
-	cancel(reason: any): Promise<void>;
-	releaseLock(): void;
-	readonly closed: Promise<void>;
-}
-
-interface ReadableStreamDefaultReader extends ReadableStreamReader {
-	read(): Promise<IteratorResult<any>>;
-}
-
-interface PipeToOptions {
-	preventClose?: boolean;
-	preventAbort?: boolean;
-	preventCancel?: boolean;
-}
-
-interface StreamTransform {
-	readable: ReadableStream;
-	writable: WritableStream;
-}
-
-interface ReadableStream {
-	cancel(reason?: any): Promise<void>;
-	getReader(options?: any): ReadableStreamDefaultReader;
-	tee(): ReadableStream[];
-	pipeThrough(transform: StreamTransform, options?: PipeToOptions): ReadableStream;
-	pipeTo(dest: WritableStream, options?: PipeToOptions): Promise<void>;
-	readonly locked: boolean;
-}
-
 interface ReadableStreamConstructor {
-	// exact types of these params is irrelevant in the context of these public types
-	new(source?: any, strategy?: any): ReadableStream;
+	new(source?: UnderlyingSource | UnderlyingByteSource, strategy?: QueuingStrategy): ReadableStream;
 }
 
 type ReadableStreamTeeFunction = (stream: ReadableStream, cloneForBranch2: boolean) => ReadableStream[];
 
 interface ResponseConstructor {
-	new(body?: Blob | BufferSource | FormData | ReadableStream | string | null, init?: ResponseInit): Response;
+	new(body?: Blob | BufferSource | FormData | ReadableStream<Uint8Array> | string | null, init?: ResponseInit): Response;
 }
 
 export interface AdaptedRequestInit {
-	body?: Blob | BufferSource | FormData | ReadableStream | string | null;
+	body?: Blob | BufferSource | FormData | ReadableStream<Uint8Array> | string | null;
     cache?: RequestCache;
     credentials?: RequestCredentials;
     headers?: HeadersInit;
@@ -61,7 +30,7 @@ export interface AdaptedRequestInit {
     signal?: AbortSignal;
     window?: any;
 }
-export type AdaptedFetch = (input?: Request | string, init?: RequestInit) => Promise<Response>;
+export type AdaptedFetch = (input: Request | string, init?: AdaptedRequestInit) => Promise<Response>;
 
 /**
  * Create and return a fetch function that will add or patch the body property

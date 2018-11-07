@@ -30,6 +30,14 @@ pnpm install @stardazed/streams-fetch-adapter
 yarn add @stardazed/streams-fetch-adapter
 ```
 
+**⚠️ Important**: To use this package in a TypeScript project, you need to use
+TypeScript 3.2 or higher. If you are using an older version of TypeScript, install
+version 2.0.0 instead, like so:
+```
+npm install @stardazed/streams-fetch-adapter@2.0.0
+```
+
+
 Usage
 -----
 Use this package if you want to adapt `fetch` and `Response` to support your custom

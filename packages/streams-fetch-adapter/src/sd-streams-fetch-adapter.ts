@@ -6,69 +6,14 @@
  */
 
 // Minimal declarations needed to have things compile
-// TypeScript's declarations as of 3.1.1 are incomplete
-interface StreamStrategy {
-	size?(chunk?: any): number;
-	highWaterMark?: number;
-}
-
-interface ReadableStreamReader {
-	cancel(reason: any): Promise<void>;
-	releaseLock(): void;
-	readonly closed: Promise<void>;
-}
-
-interface ReadableStreamDefaultReader extends ReadableStreamReader {
-	read(): Promise<IteratorResult<any>>;
-}
-
-interface ReadableStreamController {
-	close(): void;
-	error(e?: any): void;
-	readonly desiredSize: number | null;
-}
-
-interface ReadableStreamDefaultController extends ReadableStreamController {
-	enqueue(chunk: any): void;
-}
-
-interface ReadableStreamSource {
-	start?(controller: ReadableStreamDefaultController): void | Promise<void>;
-	pull?(controller: ReadableStreamDefaultController): void | Promise<void>;
-	cancel?(reason?: any): void;
-	type?: "bytes" | undefined;
-	autoAllocateChunkSize?: number; // only for "bytes" type sources
-}
-
-interface PipeToOptions {
-	preventClose?: boolean;
-	preventAbort?: boolean;
-	preventCancel?: boolean;
-}
-
-interface StreamTransform {
-	readable: ReadableStream;
-	writable: WritableStream;
-}
-
-declare class ReadableStream {
-	constructor(source?: ReadableStreamSource, strategy?: StreamStrategy);
-	cancel(reason?: any): Promise<void>;
-	getReader(): ReadableStreamDefaultReader;
-	tee(): ReadableStream[];
-	pipeThrough(transform: StreamTransform, options?: PipeToOptions): ReadableStream;
-	pipeTo(dest: WritableStream, options?: PipeToOptions): Promise<void>;
-	readonly locked: boolean;
-}
-
 interface ReadableStreamConstructor {
-	new(source?: ReadableStreamSource, strategy?: StreamStrategy): ReadableStream;
+	new(source?: UnderlyingSource, strategy?: QueuingStrategy): ReadableStream;
 }
 
 type ReadableStreamTeeFunction = (stream: ReadableStream, cloneForBranch2: boolean) => ReadableStream[];
 
 type FetchBody = Blob | BufferSource | FormData | ReadableStream | string | null;
-type AdaptedFetch = (input?: Request | string, init?: RequestInit) => Promise<Response>;
+type AdaptedFetch = (input: Request | string, init?: RequestInit) => Promise<Response>;
 
 interface ResponseConstructor {
 	new(body?: FetchBody, init?: ResponseInit): Response;
@@ -189,7 +134,7 @@ export function createAdaptedFetch(
 	customReadableStream: ReadableStreamConstructor,
 	customReadableStreamTee: ReadableStreamTeeFunction
 ): AdaptedFetch {
-	return function fetch(input?: Request | string, init?: RequestInit) {
+	return function fetch(input: Request | string, init?: RequestInit) {
 		// if the body passed into the request init is a ReadableStream (either native or custom)
 		// then first read it out completely before we pass it onto the native fetch as a Blob
 		return resolveRequestInitStream(init, nativeReadableStream, customReadableStream).then(

@@ -1,5 +1,9 @@
 # @stardazed/streams-fetch-adapter changelog
 
+## 3.0.0
+_Unreleased_
+* BREAKING: Now uses built-in parameterised types, requiring TypeScript 3.2 or newer.
+
 ## 2.0.0
 _2018-10-01_
 * BREAKING: changed external APIs to support proper Response cloning for fetches ([#2](https://github.com/stardazed/sd-streams/issues/2))
