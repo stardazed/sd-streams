@@ -16,7 +16,7 @@ export class WritableStreamDefaultController<InputType> implements ws.WritableSt
 	[ws.controlledWritableStream_]: ws.WritableStream<InputType>;
 	[ws.started_]: boolean;
 	[ws.strategyHWM_]: number;
-	[ws.strategySizeAlgorithm_]: shared.SizeAlgorithm;
+	[ws.strategySizeAlgorithm_]: QueuingStrategySizeCallback<InputType>;
 	[ws.writeAlgorithm_]: ws.WriteAlgorithm<InputType>;
 
 	[q.queue_]: Queue<q.QueueElement<ws.WriteRecord<InputType> | "close">>;
@@ -48,7 +48,7 @@ export class WritableStreamDefaultController<InputType> implements ws.WritableSt
 	}
 }
 
-export function setUpWritableStreamDefaultControllerFromUnderlyingSink<InputType>(stream: ws.WritableStream<InputType>, underlyingSink: ws.WritableStreamSink<InputType>, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
+export function setUpWritableStreamDefaultControllerFromUnderlyingSink<InputType>(stream: ws.WritableStream<InputType>, underlyingSink: ws.WritableStreamSink<InputType>, highWaterMark: number, sizeAlgorithm: QueuingStrategySizeCallback<InputType>) {
 	// Assert: underlyingSink is not undefined.
 	const controller = Object.create(WritableStreamDefaultController.prototype) as WritableStreamDefaultController<InputType>;
 

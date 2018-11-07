@@ -18,7 +18,7 @@ export class ReadableStreamDefaultController<OutputType> implements rs.ReadableS
 	[rs.pullAlgorithm_]: rs.PullAlgorithm<OutputType>;
 	[rs.pulling_]: boolean;
 	[rs.strategyHWM_]: number;
-	[rs.strategySizeAlgorithm_]: shared.SizeAlgorithm;
+	[rs.strategySizeAlgorithm_]: QueuingStrategySizeCallback<OutputType>;
 	[rs.started_]: boolean;
 
 	[q.queue_]: Queue<q.QueueElement<OutputType>>;
@@ -87,7 +87,7 @@ export class ReadableStreamDefaultController<OutputType> implements rs.ReadableS
 }
 
 
-export function setUpReadableStreamDefaultControllerFromUnderlyingSource<OutputType>(stream: rs.ReadableStream<OutputType>, underlyingSource: rs.ReadableStreamSource<OutputType>, highWaterMark: number, sizeAlgorithm: shared.SizeAlgorithm) {
+export function setUpReadableStreamDefaultControllerFromUnderlyingSource<OutputType>(stream: rs.SDReadableStream<OutputType>, underlyingSource: UnderlyingSource<OutputType>, highWaterMark: number, sizeAlgorithm: QueuingStrategySizeCallback<OutputType>) {
 	// Assert: underlyingSource is not undefined.
 	const controller = Object.create(ReadableStreamDefaultController.prototype);
 	const startAlgorithm = () => {

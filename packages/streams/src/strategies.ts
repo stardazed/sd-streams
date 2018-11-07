@@ -5,9 +5,7 @@
  * https://github.com/stardazed/sd-streams
  */
 
-import { StreamStrategy } from "./shared-internals";
-
-export class ByteLengthQueuingStrategy implements StreamStrategy {
+export class ByteLengthQueuingStrategy implements QueuingStrategy<ArrayBufferView> {
 	highWaterMark: number;
 
 	constructor(options: { highWaterMark: number }) {
@@ -19,7 +17,7 @@ export class ByteLengthQueuingStrategy implements StreamStrategy {
 	} 
 }
 
-export class CountQueuingStrategy implements StreamStrategy {
+export class CountQueuingStrategy implements QueuingStrategy<any> {
 	highWaterMark: number;
 
 	constructor(options: { highWaterMark: number }) {

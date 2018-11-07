@@ -22,7 +22,7 @@ export class WritableStream<InputType> {
 	[ws.writer_]: ws.WritableStreamDefaultWriter<InputType> | undefined;
 	[ws.writeRequests_]: shared.ControlledPromise<void>[];
 
-	constructor(sink: ws.WritableStreamSink<InputType> = {}, strategy: shared.StreamStrategy = {}) {
+	constructor(sink: ws.WritableStreamSink<InputType> = {}, strategy: QueuingStrategy<InputType> = {}) {
 		ws.initializeWritableStream(this);
 		const sizeFunc = strategy.size;
 		const stratHWM = strategy.highWaterMark;
@@ -61,7 +61,7 @@ export class WritableStream<InputType> {
 	}
 }
 
-export function createWritableStream<InputType>(startAlgorithm: ws.StartAlgorithm, writeAlgorithm: ws.WriteAlgorithm<InputType>, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark?: number, sizeAlgorithm?: shared.SizeAlgorithm) {
+export function createWritableStream<InputType>(startAlgorithm: ws.StartAlgorithm, writeAlgorithm: ws.WriteAlgorithm<InputType>, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark?: number, sizeAlgorithm?: QueuingStrategySizeCallback<InputType>) {
 	if (highWaterMark === undefined) {
 		highWaterMark = 1;
 	}

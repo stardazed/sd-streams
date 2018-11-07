@@ -18,7 +18,7 @@ export class TransformStream<InputType, OutputType> {
 	[ts.transformStreamController_]: TransformStreamDefaultController<InputType, OutputType>; // A TransformStreamDefaultController created with the ability to control[[readable]] and[[writable]]; also used for the IsTransformStream brand check
 	[ts.writable_]: ws.WritableStream<InputType>; // The WritableStream instance controlled by this object
 
-	constructor(transformer: ts.Transformer<InputType, OutputType> = {}, writableStrategy: shared.StreamStrategy = {}, readableStrategy: shared.StreamStrategy = {}) {
+	constructor(transformer: ts.Transformer<InputType, OutputType> = {}, writableStrategy: QueuingStrategy<InputType> = {}, readableStrategy: QueuingStrategy<OutputType> = {}) {
 		const writableSizeFunction = writableStrategy.size;
 		const writableHighWaterMark = writableStrategy.highWaterMark;
 		const readableSizeFunction = readableStrategy.size;

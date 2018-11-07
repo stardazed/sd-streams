@@ -107,7 +107,7 @@ export interface ReadableStreamDefaultController<OutputType> extends ReadableStr
 	[controlledReadableStream_]: ReadableStream<OutputType>;
 	[pullAlgorithm_]: PullAlgorithm<OutputType>;
 	[cancelAlgorithm_]: CancelAlgorithm;
-	[strategySizeAlgorithm_]: shared.SizeAlgorithm;
+	[strategySizeAlgorithm_]: QueuingStrategySizeCallback<OutputType>;
 	[strategyHWM_]: number;
 
 	[started_]: boolean;

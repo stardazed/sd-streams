@@ -17,15 +17,6 @@ export type ErrorResult = any;
 
 // ---------
 
-export type SizeAlgorithm = (this: void, chunk?: any) => number;
-
-export interface StreamStrategy {
-	size?: SizeAlgorithm;
-	highWaterMark?: number;
-}
-
-// ---------
-
 export function isInteger(value: number) {
 	if (! isFinite(value)) { // covers NaN, +Infinity and -Infinity
 		return false;
@@ -205,11 +196,11 @@ export function validateAndNormalizeHighWaterMark(hwm: unknown) {
 	return highWaterMark;
 }
 
-export function makeSizeAlgorithmFromSizeFunction(sizeFn: undefined | ((chunk: any) => number)): SizeAlgorithm {
+export function makeSizeAlgorithmFromSizeFunction<T>(sizeFn: undefined | ((chunk: T) => number)): QueuingStrategySizeCallback<T> {
 	if (typeof sizeFn !== "function" && typeof sizeFn !== "undefined") {
 		throw new TypeError("size function must be undefined or a function");
 	}
-	return function(chunk: any) {
+	return function(chunk: T) {
 		if (typeof sizeFn === "function") {
 			return sizeFn(chunk);
 		}

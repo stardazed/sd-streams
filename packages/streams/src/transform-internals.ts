@@ -53,7 +53,7 @@ export interface Transformer<InputType, OutputType> {
 }
 
 export declare class TransformStream<InputType, OutputType> {
-	constructor(transformer: Transformer<InputType, OutputType>, writableStrategy: shared.StreamStrategy, readableStrategy: shared.StreamStrategy);
+	constructor(transformer: Transformer<InputType, OutputType>, writableStrategy: QueuingStrategy<InputType>, readableStrategy: QueuingStrategy<OutputType>);
 
 	readonly readable: rs.ReadableStream<OutputType>;
 	readonly writable: ws.WritableStream<InputType>;
@@ -74,7 +74,7 @@ export function isTransformStream(value: unknown): value is TransformStream<any,
 	return transformStreamController_ in value;
 }
 
-export function initializeTransformStream<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, startPromise: Promise<void>, writableHighWaterMark: number, writableSizeAlgorithm: shared.SizeAlgorithm, readableHighWaterMark: number, readableSizeAlgorithm: shared.SizeAlgorithm) {
+export function initializeTransformStream<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, startPromise: Promise<void>, writableHighWaterMark: number, writableSizeAlgorithm: QueuingStrategySizeCallback<InputType>, readableHighWaterMark: number, readableSizeAlgorithm: QueuingStrategySizeCallback<OutputType>) {
 	const startAlgorithm = function() {
 		return startPromise;
 	};
