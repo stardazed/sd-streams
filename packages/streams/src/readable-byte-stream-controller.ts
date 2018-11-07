@@ -11,12 +11,12 @@ import * as shared from "./shared-internals";
 import { ReadableStreamBYOBRequest } from "./readable-stream-byob-request";
 import { Queue } from "./queue";
 
-export class ReadableByteStreamController implements rs.ReadableByteStreamController {
+export class ReadableByteStreamController implements rs.SDReadableByteStreamController {
 	[rs.autoAllocateChunkSize_]: number | undefined;
-	[rs.byobRequest_]: rs.ReadableStreamBYOBRequest | undefined;
+	[rs.byobRequest_]: rs.SDReadableStreamBYOBRequest | undefined;
 	[rs.cancelAlgorithm_]: rs.CancelAlgorithm;
 	[rs.closeRequested_]: boolean;
-	[rs.controlledReadableByteStream_]: rs.ReadableStream<ArrayBufferView>;
+	[rs.controlledReadableByteStream_]: rs.SDReadableStream<ArrayBufferView>;
 	[rs.pullAgain_]: boolean;
 	[rs.pullAlgorithm_]: rs.PullAlgorithm<ArrayBufferView>;
 	[rs.pulling_]: boolean;
@@ -31,7 +31,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 		throw new TypeError();
 	}
 
-	get byobRequest(): rs.ReadableStreamBYOBRequest | undefined {
+	get byobRequest(): rs.SDReadableStreamBYOBRequest | undefined {
 		if (! rs.isReadableByteStreamController(this)) {
 			throw new TypeError();
 		}
@@ -138,7 +138,7 @@ export class ReadableByteStreamController implements rs.ReadableByteStreamContro
 	}
 }
 
-export function setUpReadableByteStreamControllerFromUnderlyingSource(stream: rs.ReadableStream<ArrayBufferView>, underlyingByteSource: rs.ReadableStreamSource<ArrayBufferView>, highWaterMark: number) {
+export function setUpReadableByteStreamControllerFromUnderlyingSource(stream: rs.SDReadableStream<ArrayBufferView>, underlyingByteSource: UnderlyingByteSource, highWaterMark: number) {
 	// Assert: underlyingByteSource is not undefined.
 	const controller = Object.create(ReadableByteStreamController.prototype) as ReadableByteStreamController;
 

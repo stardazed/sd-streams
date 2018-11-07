@@ -8,7 +8,7 @@
 import * as rs from "./readable-internals";
 
 export class ReadableStreamBYOBRequest {
-	[rs.associatedReadableByteStreamController_]: rs.ReadableByteStreamController | undefined;
+	[rs.associatedReadableByteStreamController_]: rs.SDReadableByteStreamController | undefined;
 	[rs.view_]: ArrayBufferView | undefined;
 
 	constructor() {

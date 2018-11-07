@@ -10,10 +10,10 @@ import * as shared from "./shared-internals";
 import * as q from "./queue-mixin";
 import { Queue } from "./queue";
 
-export class ReadableStreamDefaultController<OutputType> implements rs.ReadableStreamDefaultController<OutputType> {
+export class ReadableStreamDefaultController<OutputType> implements rs.SDReadableStreamDefaultController<OutputType> {
 	[rs.cancelAlgorithm_]: rs.CancelAlgorithm;
 	[rs.closeRequested_]: boolean;
-	[rs.controlledReadableStream_]: rs.ReadableStream<OutputType>;
+	[rs.controlledReadableStream_]: rs.SDReadableStream<OutputType>;
 	[rs.pullAgain_]: boolean;
 	[rs.pullAlgorithm_]: rs.PullAlgorithm<OutputType>;
 	[rs.pulling_]: boolean;

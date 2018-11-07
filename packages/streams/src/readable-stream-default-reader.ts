@@ -8,12 +8,12 @@
 import * as rs from "./readable-internals";
 import * as shared from "./shared-internals";
 
-export class ReadableStreamDefaultReader<OutputType> implements rs.ReadableStreamReader<OutputType> {
+export class ReadableStreamDefaultReader<OutputType> implements rs.SDReadableStreamReader<OutputType> {
 	[rs.closedPromise_]: shared.ControlledPromise<void>;
-	[rs.ownerReadableStream_]: rs.ReadableStream<OutputType> | undefined;
+	[rs.ownerReadableStream_]: rs.SDReadableStream<OutputType> | undefined;
 	[rs.readRequests_]: rs.ReadRequest<IteratorResult<OutputType>>[];
 
-	constructor(stream: rs.ReadableStream<OutputType>) {
+	constructor(stream: rs.SDReadableStream<OutputType>) {
 		if (! rs.isReadableStream(stream)) {
 			throw new TypeError();
 		}

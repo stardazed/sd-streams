@@ -22,7 +22,7 @@ export class TransformStreamDefaultController<InputType, OutputType> implements 
 		if (! ts.isTransformStreamDefaultController(this)) {
 			throw new TypeError();
 		}
-		const readableController = this[ts.controlledTransformStream_][ts.readable_][rs.readableStreamController_] as rs.ReadableStreamDefaultController<OutputType>;
+		const readableController = this[ts.controlledTransformStream_][ts.readable_][rs.readableStreamController_] as rs.SDReadableStreamDefaultController<OutputType>;
 		return rs.readableStreamDefaultControllerGetDesiredSize(readableController);
 
 	}

@@ -14,32 +14,34 @@ import { ReadableStreamDefaultController, setUpReadableStreamDefaultControllerFr
 import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 
 import { ReadableByteStreamController, setUpReadableByteStreamControllerFromUnderlyingSource } from "./readable-byte-stream-controller";
-import { ReadableStreamBYOBReader } from "./readable-stream-byob-reader";
+import { SDReadableStreamBYOBReader } from "./readable-stream-byob-reader";
 
-export class ReadableStream<OutputType> implements rs.ReadableStream<OutputType> {
+export class SDReadableStream<OutputType> implements rs.SDReadableStream<OutputType> {
 	[shared.state_]: rs.ReadableStreamState;
 	[shared.storedError_]: shared.ErrorResult;
-	[rs.reader_]: rs.ReadableStreamReader<OutputType> | undefined;
-	[rs.readableStreamController_]: rs.ReadableStreamController<OutputType>;
+	[rs.reader_]: rs.SDReadableStreamReader<OutputType> | undefined;
+	[rs.readableStreamController_]: rs.SDReadableStreamControllerBase<OutputType>;
 
-	constructor(source: rs.ReadableStreamSource<OutputType> = {}, strategy: shared.StreamStrategy = {}) {
+	constructor(underlyingSource: UnderlyingByteSource, strategy?: { highWaterMark?: number, size?: undefined });
+	constructor(underlyingSource?: UnderlyingSource<OutputType>, strategy?: QueuingStrategy<OutputType>);
+	constructor(underlyingSource: UnderlyingSource<OutputType> | UnderlyingByteSource = {}, strategy: QueuingStrategy<OutputType> | { highWaterMark?: number, size?: undefined } = {}) {
 		rs.initializeReadableStream(this);
 
 		const sizeFunc = strategy.size;
 		const stratHWM = strategy.highWaterMark;
-		const sourceType = source.type;
+		const sourceType = underlyingSource.type;
 
 		if (sourceType === undefined) {
 			const sizeAlgorithm = shared.makeSizeAlgorithmFromSizeFunction(sizeFunc);
 			const highWaterMark = shared.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 1 : stratHWM);
-			setUpReadableStreamDefaultControllerFromUnderlyingSource(this, source, highWaterMark, sizeAlgorithm);
+			setUpReadableStreamDefaultControllerFromUnderlyingSource(this, underlyingSource as UnderlyingSource<OutputType>, highWaterMark, sizeAlgorithm);
 		}
 		else if (String(sourceType) === "bytes") {
 			if (sizeFunc !== undefined) {
 				throw new RangeError("bytes streams cannot have a strategy with a `size` field");
 			}
 			const highWaterMark = shared.validateAndNormalizeHighWaterMark(stratHWM === undefined ? 0 : stratHWM);
-			setUpReadableByteStreamControllerFromUnderlyingSource(this as unknown as ReadableStream<ArrayBufferView>, source as unknown as rs.ReadableStreamSource<ArrayBufferView>, highWaterMark);
+			setUpReadableByteStreamControllerFromUnderlyingSource(this as unknown as rs.SDReadableStream<ArrayBufferView>, underlyingSource as UnderlyingByteSource, highWaterMark);
 		}
 		else {
 			throw new RangeError("The underlying source's `type` field must be undefined or 'bytes'");
@@ -50,16 +52,21 @@ export class ReadableStream<OutputType> implements rs.ReadableStream<OutputType>
 		return rs.isReadableStreamLocked(this);
 	}
 
-	getReader(options: rs.ReadableStreamReaderOptions = {}): rs.ReadableStreamReader<OutputType> {
+	getReader(): rs.SDReadableStreamDefaultReader<OutputType>;
+	getReader(options: { mode?: "byob" }): rs.SDReadableStreamBYOBReader;
+	getReader(options?: { mode?: "byob" }): rs.SDReadableStreamDefaultReader<OutputType> | rs.SDReadableStreamBYOBReader {
 		if (! rs.isReadableStream(this)) {
 			throw new TypeError();
+		}
+		if (options === undefined) {
+			options = {};
 		}
 		const { mode } = options;
 		if (mode === undefined) {
 			return new ReadableStreamDefaultReader(this);
 		}
 		else if (String(mode) === "byob") {
-			return new ReadableStreamBYOBReader(this as unknown as ReadableStream<ArrayBufferView>) as rs.ReadableStreamReader<OutputType>;
+			return new SDReadableStreamBYOBReader(this as unknown as rs.SDReadableStream<ArrayBufferView>);
 		}
 		throw RangeError("mode option must be undefined or `byob`");
 	}
@@ -74,11 +81,11 @@ export class ReadableStream<OutputType> implements rs.ReadableStream<OutputType>
 		return rs.readableStreamCancel(this, reason);
 	}
 
-	tee(): ReadableStream<OutputType>[] {
+	tee(): SDReadableStream<OutputType>[] {
 		return readableStreamTee(this, false);
 	}
 
-	pipeThrough<ResultType>(transform: rs.StreamTransform<OutputType, ResultType>, options?: rs.PipeToOptions): rs.ReadableStream<ResultType> {
+	pipeThrough<ResultType>(transform: rs.GenericTransformStream<OutputType, ResultType>, options?: PipeOptions): rs.SDReadableStream<ResultType> {
 		const { readable, writable } = transform;
 		if (readable === undefined || writable === undefined) {
 			throw new TypeError("Both a readable and writable stream must be provided");
@@ -87,12 +94,12 @@ export class ReadableStream<OutputType> implements rs.ReadableStream<OutputType>
 
 		// not sure why the spec is so pedantic about the authenticity of only this particular promise, but hey
 		try {
-			Promise.prototype.then.call(pipeResult, undefined, () => {});
+			Promise.prototype.then.call(pipeResult, undefined, () => ({}));
 		} catch (_e) {}
 		return readable;
 	}
 
-	pipeTo(dest: ws.WritableStream<OutputType>, options: rs.PipeToOptions = {}): Promise<void> {
+	pipeTo(dest: ws.WritableStream<OutputType>, options: PipeOptions = {}): Promise<void> {
 		if (! rs.isReadableStream(this)) {
 			return Promise.reject(new TypeError());
 		}
@@ -110,7 +117,7 @@ export class ReadableStream<OutputType> implements rs.ReadableStream<OutputType>
 	}
 }
 
-export function createReadableStream<OutputType>(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm<OutputType>, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, sizeAlgorithm?: shared.SizeAlgorithm) {
+export function createReadableStream<OutputType>(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm<OutputType>, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, sizeAlgorithm?: QueuingStrategySizeCallback<OutputType>) {
 	if (highWaterMark === undefined) {
 		highWaterMark = 1;
 	}
@@ -119,7 +126,7 @@ export function createReadableStream<OutputType>(startAlgorithm: rs.StartAlgorit
 	}
 	// Assert: ! IsNonNegativeNumber(highWaterMark) is true.
 
-	const stream = Object.create(ReadableStream.prototype) as ReadableStream<OutputType>;
+	const stream = Object.create(SDReadableStream.prototype) as SDReadableStream<OutputType>;
 	rs.initializeReadableStream(stream);
 	const controller = Object.create(ReadableStreamDefaultController.prototype) as ReadableStreamDefaultController<OutputType>;
 	rs.setUpReadableStreamDefaultController(stream, controller, startAlgorithm, pullAlgorithm, cancelAlgorithm, highWaterMark, sizeAlgorithm);
@@ -137,14 +144,14 @@ export function createReadableByteStream<OutputType>(startAlgorithm: rs.StartAlg
 		}
 	}
 
-	const stream = Object.create(ReadableStream.prototype) as ReadableStream<OutputType>;
+	const stream = Object.create(SDReadableStream.prototype) as SDReadableStream<OutputType>;
 	rs.initializeReadableStream(stream);
 	const controller = Object.create(ReadableByteStreamController.prototype) as ReadableByteStreamController;
-	rs.setUpReadableByteStreamController(stream as unknown as ReadableStream<ArrayBufferView>, controller, startAlgorithm, pullAlgorithm as unknown as rs.PullAlgorithm<ArrayBufferView>, cancelAlgorithm, highWaterMark, autoAllocateChunkSize);
+	rs.setUpReadableByteStreamController(stream as unknown as SDReadableStream<ArrayBufferView>, controller, startAlgorithm, pullAlgorithm as unknown as rs.PullAlgorithm<ArrayBufferView>, cancelAlgorithm, highWaterMark, autoAllocateChunkSize);
 	return stream;
 }
 
-export function readableStreamTee<OutputType>(stream: ReadableStream<OutputType>, cloneForBranch2: boolean) {
+export function readableStreamTee<OutputType>(stream: SDReadableStream<OutputType>, cloneForBranch2: boolean) {
 	if (! rs.isReadableStream(stream)) {
 		throw new TypeError();
 	}
@@ -155,8 +162,8 @@ export function readableStreamTee<OutputType>(stream: ReadableStream<OutputType>
 	let canceled2 = false;
 	let reason1: shared.ErrorResult;
 	let reason2: shared.ErrorResult;
-	let branch1: ReadableStream<OutputType>;
-	let branch2: ReadableStream<OutputType>;
+	let branch1: SDReadableStream<OutputType>;
+	let branch2: SDReadableStream<OutputType>;
 
 	let cancelResolve: (reason: shared.ErrorResult) => void;
 	const cancelPromise = new Promise<void>(resolve => cancelResolve = resolve);

@@ -17,7 +17,7 @@ interface ErrorWrapper {
 	actualError: shared.ErrorResult;
 }
 
-export function pipeTo<ChunkType>(source: rs.ReadableStream<ChunkType>, dest: ws.WritableStream<ChunkType>, options: rs.PipeToOptions) {
+export function pipeTo<ChunkType>(source: rs.SDReadableStream<ChunkType>, dest: ws.WritableStream<ChunkType>, options: PipeOptions) {
 	const preventClose = !!options.preventClose;
 	const preventAbort = !!options.preventAbort;
 	const preventCancel = !!options.preventCancel;
@@ -31,7 +31,7 @@ export function pipeTo<ChunkType>(source: rs.ReadableStream<ChunkType>, dest: ws
 	const reader = new ReadableStreamDefaultReader(source);
 	const writer = new WritableStreamDefaultWriter(dest);
 
-	function onStreamErrored(stream: rs.ReadableStream<ChunkType> | ws.WritableStream<ChunkType>, promise: Promise<void>, action: (error: shared.ErrorResult) => void) {
+	function onStreamErrored(stream: rs.SDReadableStream<ChunkType> | ws.WritableStream<ChunkType>, promise: Promise<void>, action: (error: shared.ErrorResult) => void) {
 		if (stream[shared.state_] === "errored") {
 			action(stream[shared.storedError_]);
 		} else {
@@ -39,7 +39,7 @@ export function pipeTo<ChunkType>(source: rs.ReadableStream<ChunkType>, dest: ws
 		}
 	}
 
-	function onStreamClosed(stream: rs.ReadableStream<ChunkType> | ws.WritableStream<ChunkType>, promise: Promise<void>, action: () => void) {
+	function onStreamClosed(stream: rs.SDReadableStream<ChunkType> | ws.WritableStream<ChunkType>, promise: Promise<void>, action: () => void) {
 		if (stream[shared.state_] === "closed") {
 			action();
 		} else {

@@ -14,7 +14,7 @@ import { TransformStreamDefaultController } from "./transform-stream-default-con
 export class TransformStream<InputType, OutputType> {
 	[ts.backpressure_]: boolean | undefined; // Whether there was backpressure on [[readable]] the last time it was observed
 	[ts.backpressureChangePromise_]: shared.ControlledPromise<void>; // A promise which is fulfilled and replaced every time the value of[[backpressure]] changes
-	[ts.readable_]: rs.ReadableStream<OutputType>; // The ReadableStream instance controlled by this object
+	[ts.readable_]: rs.SDReadableStream<OutputType>; // The ReadableStream instance controlled by this object
 	[ts.transformStreamController_]: TransformStreamDefaultController<InputType, OutputType>; // A TransformStreamDefaultController created with the ability to control[[readable]] and[[writable]]; also used for the IsTransformStream brand check
 	[ts.writable_]: ws.WritableStream<InputType>; // The WritableStream instance controlled by this object
 
@@ -46,7 +46,7 @@ export class TransformStream<InputType, OutputType> {
 		startPromise.resolve(startResult);
 	}
 
-	get readable(): rs.ReadableStream<OutputType> {
+	get readable(): rs.SDReadableStream<OutputType> {
 		if (! ts.isTransformStream(this)) {
 			throw new TypeError();
 		}
