@@ -49,7 +49,7 @@ class TextEncodeTransformer implements Transformer<string, Uint8Array> {
 	}
 }
 
-export class TextEncoderStream implements GenericTransformStream<string, Uint8Array>, TextEncoderCommon {
+export class TextEncoderStream implements TextEncoderCommon {
 	private [encEncoder]: TextEncoder;
 	private [encTransform]: TransformStream<string, Uint8Array>;
 

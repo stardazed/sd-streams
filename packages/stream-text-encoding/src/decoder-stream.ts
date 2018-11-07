@@ -39,7 +39,7 @@ class TextDecodeTransformer implements Transformer<ArrayBuffer | Uint8Array, str
 	}
 }
 
-export class TextDecoderStream implements GenericTransformStream<ArrayBuffer | Uint8Array, string>, TextDecoderCommon {
+export class TextDecoderStream implements TextDecoderCommon {
 	private [decDecoder]: TextDecoder;
 	private [decTransform]: TransformStream<ArrayBuffer | Uint8Array, string>;
 

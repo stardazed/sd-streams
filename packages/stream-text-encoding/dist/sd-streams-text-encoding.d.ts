@@ -5,8 +5,6 @@
 * https://github.com/stardazed/sd-streams
 */
 
-import { ReadableStream, WritableStream } from "@stardazed/streams-types";
-
 export class TextDecoderStream {
 	constructor(label?: string, options?: TextDecoderOptions);
 
