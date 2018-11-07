@@ -16,6 +16,13 @@ pnpm install @stardazed/streams-text-encoding
 yarn add @stardazed/streams-text-encoding
 ```
 
+**⚠️ Important**: To use this package in a TypeScript project, you need to use
+TypeScript 3.2 or higher. If you are using an older version of TypeScript, install
+version 1.0.2 instead, like so:
+```
+npm install @stardazed/streams-text-encoding@1.0.2
+```
+
 Usage
 -----
 ```js
