@@ -1,5 +1,9 @@
 # @stardazed/streams-text-encoding changelog
 
+## 2.0.0
+_Unreleased_
+* BREAKING: Use built-in stream types (requires TypeScript 3.2+)
+
 ## 1.0.2
 _2018-09-18_
 * Fix broken URLs

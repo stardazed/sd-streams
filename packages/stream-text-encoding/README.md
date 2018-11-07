@@ -35,9 +35,10 @@ byteReadable
     .pipeTo(textWritable);
 ```
 
-The options passed to the TextDecoderStream are identical to those passed to the
+The options passed to the `TextDecoderStream` are identical to those passed to the
 `TextDecoder` class. See [MDN's docs](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder/TextDecoder)
-for more.
+for more. Those docs do omit the `ignoreBOM` option as Firefox does not support it,
+but other implementations do.
 
 Copyright
 ---------
