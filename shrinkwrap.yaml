@@ -1,57 +1,58 @@
 importers:
   packages/stream-text-encoding:
-    dependencies:
-      '@stardazed/streams-types': 'link:../streams-types'
     devDependencies:
-      rollup: registry.npmjs.org/rollup/0.66.6
-      rollup-plugin-typescript: registry.npmjs.org/rollup-plugin-typescript/0.8.1
-      typescript: registry.npmjs.org/typescript/3.1.3
+      rollup: registry.npmjs.org/rollup/1.1.0
+      rollup-plugin-typescript: registry.npmjs.org/rollup-plugin-typescript/1.0.0/tslib@1.9.3+typescript@3.2.2
+      tslib: registry.npmjs.org/tslib/1.9.3
+      typescript: registry.npmjs.org/typescript/3.2.2
     specifiers:
-      rollup: ^0.66.6
-      rollup-plugin-typescript: ^0.8.1
-      typescript: ^3.1.3
+      rollup: ^1.1.0
+      rollup-plugin-typescript: ^1.0.0
+      tslib: ^1.9.3
+      typescript: ^3.2.2
   packages/streams:
     devDependencies:
-      rollup: registry.npmjs.org/rollup/0.66.6
-      rollup-plugin-typescript: registry.npmjs.org/rollup-plugin-typescript/0.8.1
-      typescript: registry.npmjs.org/typescript/3.1.3
+      rollup: registry.npmjs.org/rollup/1.1.0
+      rollup-plugin-typescript: registry.npmjs.org/rollup-plugin-typescript/1.0.0/tslib@1.9.3+typescript@3.2.2
+      tslib: registry.npmjs.org/tslib/1.9.3
+      typescript: registry.npmjs.org/typescript/3.2.2
     specifiers:
-      rollup: ^0.66.2
-      rollup-plugin-typescript: ^0.8.1
-      typescript: ^3.1.1
+      rollup: ^1.1.0
+      rollup-plugin-typescript: ^1.0.0
+      tslib: ^1.9.3
+      typescript: ^3.2.2
   packages/streams-fetch-adapter:
     devDependencies:
-      rollup: registry.npmjs.org/rollup/0.66.6
-      rollup-plugin-typescript: registry.npmjs.org/rollup-plugin-typescript/0.8.1
-      typescript: registry.npmjs.org/typescript/3.1.3
+      rollup: registry.npmjs.org/rollup/1.1.0
+      rollup-plugin-typescript: registry.npmjs.org/rollup-plugin-typescript/1.0.0/tslib@1.9.3+typescript@3.2.2
+      tslib: registry.npmjs.org/tslib/1.9.3
+      typescript: registry.npmjs.org/typescript/3.2.2
     specifiers:
-      rollup: ^0.66.2
-      rollup-plugin-typescript: ^0.8.1
-      typescript: ^3.1.1
+      rollup: ^1.1.0
+      rollup-plugin-typescript: ^1.0.0
+      tslib: ^1.9.3
+      typescript: ^3.2.2
   packages/streams-polyfill:
     devDependencies:
       '@stardazed/streams': registry.npmjs.org/@stardazed/streams/1.0.7
       '@stardazed/streams-fetch-adapter': 'link:../streams-fetch-adapter'
       '@stardazed/streams-text-encoding': 'link:../stream-text-encoding'
-      rollup: registry.npmjs.org/rollup/0.66.6
-      rollup-plugin-node-resolve: registry.npmjs.org/rollup-plugin-node-resolve/3.4.0
-      rollup-plugin-terser: registry.npmjs.org/rollup-plugin-terser/1.0.1
-      rollup-plugin-typescript: registry.npmjs.org/rollup-plugin-typescript/0.8.1
-      typescript: registry.npmjs.org/typescript/3.1.3
+      rollup: registry.npmjs.org/rollup/1.1.0
+      rollup-plugin-node-resolve: registry.npmjs.org/rollup-plugin-node-resolve/4.0.0
+      rollup-plugin-terser: registry.npmjs.org/rollup-plugin-terser/4.0.2/rollup@1.1.0
+      rollup-plugin-typescript: registry.npmjs.org/rollup-plugin-typescript/1.0.0/tslib@1.9.3+typescript@3.2.2
+      tslib: registry.npmjs.org/tslib/1.9.3
+      typescript: registry.npmjs.org/typescript/3.2.2
     specifiers:
       '@stardazed/streams': ^1.0.7
       '@stardazed/streams-fetch-adapter': ^2.0.0
       '@stardazed/streams-text-encoding': ^1.0.2
-      rollup: ^0.66.2
-      rollup-plugin-node-resolve: ^3.3.0
-      rollup-plugin-terser: ^1.0.1
-      rollup-plugin-typescript: ^0.8.1
-      typescript: ^3.1.1
-  packages/streams-types:
-    devDependencies:
-      typescript: registry.npmjs.org/typescript/3.1.3
-    specifiers:
-      typescript: ^3.1.3
+      rollup: ^1.1.0
+      rollup-plugin-node-resolve: ^4.0.0
+      rollup-plugin-terser: ^4.0.2
+      rollup-plugin-typescript: ^1.0.0
+      tslib: ^1.9.3
+      typescript: ^3.2.2
 packages:
   registry.npmjs.org/@babel/code-frame/7.0.0:
     dependencies:
@@ -65,7 +66,7 @@ packages:
     version: 7.0.0
   registry.npmjs.org/@babel/highlight/7.0.0:
     dependencies:
-      chalk: registry.npmjs.org/chalk/2.4.1
+      chalk: registry.npmjs.org/chalk/2.4.2
       esutils: registry.npmjs.org/esutils/2.0.2
       js-tokens: registry.npmjs.org/js-tokens/4.0.0
     dev: true
@@ -91,14 +92,25 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/@types/estree/-/estree-0.0.39.tgz'
     version: 0.0.39
-  registry.npmjs.org/@types/node/10.12.0:
+  registry.npmjs.org/@types/node/10.12.18:
     dev: true
     name: '@types/node'
     resolution:
-      integrity: sha512-3TUHC3jsBAB7qVRGxT6lWyYo2v96BMmD2PTcl47H25Lu7UXtFH/2qqmKiVrnel6Ne//0TFYf6uvNX+HW2FRkLQ==
+      integrity: sha512-fh+pAqt4xRzPfqA6eh3Z2y6fyZavRIumvjhaCL753+TVkGKGhpPeyrJG2JftD0T9q4GF00KjefsQ+PQNDdWQaQ==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/@types/node/-/node-10.12.0.tgz'
-    version: 10.12.0
+      tarball: 'https://registry.npmjs.org/@types/node/-/node-10.12.18.tgz'
+    version: 10.12.18
+  registry.npmjs.org/acorn/6.0.5:
+    dev: true
+    engines:
+      node: '>=0.4.0'
+    hasBin: true
+    name: acorn
+    resolution:
+      integrity: sha512-i33Zgp3XWtmZBMNvCr4azvOFeWVw1Rk6p3hfi3LUDvIFraOMywb1kAtrbi+med14m4Xfpqm3zRZMT+c0FNE7kg==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/acorn/-/acorn-6.0.5.tgz'
+    version: 6.0.5
   registry.npmjs.org/ansi-styles/3.2.1:
     dependencies:
       color-convert: registry.npmjs.org/color-convert/1.9.3
@@ -111,25 +123,52 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/ansi-styles/-/ansi-styles-3.2.1.tgz'
     version: 3.2.1
-  registry.npmjs.org/balanced-match/1.0.0:
-    dev: true
-    name: balanced-match
-    resolution:
-      integrity: sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
-      registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.0.tgz'
-    version: 1.0.0
-  registry.npmjs.org/brace-expansion/1.1.11:
+  registry.npmjs.org/arr-diff/2.0.0:
     dependencies:
-      balanced-match: registry.npmjs.org/balanced-match/1.0.0
-      concat-map: registry.npmjs.org/concat-map/0.0.1
+      arr-flatten: registry.npmjs.org/arr-flatten/1.1.0
     dev: true
-    name: brace-expansion
+    engines:
+      node: '>=0.10.0'
+    name: arr-diff
     resolution:
-      integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==
+      integrity: sha1-jzuCf5Vai9ZpaX5KQlasPOrjVs8=
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz'
-    version: 1.1.11
+      tarball: 'https://registry.npmjs.org/arr-diff/-/arr-diff-2.0.0.tgz'
+    version: 2.0.0
+  registry.npmjs.org/arr-flatten/1.1.0:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: arr-flatten
+    resolution:
+      integrity: sha512-L3hKV5R/p5o81R7O02IGnwpDmkp6E982XhtbuwSe3O4qOtMMMtodicASA1Cny2U+aCXcNpml+m4dPsvsJ3jatg==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/arr-flatten/-/arr-flatten-1.1.0.tgz'
+    version: 1.1.0
+  registry.npmjs.org/array-unique/0.2.1:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: array-unique
+    resolution:
+      integrity: sha1-odl8yvy8JiXMcPrc6zalDFiwGlM=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/array-unique/-/array-unique-0.2.1.tgz'
+    version: 0.2.1
+  registry.npmjs.org/braces/1.8.5:
+    dependencies:
+      expand-range: registry.npmjs.org/expand-range/1.8.2
+      preserve: registry.npmjs.org/preserve/0.2.0
+      repeat-element: registry.npmjs.org/repeat-element/1.1.3
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: braces
+    resolution:
+      integrity: sha1-uneWLhLf+WnWt2cR6RS3N4V79qc=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/braces/-/braces-1.8.5.tgz'
+    version: 1.8.5
   registry.npmjs.org/buffer-from/1.1.1:
     dev: true
     name: buffer-from
@@ -138,17 +177,17 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.1.tgz'
     version: 1.1.1
-  registry.npmjs.org/builtin-modules/2.0.0:
+  registry.npmjs.org/builtin-modules/3.0.0:
     dev: true
     engines:
-      node: '>=4'
+      node: '>=6'
     name: builtin-modules
     resolution:
-      integrity: sha512-3U5kUA5VPsRUA3nofm/BXX7GVHKfxz0hOBAPxXrIvHzlDRkQVqEn6yi8QJegxl4LzOHLdvb7XF5dVawa/VVYBg==
+      integrity: sha512-hMIeU4K2ilbXV6Uv93ZZ0Avg/M91RaKXucQ+4me2Do1txxBDyDZWCBa5bJSLqoNTRpXTLwEzIk1KmloenDDjhg==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/builtin-modules/-/builtin-modules-2.0.0.tgz'
-    version: 2.0.0
-  registry.npmjs.org/chalk/2.4.1:
+      tarball: 'https://registry.npmjs.org/builtin-modules/-/builtin-modules-3.0.0.tgz'
+    version: 3.0.0
+  registry.npmjs.org/chalk/2.4.2:
     dependencies:
       ansi-styles: registry.npmjs.org/ansi-styles/3.2.1
       escape-string-regexp: registry.npmjs.org/escape-string-regexp/1.0.5
@@ -158,10 +197,10 @@ packages:
       node: '>=4'
     name: chalk
     resolution:
-      integrity: sha512-ObN6h1v2fTJSmUXoS3nMQ92LbDK9be4TV+6G+omQlGJFdcUX5heKi1LZ1YnRMIgwTLEj3E24bT6tYni50rlCfQ==
+      integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/chalk/-/chalk-2.4.1.tgz'
-    version: 2.4.1
+      tarball: 'https://registry.npmjs.org/chalk/-/chalk-2.4.2.tgz'
+    version: 2.4.2
   registry.npmjs.org/color-convert/1.9.3:
     dependencies:
       color-name: registry.npmjs.org/color-name/1.1.3
@@ -188,22 +227,22 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/commander/-/commander-2.17.1.tgz'
     version: 2.17.1
-  registry.npmjs.org/compare-versions/2.0.1:
+  registry.npmjs.org/core-util-is/1.0.2:
     dev: true
-    name: compare-versions
+    name: core-util-is
     resolution:
-      integrity: sha1-Htwfk2h/2XoyXFn1XkWgfbEGrKY=
+      integrity: sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
       registry: 'https://registry.npmjs.com/'
-      tarball: 'http://registry.npmjs.org/compare-versions/-/compare-versions-2.0.1.tgz'
-    version: 2.0.1
-  registry.npmjs.org/concat-map/0.0.1:
+      tarball: 'https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz'
+    version: 1.0.2
+  registry.npmjs.org/deep-is/0.1.3:
     dev: true
-    name: concat-map
+    name: deep-is
     resolution:
-      integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
+      integrity: sha1-s2nW+128E+7PUk+RsHD+7cNXzzQ=
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz'
-    version: 0.0.1
+      tarball: 'https://registry.npmjs.org/deep-is/-/deep-is-0.1.3.tgz'
+    version: 0.1.3
   registry.npmjs.org/escape-string-regexp/1.0.5:
     dev: true
     engines:
@@ -214,14 +253,53 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz'
     version: 1.0.5
-  registry.npmjs.org/estree-walker/0.2.1:
+  registry.npmjs.org/escodegen/1.11.0:
+    dependencies:
+      esprima: registry.npmjs.org/esprima/3.1.3
+      estraverse: registry.npmjs.org/estraverse/4.2.0
+      esutils: registry.npmjs.org/esutils/2.0.2
+      optionator: registry.npmjs.org/optionator/0.8.2
+    dev: true
+    engines:
+      node: '>=4.0'
+    hasBin: true
+    name: escodegen
+    optionalDependencies:
+      source-map: registry.npmjs.org/source-map/0.6.1
+    resolution:
+      integrity: sha512-IeMV45ReixHS53K/OmfKAIztN/igDHzTJUhZM3k1jMhIZWjk45SMwAtBsEXiJp3vSPmTcu6CXn7mDvFHRN66fw==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/escodegen/-/escodegen-1.11.0.tgz'
+    version: 1.11.0
+  registry.npmjs.org/esprima/3.1.3:
+    dev: true
+    engines:
+      node: '>=4'
+    hasBin: true
+    name: esprima
+    resolution:
+      integrity: sha1-/cpRzuYTOJXjyI1TXOSdv/YqRjM=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/esprima/-/esprima-3.1.3.tgz'
+    version: 3.1.3
+  registry.npmjs.org/estraverse/4.2.0:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: estraverse
+    resolution:
+      integrity: sha1-De4/7TH81GlhjOc0IJn8GvoL2xM=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/estraverse/-/estraverse-4.2.0.tgz'
+    version: 4.2.0
+  registry.npmjs.org/estree-walker/0.5.2:
     dev: true
     name: estree-walker
     resolution:
-      integrity: sha1-va/oCVOD2EFNXcLs9MkXO225QS4=
+      integrity: sha512-XpCnW/AE10ws/kDAs37cngSkvgIR8aN3G0MS85m7dUpuK2EREo9VJ00uvw6Dg/hXEpfsE1I1TvJOJr+Z+TL+ig==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/estree-walker/-/estree-walker-0.2.1.tgz'
-    version: 0.2.1
+      tarball: 'https://registry.npmjs.org/estree-walker/-/estree-walker-0.5.2.tgz'
+    version: 0.5.2
   registry.npmjs.org/esutils/2.0.2:
     dev: true
     engines:
@@ -232,6 +310,121 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/esutils/-/esutils-2.0.2.tgz'
     version: 2.0.2
+  registry.npmjs.org/expand-brackets/0.1.5:
+    dependencies:
+      is-posix-bracket: registry.npmjs.org/is-posix-bracket/0.1.1
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: expand-brackets
+    resolution:
+      integrity: sha1-3wcoTjQqgHzXM6xa9yQR5YHRF3s=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/expand-brackets/-/expand-brackets-0.1.5.tgz'
+    version: 0.1.5
+  registry.npmjs.org/expand-range/1.8.2:
+    dependencies:
+      fill-range: registry.npmjs.org/fill-range/2.2.4
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: expand-range
+    resolution:
+      integrity: sha1-opnv/TNf4nIeuujiV+x5ZE/IUzc=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/expand-range/-/expand-range-1.8.2.tgz'
+    version: 1.8.2
+  registry.npmjs.org/extglob/0.3.2:
+    dependencies:
+      is-extglob: registry.npmjs.org/is-extglob/1.0.0
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: extglob
+    resolution:
+      integrity: sha1-Lhj/PS9JqydlzskCPwEdqo2DSaE=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/extglob/-/extglob-0.3.2.tgz'
+    version: 0.3.2
+  registry.npmjs.org/fast-levenshtein/2.0.6:
+    dev: true
+    name: fast-levenshtein
+    resolution:
+      integrity: sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz'
+    version: 2.0.6
+  registry.npmjs.org/filename-regex/2.0.1:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: filename-regex
+    resolution:
+      integrity: sha1-wcS5vuPglyXdsQa3XB4wH+LxiyY=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/filename-regex/-/filename-regex-2.0.1.tgz'
+    version: 2.0.1
+  registry.npmjs.org/fill-range/2.2.4:
+    dependencies:
+      is-number: registry.npmjs.org/is-number/2.1.0
+      isobject: registry.npmjs.org/isobject/2.1.0
+      randomatic: registry.npmjs.org/randomatic/3.1.1
+      repeat-element: registry.npmjs.org/repeat-element/1.1.3
+      repeat-string: registry.npmjs.org/repeat-string/1.6.1
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: fill-range
+    resolution:
+      integrity: sha512-cnrcCbj01+j2gTG921VZPnHbjmdAf8oQV/iGeV2kZxGSyfYjjTyY79ErsK1WJWMpw6DaApEX72binqJE+/d+5Q==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/fill-range/-/fill-range-2.2.4.tgz'
+    version: 2.2.4
+  registry.npmjs.org/for-in/1.0.2:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: for-in
+    resolution:
+      integrity: sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/for-in/-/for-in-1.0.2.tgz'
+    version: 1.0.2
+  registry.npmjs.org/for-own/0.1.5:
+    dependencies:
+      for-in: registry.npmjs.org/for-in/1.0.2
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: for-own
+    resolution:
+      integrity: sha1-UmXGgaTylNq78XyVCbZ2OqhFEM4=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/for-own/-/for-own-0.1.5.tgz'
+    version: 0.1.5
+  registry.npmjs.org/glob-base/0.3.0:
+    dependencies:
+      glob-parent: registry.npmjs.org/glob-parent/2.0.0
+      is-glob: registry.npmjs.org/is-glob/2.0.1
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: glob-base
+    resolution:
+      integrity: sha1-27Fk9iIbHAscz4Kuoyi0l98Oo8Q=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/glob-base/-/glob-base-0.3.0.tgz'
+    version: 0.3.0
+  registry.npmjs.org/glob-parent/2.0.0:
+    dependencies:
+      is-glob: registry.npmjs.org/is-glob/2.0.1
+    dev: true
+    name: glob-parent
+    resolution:
+      integrity: sha1-gTg9ctsFT8zPUzbaqQLxgvbtuyg=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/glob-parent/-/glob-parent-2.0.0.tgz'
+    version: 2.0.0
   registry.npmjs.org/has-flag/3.0.0:
     dev: true
     engines:
@@ -242,6 +435,76 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/has-flag/-/has-flag-3.0.0.tgz'
     version: 3.0.0
+  registry.npmjs.org/inherits/2.0.3:
+    dev: true
+    name: inherits
+    resolution:
+      integrity: sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/inherits/-/inherits-2.0.3.tgz'
+    version: 2.0.3
+  registry.npmjs.org/is-buffer/1.1.6:
+    dev: true
+    name: is-buffer
+    resolution:
+      integrity: sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/is-buffer/-/is-buffer-1.1.6.tgz'
+    version: 1.1.6
+  registry.npmjs.org/is-dotfile/1.0.3:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: is-dotfile
+    resolution:
+      integrity: sha1-pqLzL/0t+wT1yiXs0Pa4PPeYoeE=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/is-dotfile/-/is-dotfile-1.0.3.tgz'
+    version: 1.0.3
+  registry.npmjs.org/is-equal-shallow/0.1.3:
+    dependencies:
+      is-primitive: registry.npmjs.org/is-primitive/2.0.0
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: is-equal-shallow
+    resolution:
+      integrity: sha1-IjgJj8Ih3gvPpdnqxMRdY4qhxTQ=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/is-equal-shallow/-/is-equal-shallow-0.1.3.tgz'
+    version: 0.1.3
+  registry.npmjs.org/is-extendable/0.1.1:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: is-extendable
+    resolution:
+      integrity: sha1-YrEQ4omkcUGOPsNqYX1HLjAd/Ik=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/is-extendable/-/is-extendable-0.1.1.tgz'
+    version: 0.1.1
+  registry.npmjs.org/is-extglob/1.0.0:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: is-extglob
+    resolution:
+      integrity: sha1-rEaBd8SUNAWgkvyPKXYMb/xiBsA=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/is-extglob/-/is-extglob-1.0.0.tgz'
+    version: 1.0.0
+  registry.npmjs.org/is-glob/2.0.1:
+    dependencies:
+      is-extglob: registry.npmjs.org/is-extglob/1.0.0
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: is-glob
+    resolution:
+      integrity: sha1-0Jb5JqPe1WAPP9/ZEZjLCIjC2GM=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/is-glob/-/is-glob-2.0.1.tgz'
+    version: 2.0.1
   registry.npmjs.org/is-module/1.0.0:
     dev: true
     name: is-module
@@ -250,6 +513,81 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/is-module/-/is-module-1.0.0.tgz'
     version: 1.0.0
+  registry.npmjs.org/is-number/2.1.0:
+    dependencies:
+      kind-of: registry.npmjs.org/kind-of/3.2.2
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: is-number
+    resolution:
+      integrity: sha1-Afy7s5NGOlSPL0ZszhbezknbkI8=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/is-number/-/is-number-2.1.0.tgz'
+    version: 2.1.0
+  registry.npmjs.org/is-number/4.0.0:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: is-number
+    resolution:
+      integrity: sha512-rSklcAIlf1OmFdyAqbnWTLVelsQ58uvZ66S/ZyawjWqIviTWCjg2PzVGw8WUA+nNuPTqb4wgA+NszrJ+08LlgQ==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/is-number/-/is-number-4.0.0.tgz'
+    version: 4.0.0
+  registry.npmjs.org/is-posix-bracket/0.1.1:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: is-posix-bracket
+    resolution:
+      integrity: sha1-MzTceXdDaOkvAW5vvAqI9c1ua8Q=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/is-posix-bracket/-/is-posix-bracket-0.1.1.tgz'
+    version: 0.1.1
+  registry.npmjs.org/is-primitive/2.0.0:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: is-primitive
+    resolution:
+      integrity: sha1-IHurkWOEmcB7Kt8kCkGochADRXU=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/is-primitive/-/is-primitive-2.0.0.tgz'
+    version: 2.0.0
+  registry.npmjs.org/isarray/1.0.0:
+    dev: true
+    name: isarray
+    resolution:
+      integrity: sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz'
+    version: 1.0.0
+  registry.npmjs.org/isobject/2.1.0:
+    dependencies:
+      isarray: registry.npmjs.org/isarray/1.0.0
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: isobject
+    resolution:
+      integrity: sha1-8GVWEJaj8dou9GJy+BXIQNh+DIk=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/isobject/-/isobject-2.1.0.tgz'
+    version: 2.1.0
+  registry.npmjs.org/jest-worker/24.0.0-alpha.9:
+    dependencies:
+      merge-stream: registry.npmjs.org/merge-stream/1.0.1
+      supports-color: registry.npmjs.org/supports-color/5.5.0
+    dev: true
+    engines:
+      node: '>= 6'
+    name: jest-worker
+    resolution:
+      integrity: sha512-6lveyea6qbLdlQy+H+hn4IcEVgdqlI++KZU0tOdLeCliJ7myj7sDAO3fCVAcuMW9yxekIwrYclj472mP3wQdcQ==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/jest-worker/-/jest-worker-24.0.0-alpha.9.tgz'
+    version: 24.0.0-alpha.9
   registry.npmjs.org/js-tokens/4.0.0:
     dev: true
     name: js-tokens
@@ -258,26 +596,150 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz'
     version: 4.0.0
-  registry.npmjs.org/minimatch/3.0.4:
+  registry.npmjs.org/kind-of/3.2.2:
     dependencies:
-      brace-expansion: registry.npmjs.org/brace-expansion/1.1.11
-    dev: true
-    name: minimatch
-    resolution:
-      integrity: sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==
-      registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/minimatch/-/minimatch-3.0.4.tgz'
-    version: 3.0.4
-  registry.npmjs.org/object-assign/4.1.1:
+      is-buffer: registry.npmjs.org/is-buffer/1.1.6
     dev: true
     engines:
       node: '>=0.10.0'
-    name: object-assign
+    name: kind-of
     resolution:
-      integrity: sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
+      integrity: sha1-MeohpzS6ubuw8yRm2JOupR5KPGQ=
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz'
-    version: 4.1.1
+      tarball: 'https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz'
+    version: 3.2.2
+  registry.npmjs.org/kind-of/6.0.2:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: kind-of
+    resolution:
+      integrity: sha512-s5kLOcnH0XqDO+FvuaLX8DDjZ18CGFk7VygH40QoKPUQhW4e2rvM0rwUq0t8IQDOwYSeLK01U90OjzBTme2QqA==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/kind-of/-/kind-of-6.0.2.tgz'
+    version: 6.0.2
+  registry.npmjs.org/lave/1.1.10:
+    dev: true
+    engines:
+      node: '>= 4'
+    name: lave
+    resolution:
+      integrity: sha1-BiIHZSxVAtfG/wlsneOZVAH2NNU=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/lave/-/lave-1.1.10.tgz'
+    version: 1.1.10
+  registry.npmjs.org/levn/0.3.0:
+    dependencies:
+      prelude-ls: registry.npmjs.org/prelude-ls/1.1.2
+      type-check: registry.npmjs.org/type-check/0.3.2
+    dev: true
+    engines:
+      node: '>= 0.8.0'
+    name: levn
+    resolution:
+      integrity: sha1-OwmSTt+fCDwEkP3UwLxEIeBHZO4=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/levn/-/levn-0.3.0.tgz'
+    version: 0.3.0
+  registry.npmjs.org/math-random/1.0.1:
+    dev: true
+    name: math-random
+    resolution:
+      integrity: sha1-izqsWIuKZuSXXjzepn97sylgH6w=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/math-random/-/math-random-1.0.1.tgz'
+    version: 1.0.1
+  registry.npmjs.org/merge-stream/1.0.1:
+    dependencies:
+      readable-stream: registry.npmjs.org/readable-stream/2.3.6
+    dev: true
+    name: merge-stream
+    resolution:
+      integrity: sha1-QEEgLVCKNCugAXQAjfDCUbjBNeE=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/merge-stream/-/merge-stream-1.0.1.tgz'
+    version: 1.0.1
+  registry.npmjs.org/micromatch/2.3.11:
+    dependencies:
+      arr-diff: registry.npmjs.org/arr-diff/2.0.0
+      array-unique: registry.npmjs.org/array-unique/0.2.1
+      braces: registry.npmjs.org/braces/1.8.5
+      expand-brackets: registry.npmjs.org/expand-brackets/0.1.5
+      extglob: registry.npmjs.org/extglob/0.3.2
+      filename-regex: registry.npmjs.org/filename-regex/2.0.1
+      is-extglob: registry.npmjs.org/is-extglob/1.0.0
+      is-glob: registry.npmjs.org/is-glob/2.0.1
+      kind-of: registry.npmjs.org/kind-of/3.2.2
+      normalize-path: registry.npmjs.org/normalize-path/2.1.1
+      object.omit: registry.npmjs.org/object.omit/2.0.1
+      parse-glob: registry.npmjs.org/parse-glob/3.0.4
+      regex-cache: registry.npmjs.org/regex-cache/0.4.4
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: micromatch
+    resolution:
+      integrity: sha1-hmd8l9FyCzY0MdBNDRUpO9OMFWU=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/micromatch/-/micromatch-2.3.11.tgz'
+    version: 2.3.11
+  registry.npmjs.org/normalize-path/2.1.1:
+    dependencies:
+      remove-trailing-separator: registry.npmjs.org/remove-trailing-separator/1.1.0
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: normalize-path
+    resolution:
+      integrity: sha1-GrKLVW4Zg2Oowab35vogE3/mrtk=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/normalize-path/-/normalize-path-2.1.1.tgz'
+    version: 2.1.1
+  registry.npmjs.org/object.omit/2.0.1:
+    dependencies:
+      for-own: registry.npmjs.org/for-own/0.1.5
+      is-extendable: registry.npmjs.org/is-extendable/0.1.1
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: object.omit
+    resolution:
+      integrity: sha1-Gpx0SCnznbuFjHbKNXmuKlTr0fo=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/object.omit/-/object.omit-2.0.1.tgz'
+    version: 2.0.1
+  registry.npmjs.org/optionator/0.8.2:
+    dependencies:
+      deep-is: registry.npmjs.org/deep-is/0.1.3
+      fast-levenshtein: registry.npmjs.org/fast-levenshtein/2.0.6
+      levn: registry.npmjs.org/levn/0.3.0
+      prelude-ls: registry.npmjs.org/prelude-ls/1.1.2
+      type-check: registry.npmjs.org/type-check/0.3.2
+      wordwrap: registry.npmjs.org/wordwrap/1.0.0
+    dev: true
+    engines:
+      node: '>= 0.8.0'
+    name: optionator
+    resolution:
+      integrity: sha1-NkxeQJ0/TWMB1sC0wFu6UBgK62Q=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/optionator/-/optionator-0.8.2.tgz'
+    version: 0.8.2
+  registry.npmjs.org/parse-glob/3.0.4:
+    dependencies:
+      glob-base: registry.npmjs.org/glob-base/0.3.0
+      is-dotfile: registry.npmjs.org/is-dotfile/1.0.3
+      is-extglob: registry.npmjs.org/is-extglob/1.0.0
+      is-glob: registry.npmjs.org/is-glob/2.0.1
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: parse-glob
+    resolution:
+      integrity: sha1-ssN2z7EfNVE7rdFz7wu246OIORw=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/parse-glob/-/parse-glob-3.0.4.tgz'
+    version: 3.0.4
   registry.npmjs.org/path-parse/1.0.6:
     dev: true
     name: path-parse
@@ -286,76 +748,193 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/path-parse/-/path-parse-1.0.6.tgz'
     version: 1.0.6
-  registry.npmjs.org/resolve/1.8.1:
+  registry.npmjs.org/prelude-ls/1.1.2:
+    dev: true
+    engines:
+      node: '>= 0.8.0'
+    name: prelude-ls
+    resolution:
+      integrity: sha1-IZMqVJ9eUv/ZqCf1cOBL5iqX2lQ=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.1.2.tgz'
+    version: 1.1.2
+  registry.npmjs.org/preserve/0.2.0:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: preserve
+    resolution:
+      integrity: sha1-gV7R9uvGWSb4ZbMQwHE7yzMVzks=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/preserve/-/preserve-0.2.0.tgz'
+    version: 0.2.0
+  registry.npmjs.org/process-nextick-args/2.0.0:
+    dev: true
+    name: process-nextick-args
+    resolution:
+      integrity: sha512-MtEC1TqN0EU5nephaJ4rAtThHtC86dNN9qCuEhtshvpVBkAW5ZO7BASN9REnF9eoXGcRub+pFuKEpOHE+HbEMw==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/process-nextick-args/-/process-nextick-args-2.0.0.tgz'
+    version: 2.0.0
+  registry.npmjs.org/randomatic/3.1.1:
+    dependencies:
+      is-number: registry.npmjs.org/is-number/4.0.0
+      kind-of: registry.npmjs.org/kind-of/6.0.2
+      math-random: registry.npmjs.org/math-random/1.0.1
+    dev: true
+    engines:
+      node: '>= 0.10.0'
+    name: randomatic
+    resolution:
+      integrity: sha512-TuDE5KxZ0J461RVjrJZCJc+J+zCkTb1MbH9AQUq68sMhOMcy9jLcb3BrZKgp9q9Ncltdg4QVqWrH02W2EFFVYw==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/randomatic/-/randomatic-3.1.1.tgz'
+    version: 3.1.1
+  registry.npmjs.org/readable-stream/2.3.6:
+    dependencies:
+      core-util-is: registry.npmjs.org/core-util-is/1.0.2
+      inherits: registry.npmjs.org/inherits/2.0.3
+      isarray: registry.npmjs.org/isarray/1.0.0
+      process-nextick-args: registry.npmjs.org/process-nextick-args/2.0.0
+      safe-buffer: registry.npmjs.org/safe-buffer/5.1.2
+      string_decoder: registry.npmjs.org/string_decoder/1.1.1
+      util-deprecate: registry.npmjs.org/util-deprecate/1.0.2
+    dev: true
+    name: readable-stream
+    resolution:
+      integrity: sha512-tQtKA9WIAhBF3+VLAseyMqZeBjW0AHJoxOtYqSUZNJxauErmLbVm2FW1y+J/YA9dUrAC39ITejlZWhVIwawkKw==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/readable-stream/-/readable-stream-2.3.6.tgz'
+    version: 2.3.6
+  registry.npmjs.org/regex-cache/0.4.4:
+    dependencies:
+      is-equal-shallow: registry.npmjs.org/is-equal-shallow/0.1.3
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: regex-cache
+    resolution:
+      integrity: sha512-nVIZwtCjkC9YgvWkpM55B5rBhBYRZhAaJbgcFYXXsHnbZ9UZI9nnVWYZpBlCqv9ho2eZryPnWrZGsOdPwVWXWQ==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/regex-cache/-/regex-cache-0.4.4.tgz'
+    version: 0.4.4
+  registry.npmjs.org/remove-trailing-separator/1.1.0:
+    dev: true
+    name: remove-trailing-separator
+    resolution:
+      integrity: sha1-wkvOKig62tW8P1jg1IJJuSN52O8=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/remove-trailing-separator/-/remove-trailing-separator-1.1.0.tgz'
+    version: 1.1.0
+  registry.npmjs.org/repeat-element/1.1.3:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    name: repeat-element
+    resolution:
+      integrity: sha512-ahGq0ZnV5m5XtZLMb+vP76kcAM5nkLqk0lpqAuojSKGgQtn4eRi4ZZGm2olo2zKFH+sMsWaqOCW1dqAnOru72g==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/repeat-element/-/repeat-element-1.1.3.tgz'
+    version: 1.1.3
+  registry.npmjs.org/repeat-string/1.6.1:
+    dev: true
+    engines:
+      node: '>=0.10'
+    name: repeat-string
+    resolution:
+      integrity: sha1-jcrkcOHIirwtYA//Sndihtp15jc=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/repeat-string/-/repeat-string-1.6.1.tgz'
+    version: 1.6.1
+  registry.npmjs.org/resolve/1.9.0:
     dependencies:
       path-parse: registry.npmjs.org/path-parse/1.0.6
     dev: true
     name: resolve
     resolution:
-      integrity: sha512-AicPrAC7Qu1JxPCZ9ZgCZlY35QgFnNqc+0LtbRNxnVw4TXvjQ72wnuL9JQcEBgXkI9JM8MsT9kaQoHcpCRJOYA==
+      integrity: sha512-TZNye00tI67lwYvzxCxHGjwTNlUV70io54/Ed4j6PscB8xVfuBJpRenI/o6dVk0cY0PYTY27AgCoGGxRnYuItQ==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/resolve/-/resolve-1.8.1.tgz'
-    version: 1.8.1
-  registry.npmjs.org/rollup-plugin-node-resolve/3.4.0:
+      tarball: 'https://registry.npmjs.org/resolve/-/resolve-1.9.0.tgz'
+    version: 1.9.0
+  registry.npmjs.org/rollup-plugin-node-resolve/4.0.0:
     dependencies:
-      builtin-modules: registry.npmjs.org/builtin-modules/2.0.0
+      builtin-modules: registry.npmjs.org/builtin-modules/3.0.0
       is-module: registry.npmjs.org/is-module/1.0.0
-      resolve: registry.npmjs.org/resolve/1.8.1
+      resolve: registry.npmjs.org/resolve/1.9.0
     dev: true
     name: rollup-plugin-node-resolve
     resolution:
-      integrity: sha512-PJcd85dxfSBWih84ozRtBkB731OjXk0KnzN0oGp7WOWcarAFkVa71cV5hTJg2qpVsV2U8EUwrzHP3tvy9vS3qg==
+      integrity: sha512-7Ni+/M5RPSUBfUaP9alwYQiIKnKeXCOHiqBpKUl9kwp3jX5ZJtgXAait1cne6pGEVUUztPD6skIKH9Kq9sNtfw==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/rollup-plugin-node-resolve/-/rollup-plugin-node-resolve-3.4.0.tgz'
-    version: 3.4.0
-  registry.npmjs.org/rollup-plugin-terser/1.0.1:
+      tarball: 'https://registry.npmjs.org/rollup-plugin-node-resolve/-/rollup-plugin-node-resolve-4.0.0.tgz'
+    version: 4.0.0
+  registry.npmjs.org/rollup-plugin-terser/4.0.2/rollup@1.1.0:
     dependencies:
       '@babel/code-frame': registry.npmjs.org/@babel/code-frame/7.0.0
-      terser: registry.npmjs.org/terser/3.10.3
+      escodegen: registry.npmjs.org/escodegen/1.11.0
+      jest-worker: registry.npmjs.org/jest-worker/24.0.0-alpha.9
+      lave: registry.npmjs.org/lave/1.1.10
+      rollup: registry.npmjs.org/rollup/1.1.0
+      terser: registry.npmjs.org/terser/3.14.1
     dev: true
+    id: registry.npmjs.org/rollup-plugin-terser/4.0.2
     name: rollup-plugin-terser
+    peerDependencies:
+      rollup: '>=0.66.0 <2'
     resolution:
-      integrity: sha512-VC6chT7QnrV6JzdgkPE0hP/atRBxaa3CPbVXfZJ8nJLjcidSdWftOst098RasYRUTKxJWAgdaJN1+uiZM6iffA==
+      integrity: sha512-M2vY7NPMa3N77/avJSJyBva4nyBTiUM0kgMoWwEAeo2Edl3MW/GoM0069FzVrfMYP3xDqcVrDbaIOqVaBD8lHQ==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/rollup-plugin-terser/-/rollup-plugin-terser-1.0.1.tgz'
-    version: 1.0.1
-  registry.npmjs.org/rollup-plugin-typescript/0.8.1:
+      tarball: 'https://registry.npmjs.org/rollup-plugin-terser/-/rollup-plugin-terser-4.0.2.tgz'
+    version: 4.0.2
+  registry.npmjs.org/rollup-plugin-typescript/1.0.0/tslib@1.9.3+typescript@3.2.2:
     dependencies:
-      compare-versions: registry.npmjs.org/compare-versions/2.0.1
-      object-assign: registry.npmjs.org/object-assign/4.1.1
-      rollup-pluginutils: registry.npmjs.org/rollup-pluginutils/1.5.2
-      tippex: registry.npmjs.org/tippex/2.3.1
-      typescript: registry.npmjs.org/typescript/1.8.10
+      resolve: registry.npmjs.org/resolve/1.9.0
+      rollup-pluginutils: registry.npmjs.org/rollup-pluginutils/2.3.3
+      tslib: registry.npmjs.org/tslib/1.9.3
+      typescript: registry.npmjs.org/typescript/3.2.2
     dev: true
+    id: registry.npmjs.org/rollup-plugin-typescript/1.0.0
     name: rollup-plugin-typescript
+    peerDependencies:
+      tslib: '*'
+      typescript: '>=2.1.0'
     resolution:
-      integrity: sha1-L/fuzCHPa7K0P8J+W2iJUs5xkko=
+      integrity: sha512-d2KDNMJXgaaB//dDGd/YmyMiopt1Pz965Iu3zmEoL08YqNcKRBz26uHqqc47rFGfrJV5kFqifC9IYlh6dpSCLg==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'http://registry.npmjs.org/rollup-plugin-typescript/-/rollup-plugin-typescript-0.8.1.tgz'
-    version: 0.8.1
-  registry.npmjs.org/rollup-pluginutils/1.5.2:
+      tarball: 'https://registry.npmjs.org/rollup-plugin-typescript/-/rollup-plugin-typescript-1.0.0.tgz'
+    version: 1.0.0
+  registry.npmjs.org/rollup-pluginutils/2.3.3:
     dependencies:
-      estree-walker: registry.npmjs.org/estree-walker/0.2.1
-      minimatch: registry.npmjs.org/minimatch/3.0.4
+      estree-walker: registry.npmjs.org/estree-walker/0.5.2
+      micromatch: registry.npmjs.org/micromatch/2.3.11
     dev: true
     name: rollup-pluginutils
     resolution:
-      integrity: sha1-HhVud4+UtyVb+hs9AXi+j1xVJAg=
+      integrity: sha512-2XZwja7b6P5q4RZ5FhyX1+f46xi1Z3qBKigLRZ6VTZjwbN0K1IFGMlwm06Uu0Emcre2Z63l77nq/pzn+KxIEoA==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'http://registry.npmjs.org/rollup-pluginutils/-/rollup-pluginutils-1.5.2.tgz'
-    version: 1.5.2
-  registry.npmjs.org/rollup/0.66.6:
+      tarball: 'https://registry.npmjs.org/rollup-pluginutils/-/rollup-pluginutils-2.3.3.tgz'
+    version: 2.3.3
+  registry.npmjs.org/rollup/1.1.0:
     dependencies:
       '@types/estree': registry.npmjs.org/@types/estree/0.0.39
-      '@types/node': registry.npmjs.org/@types/node/10.12.0
+      '@types/node': registry.npmjs.org/@types/node/10.12.18
+      acorn: registry.npmjs.org/acorn/6.0.5
     dev: true
     hasBin: true
     name: rollup
     resolution:
-      integrity: sha512-J7/SWanrcb83vfIHqa8+aVVGzy457GcjA6GVZEnD0x2u4OnOd0Q1pCrEoNe8yLwM6z6LZP02zBT2uW0yh5TqOw==
+      integrity: sha512-NK03gkkOz0CchHBMGomcNqa6U3jLNzHuWK9SI0+1FV475JA6cQxVtjlDcQoKKDNIQ3IwYumIlgoKYDEWUyFBwQ==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/rollup/-/rollup-0.66.6.tgz'
-    version: 0.66.6
+      tarball: 'https://registry.npmjs.org/rollup/-/rollup-1.1.0.tgz'
+    version: 1.1.0
+  registry.npmjs.org/safe-buffer/5.1.2:
+    dev: true
+    name: safe-buffer
+    resolution:
+      integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz'
+    version: 5.1.2
   registry.npmjs.org/source-map-support/0.5.9:
     dependencies:
       buffer-from: registry.npmjs.org/buffer-from/1.1.1
@@ -377,6 +956,16 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz'
     version: 0.6.1
+  registry.npmjs.org/string_decoder/1.1.1:
+    dependencies:
+      safe-buffer: registry.npmjs.org/safe-buffer/5.1.2
+    dev: true
+    name: string_decoder
+    resolution:
+      integrity: sha512-n/ShnvDi6FHbbVfviro+WojiFzv+s8MPMHBczVePfUpDJLwoLT0ht1l4YwBCbi8pJAveEEdnkHyPyTP/mzRfwg==
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/string_decoder/-/string_decoder-1.1.1.tgz'
+    version: 1.1.1
   registry.npmjs.org/supports-color/5.5.0:
     dependencies:
       has-flag: registry.npmjs.org/has-flag/3.0.0
@@ -389,49 +978,66 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/supports-color/-/supports-color-5.5.0.tgz'
     version: 5.5.0
-  registry.npmjs.org/terser/3.10.3:
+  registry.npmjs.org/terser/3.14.1:
     dependencies:
       commander: registry.npmjs.org/commander/2.17.1
       source-map: registry.npmjs.org/source-map/0.6.1
       source-map-support: registry.npmjs.org/source-map-support/0.5.9
     dev: true
     engines:
-      node: '>=0.8.0'
+      node: '>=4.0.0'
     hasBin: true
     name: terser
     resolution:
-      integrity: sha512-uyL5hwDICjnv49JANhZvQYLikt/HADWNbUFsKQpZ/i+JSOkL2T4V7WUpW7S/5QGZceVq2x0HRVhEQQuW2ZpX6g==
+      integrity: sha512-NSo3E99QDbYSMeJaEk9YW2lTg3qS9V0aKGlb+PlOrei1X02r1wSBHCNX/O+yeTRFSWPKPIGj6MqvvdqV4rnVGw==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/terser/-/terser-3.10.3.tgz'
-    version: 3.10.3
-  registry.npmjs.org/tippex/2.3.1:
+      tarball: 'https://registry.npmjs.org/terser/-/terser-3.14.1.tgz'
+    version: 3.14.1
+  registry.npmjs.org/tslib/1.9.3:
     dev: true
-    name: tippex
+    name: tslib
     resolution:
-      integrity: sha1-ov1bcIfXy/sgyYBqbBYQjCwPr9o=
+      integrity: sha512-4krF8scpejhaOgqzBEcGM7yDIEfi0/8+8zDRZhNZZ2kjmHJ4hv3zCbQWxoJGz1iw5U0Jl0nma13xzHXcncMavQ==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/tippex/-/tippex-2.3.1.tgz'
-    version: 2.3.1
-  registry.npmjs.org/typescript/1.8.10:
+      tarball: 'https://registry.npmjs.org/tslib/-/tslib-1.9.3.tgz'
+    version: 1.9.3
+  registry.npmjs.org/type-check/0.3.2:
+    dependencies:
+      prelude-ls: registry.npmjs.org/prelude-ls/1.1.2
     dev: true
     engines:
-      node: '>=0.8.0'
-    hasBin: true
-    name: typescript
+      node: '>= 0.8.0'
+    name: type-check
     resolution:
-      integrity: sha1-tHXW4N/wv1DyluXKbvn7tccyDx4=
+      integrity: sha1-WITKtRLPHTVeP7eE8wgEsrUg23I=
       registry: 'https://registry.npmjs.com/'
-      tarball: 'http://registry.npmjs.org/typescript/-/typescript-1.8.10.tgz'
-    version: 1.8.10
-  registry.npmjs.org/typescript/3.1.3:
+      tarball: 'https://registry.npmjs.org/type-check/-/type-check-0.3.2.tgz'
+    version: 0.3.2
+  registry.npmjs.org/typescript/3.2.2:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     name: typescript
     resolution:
-      integrity: sha512-+81MUSyX+BaSo+u2RbozuQk/UWx6hfG0a5gHu4ANEM4sU96XbuIyAB+rWBW1u70c6a5QuZfuYICn3s2UjuHUpA==
+      integrity: sha512-VCj5UiSyHBjwfYacmDuc/NOk4QQixbE+Wn7MFJuS0nRuPQbof132Pw4u53dm264O8LPc2MVsc7RJNml5szurkg==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/typescript/-/typescript-3.1.3.tgz'
-    version: 3.1.3
+      tarball: 'https://registry.npmjs.org/typescript/-/typescript-3.2.2.tgz'
+    version: 3.2.2
+  registry.npmjs.org/util-deprecate/1.0.2:
+    dev: true
+    name: util-deprecate
+    resolution:
+      integrity: sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz'
+    version: 1.0.2
+  registry.npmjs.org/wordwrap/1.0.0:
+    dev: true
+    name: wordwrap
+    resolution:
+      integrity: sha1-J1hIEIkUVqQXHI0CJkQa3pDLyus=
+      registry: 'https://registry.npmjs.com/'
+      tarball: 'https://registry.npmjs.org/wordwrap/-/wordwrap-1.0.0.tgz'
+    version: 1.0.0
 shrinkwrapVersion: 4

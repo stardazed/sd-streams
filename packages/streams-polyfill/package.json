@@ -23,10 +23,11 @@
 		"@stardazed/streams": "^1.0.7",
 		"@stardazed/streams-fetch-adapter": "^2.0.0",
 		"@stardazed/streams-text-encoding": "^1.0.2",
-		"rollup": "^0.66.2",
-		"rollup-plugin-node-resolve": "^3.3.0",
-		"rollup-plugin-terser": "^1.0.1",
-		"rollup-plugin-typescript": "^0.8.1",
-		"typescript": "^3.1.1"
+		"rollup": "^1.1.0",
+		"rollup-plugin-node-resolve": "^4.0.0",
+		"rollup-plugin-terser": "^4.0.2",
+		"rollup-plugin-typescript": "^1.0.0",
+		"tslib": "^1.9.3",
+		"typescript": "^3.2.2"
 	}
 }
