@@ -32,9 +32,9 @@ export const readyPromise_ = Symbol("readyPromise_");
 export const errorSteps_ = Symbol("errorSteps_");
 export const abortSteps_ = Symbol("abortSteps_");
 
-export type StartFunction = (controller: WritableStreamController) => void | Promise<void>;
+export type StartFunction = (controller: WritableStreamController) => void | PromiseLike<void>;
 export type StartAlgorithm = () => Promise<void> | void;
-export type WriteFunction<InputType> = (chunk: InputType, controller: WritableStreamController) => void | Promise<void>;
+export type WriteFunction<InputType> = (chunk: InputType, controller: WritableStreamController) => void | PromiseLike<void>;
 export type WriteAlgorithm<InputType> = (chunk: InputType) => Promise<void>;
 export type CloseAlgorithm = () => Promise<void>;
 export type AbortAlgorithm = (reason?: shared.ErrorResult) => Promise<void>;
@@ -88,7 +88,7 @@ export type WritableStreamState = "writable" | "closed" | "erroring" | "errored"
 export interface WritableStreamSink<InputType> {
 	start?: StartFunction;
 	write?: WriteFunction<InputType>;
-	close?(): void | Promise<void>;
+	close?(): void | PromiseLike<void>;
 	abort?(reason?: shared.ErrorResult): void;
 
 	type?: undefined; // unused, for future revisions

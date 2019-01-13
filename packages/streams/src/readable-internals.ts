@@ -44,10 +44,10 @@ export const view_ = Symbol("view_");
 export const reader_ = Symbol("reader_");
 export const readableStreamController_ = Symbol("readableStreamController_");
 
-export type StartFunction<OutputType> = (controller: SDReadableStreamControllerBase<OutputType>) => void | Promise<void>;
+export type StartFunction<OutputType> = (controller: SDReadableStreamControllerBase<OutputType>) => void | PromiseLike<void>;
 export type StartAlgorithm = () => Promise<void> | void;
-export type PullFunction<OutputType> = (controller: SDReadableStreamControllerBase<OutputType>) => void | Promise<void>;
-export type PullAlgorithm<OutputType> = (controller: SDReadableStreamControllerBase<OutputType>) => Promise<void>;
+export type PullFunction<OutputType> = (controller: SDReadableStreamControllerBase<OutputType>) => void | PromiseLike<void>;
+export type PullAlgorithm<OutputType> = (controller: SDReadableStreamControllerBase<OutputType>) => PromiseLike<void>;
 export type CancelAlgorithm = (reason?: shared.ErrorResult) => Promise<void>;
 
 // ----

@@ -25,9 +25,9 @@ export const transformAlgorithm_ = Symbol("transformAlgorithm_");
 
 // ----
 
-export type TransformFunction<InputType, OutputType> = (chunk: InputType, controller: TransformStreamDefaultController<InputType, OutputType>) => void | Promise<void>;
+export type TransformFunction<InputType, OutputType> = (chunk: InputType, controller: TransformStreamDefaultController<InputType, OutputType>) => void | PromiseLike<void>;
 export type TransformAlgorithm<InputType> = (chunk: InputType) => Promise<void>;
-export type FlushFunction<InputType, OutputType> = (controller: TransformStreamDefaultController<InputType, OutputType>) => void | Promise<void>;
+export type FlushFunction<InputType, OutputType> = (controller: TransformStreamDefaultController<InputType, OutputType>) => void | PromiseLike<void>;
 export type FlushAlgorithm = () => Promise<void>;
 
 // ----
@@ -44,7 +44,7 @@ export interface TransformStreamDefaultController<InputType, OutputType> {
 }
 
 export interface Transformer<InputType, OutputType> {
-	start?(controller: TransformStreamDefaultController<InputType, OutputType>): void | Promise<void>;
+	start?(controller: TransformStreamDefaultController<InputType, OutputType>): void | PromiseLike<void>;
 	transform?: TransformFunction<InputType, OutputType>;
 	flush?: FlushFunction<InputType, OutputType>;
 	
