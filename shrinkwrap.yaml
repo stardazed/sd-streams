@@ -34,7 +34,7 @@ importers:
       typescript: ^3.2.2
   packages/streams-polyfill:
     devDependencies:
-      '@stardazed/streams': registry.npmjs.org/@stardazed/streams/1.0.7
+      '@stardazed/streams': 'link:../streams'
       '@stardazed/streams-fetch-adapter': 'link:../streams-fetch-adapter'
       '@stardazed/streams-text-encoding': 'link:../stream-text-encoding'
       rollup: registry.npmjs.org/rollup/1.1.0
@@ -44,7 +44,7 @@ importers:
       tslib: registry.npmjs.org/tslib/1.9.3
       typescript: registry.npmjs.org/typescript/3.2.2
     specifiers:
-      '@stardazed/streams': ^1.0.7
+      '@stardazed/streams': ^2.0.0
       '@stardazed/streams-fetch-adapter': ^2.0.0
       '@stardazed/streams-text-encoding': ^1.0.2
       rollup: ^1.1.0
@@ -76,14 +76,6 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/@babel/highlight/-/highlight-7.0.0.tgz'
     version: 7.0.0
-  registry.npmjs.org/@stardazed/streams/1.0.7:
-    dev: true
-    name: '@stardazed/streams'
-    resolution:
-      integrity: sha512-Q+W866E4X5ygDNICUQXiWp8VjtDNMK/tfd0vVPa/dDv9JyueJUGgWkxmavrpLMdZOEBVohCtU1kk3n+Sk2YCWg==
-      registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/@stardazed/streams/-/streams-1.0.7.tgz'
-    version: 1.0.7
   registry.npmjs.org/@types/estree/0.0.39:
     dev: true
     name: '@types/estree'
@@ -575,7 +567,7 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/isobject/-/isobject-2.1.0.tgz'
     version: 2.1.0
-  registry.npmjs.org/jest-worker/24.0.0-alpha.9:
+  registry.npmjs.org/jest-worker/24.0.0-alpha.12:
     dependencies:
       merge-stream: registry.npmjs.org/merge-stream/1.0.1
       supports-color: registry.npmjs.org/supports-color/5.5.0
@@ -584,10 +576,10 @@ packages:
       node: '>= 6'
     name: jest-worker
     resolution:
-      integrity: sha512-6lveyea6qbLdlQy+H+hn4IcEVgdqlI++KZU0tOdLeCliJ7myj7sDAO3fCVAcuMW9yxekIwrYclj472mP3wQdcQ==
+      integrity: sha512-BzGiUwc2LPyrvOuCMqdiLqWU78C+lHbHI/hcJgWonTda0RS7aCcrgSJx5t9+56U9rzMMxDC75S9khJ0oi3fYQA==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/jest-worker/-/jest-worker-24.0.0-alpha.9.tgz'
-    version: 24.0.0-alpha.9
+      tarball: 'https://registry.npmjs.org/jest-worker/-/jest-worker-24.0.0-alpha.12.tgz'
+    version: 24.0.0-alpha.12
   registry.npmjs.org/js-tokens/4.0.0:
     dev: true
     name: js-tokens
@@ -641,14 +633,14 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/levn/-/levn-0.3.0.tgz'
     version: 0.3.0
-  registry.npmjs.org/math-random/1.0.1:
+  registry.npmjs.org/math-random/1.0.2:
     dev: true
     name: math-random
     resolution:
-      integrity: sha1-izqsWIuKZuSXXjzepn97sylgH6w=
+      integrity: sha512-Bp2Bx2wFaUymE7pWi0bbldiheIXMvyzC3hRkT5YAv2qiqqJO5VB8KafgYgZmGCxkTmloLuAx3Jv2OmJ66990mg==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/math-random/-/math-random-1.0.1.tgz'
-    version: 1.0.1
+      tarball: 'https://registry.npmjs.org/math-random/-/math-random-1.0.2.tgz'
+    version: 1.0.2
   registry.npmjs.org/merge-stream/1.0.1:
     dependencies:
       readable-stream: registry.npmjs.org/readable-stream/2.3.6
@@ -780,7 +772,7 @@ packages:
     dependencies:
       is-number: registry.npmjs.org/is-number/4.0.0
       kind-of: registry.npmjs.org/kind-of/6.0.2
-      math-random: registry.npmjs.org/math-random/1.0.1
+      math-random: registry.npmjs.org/math-random/1.0.2
     dev: true
     engines:
       node: '>= 0.10.0'
@@ -872,7 +864,7 @@ packages:
     dependencies:
       '@babel/code-frame': registry.npmjs.org/@babel/code-frame/7.0.0
       escodegen: registry.npmjs.org/escodegen/1.11.0
-      jest-worker: registry.npmjs.org/jest-worker/24.0.0-alpha.9
+      jest-worker: registry.npmjs.org/jest-worker/24.0.0-alpha.12
       lave: registry.npmjs.org/lave/1.1.10
       rollup: registry.npmjs.org/rollup/1.1.0
       terser: registry.npmjs.org/terser/3.14.1
@@ -935,17 +927,17 @@ packages:
       registry: 'https://registry.npmjs.com/'
       tarball: 'https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz'
     version: 5.1.2
-  registry.npmjs.org/source-map-support/0.5.9:
+  registry.npmjs.org/source-map-support/0.5.10:
     dependencies:
       buffer-from: registry.npmjs.org/buffer-from/1.1.1
       source-map: registry.npmjs.org/source-map/0.6.1
     dev: true
     name: source-map-support
     resolution:
-      integrity: sha512-gR6Rw4MvUlYy83vP0vxoVNzM6t8MUXqNuRsuBmBHQDu1Fh6X015FrLdgoDKcNdkwGubozq0P4N0Q37UyFVr1EA==
+      integrity: sha512-YfQ3tQFTK/yzlGJuX8pTwa4tifQj4QS2Mj7UegOu8jAz59MqIiMGPXxQhVQiIMNzayuUSF/jEuVnfFF5JqybmQ==
       registry: 'https://registry.npmjs.com/'
-      tarball: 'https://registry.npmjs.org/source-map-support/-/source-map-support-0.5.9.tgz'
-    version: 0.5.9
+      tarball: 'https://registry.npmjs.org/source-map-support/-/source-map-support-0.5.10.tgz'
+    version: 0.5.10
   registry.npmjs.org/source-map/0.6.1:
     dev: true
     engines:
@@ -982,7 +974,7 @@ packages:
     dependencies:
       commander: registry.npmjs.org/commander/2.17.1
       source-map: registry.npmjs.org/source-map/0.6.1
-      source-map-support: registry.npmjs.org/source-map-support/0.5.9
+      source-map-support: registry.npmjs.org/source-map-support/0.5.10
     dev: true
     engines:
       node: '>=4.0.0'
