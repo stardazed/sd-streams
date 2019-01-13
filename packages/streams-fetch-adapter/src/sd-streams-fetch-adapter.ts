@@ -7,7 +7,9 @@
 
 // Minimal declarations needed to have things compile
 interface ReadableStreamConstructor {
-	new(source?: UnderlyingSource, strategy?: QueuingStrategy): ReadableStream;
+	prototype: ReadableStream;
+	new(underlyingSource: UnderlyingByteSource, strategy?: { highWaterMark?: number, size?: undefined }): ReadableStream<Uint8Array>;
+	new<R = any>(underlyingSource?: UnderlyingSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
 }
 
 type ReadableStreamTeeFunction = (stream: ReadableStream, cloneForBranch2: boolean) => ReadableStream[];
