@@ -32,6 +32,21 @@ export function isFiniteNonNegativeNumber(value: unknown) {
 	return value >= 0;
 }
 
+export function isAbortSignal(signal: any): signal is AbortSignal {
+	if (typeof signal !== "object" || signal === null) {
+		return false;
+	}
+	try {
+		// this will error if AbortSignal is not implemented / available
+		const aborted = Object.getOwnPropertyDescriptor(AbortSignal.prototype, "aborted")!.get!;
+		aborted.call(signal);
+		return true;
+	}
+	catch (err) {
+		return false;
+	}
+}
+
 export function invokeOrNoop<O extends object, P extends keyof O>(o: O, p: P, args: any[]) {
 	// Assert: O is not undefined.
 	// Assert: IsPropertyKey(P) is true.
