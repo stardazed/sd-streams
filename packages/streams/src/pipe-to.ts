@@ -28,6 +28,7 @@ export function pipeTo<ChunkType>(source: rs.SDReadableStream<ChunkType>, dest: 
 	const preventClose = !!options.preventClose;
 	const preventAbort = !!options.preventAbort;
 	const preventCancel = !!options.preventCancel;
+	const signal = options.signal;
 
 	let shuttingDown = false;
 	let latestWrite = Promise.resolve();
@@ -132,9 +133,30 @@ export function pipeTo<ChunkType>(source: rs.SDReadableStream<ChunkType>, dest: 
 		}
 	}
 
+	let abortAlgorithm: () => any;
+	if (signal !== undefined) {
+		abortAlgorithm = () => {
+			const error = new DOMException("Aborted", "AbortError");
+			shutDown(() => {
+				
+				return Promise.resolve();
+			}, { actualError: error })
+		};
+
+		if (signal.aborted === true) {
+			abortAlgorithm();
+		}
+		else {
+			signal.addEventListener("abort", abortAlgorithm);
+		}
+	}
+
 	function finalize(error?: ErrorWrapper) {
 		ws.writableStreamDefaultWriterRelease(writer);
 		rs.readableStreamReaderGenericRelease(reader);
+		if (signal && abortAlgorithm) {
+			signal.removeEventListener("abort", abortAlgorithm);
+		}
 		if (error) {
 			promise.reject(error.actualError);
 		}
@@ -164,7 +186,10 @@ export function pipeTo<ChunkType>(source: rs.SDReadableStream<ChunkType>, dest: 
 		});
 	}
 
-	next();
+	// an already aborted signal may have triggered shutdown before we got here
+	if (! shuttingDown) {
+		next();
+	}
 
 	return promise.promise;
 }

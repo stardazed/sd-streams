@@ -106,6 +106,9 @@ export class SDReadableStream<OutputType> implements rs.SDReadableStream<OutputT
 		if (! ws.isWritableStream(dest)) {
 			return Promise.reject(new TypeError());
 		}
+		if (options.signal !== undefined && !shared.isAbortSignal(options.signal)) {
+			return Promise.reject(new TypeError("options.signal must be an AbortSignal instance"));
+		}
 		if (rs.isReadableStreamLocked(this)) {
 			return Promise.reject(new TypeError("Cannot pipe from a locked stream"));
 		}
