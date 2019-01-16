@@ -11,6 +11,7 @@
 		"url": "https://github.com/stardazed/sd-streams.git"
 	},
 	"main": "dist/sd-streams-polyfill.min.js",
+	"types": "dist/sd-streams-polyfill.d.ts",
 	"scripts": {
 		"build": "tsc --noEmit -p . && rollup -c",
 		"prepublishOnly": "npm run build"
