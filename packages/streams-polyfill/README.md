@@ -6,7 +6,7 @@ to support the `body` field for both downloading and uploading. It also provides
 `TextEncoderStream` and `TextDecoderStream` from the [Encoding Standard](https://encoding.spec.whatwg.org/)
 where necessary.
 
-Download size: 11KiB gzipped, 58KiB uncompressed.
+Download size: 12KiB gzipped, 60KiB uncompressed.
 
 Usage
 -----
@@ -40,19 +40,9 @@ import "@stardazed/streams-polyfill";
 
 All stream types are available globally after that point, no further actions are needed.
 
-⚠️ For TypeScript users, until the TS standard lib definitions fix the type constructor for
-`ReadableStream`, you will get an error when providing any params to the `ReadableStream`
-constructor. You will have to add a ts ignore directive on the preceding line and also
-explicitly type the source object, as follows:
-
-```ts
-// @ts-ignore
-const myReadable = new ReadableStream({
-    start(controller) {
-        controller.enqueue("stuff");
-    }
-} as ReadableStreamSource);
-```
+⚠️ For TypeScript users, you must use TypeScript 3.2 or newer to get type checking. If you
+cannot upgrade to 3.2, you can use the older v2.0.0 version of this package that provides
+a custom set of types.
 
 API Usage
 ---------
@@ -80,8 +70,13 @@ The text encoding streams require a compliant `TextEncoder` and `TextDecoder` to
 either natively or through a polyfill. Browser support: Safari 10.1+, (iOS 10.3+),
 Firefox 19+, Chrome 38+. Edge currently does NOT support these interfaces.
 
+The `pipeTo` and `pipeThrough` methods of `ReadableStream` now support a `signal` field
+of type `AbortSignal` to abort on ongoing pipe operation. This is fully supported but
+requires a native or polyfilled implementation to be present.
+Browser support: Safari 11.1+ (iOS 11.1+), Firefox 57+, Chrome 66+, Edge 16+.
+
 ### Node
-Node (as of September 2018) has no built-in fetch or web streams support. I did not do extensive
+Node (as of January 2019) has no built-in fetch or web streams support. I did not do extensive
 tests but this polyfill, when `require()`d, will install all streams types in Node's
 `global` object and they then work as expected. Like with browsers, cooperation with any
 `fetch` polyfills available has not been tested.
@@ -107,7 +102,7 @@ to have your code work with `fetch` transparently.
 
 Copyright
 ---------
-© 2018 by Arthur Langereis - [@zenmumbler](https://twitter.com/zenmumbler)
+© 2018-Present by Arthur Langereis - [@zenmumbler](https://twitter.com/zenmumbler)
 
 License
 -------
