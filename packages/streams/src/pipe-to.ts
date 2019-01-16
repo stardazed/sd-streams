@@ -32,6 +32,40 @@ export function pipeTo<ChunkType>(source: rs.SDReadableStream<ChunkType>, dest: 
 	const reader = new ReadableStreamDefaultReader(source);
 	const writer = new WritableStreamDefaultWriter(dest);
 
+	let abortAlgorithm: () => any;
+	if (signal !== undefined) {
+		abortAlgorithm = () => {
+			const error = new DOMException("Aborted", "AbortError");
+			const actions: (() => Promise<void>)[] = [];
+			if (preventAbort === false) {
+				actions.push(() => {
+					if (dest[shared.state_] === "writable") {
+						return ws.writableStreamAbort(dest, error);
+					}
+					return Promise.resolve();
+				});
+			}
+			if (preventCancel === false) {
+				actions.push(() => {
+					if (source[shared.state_] === "readable") {
+						return rs.readableStreamCancel(source, error);
+					}
+					return Promise.resolve();
+				});
+			}
+			shutDown(() => {
+				return Promise.all(actions.map(a => a())).then(_ => undefined);
+			}, { actualError: error });
+		};
+
+		if (signal.aborted === true) {
+			abortAlgorithm();
+		}
+		else {
+			signal.addEventListener("abort", abortAlgorithm);
+		}
+	}
+
 	function onStreamErrored(stream: rs.SDReadableStream<ChunkType> | ws.WritableStream<ChunkType>, promise: Promise<void>, action: (error: shared.ErrorResult) => void) {
 		if (stream[shared.state_] === "errored") {
 			action(stream[shared.storedError_]);
@@ -123,24 +157,6 @@ export function pipeTo<ChunkType>(source: rs.SDReadableStream<ChunkType>, dest: 
 		}
 		else {
 			finishShutDown();
-		}
-	}
-
-	let abortAlgorithm: () => any;
-	if (signal !== undefined) {
-		abortAlgorithm = () => {
-			const error = new DOMException("Aborted", "AbortError");
-			shutDown(() => {
-				
-				return Promise.resolve();
-			}, { actualError: error })
-		};
-
-		if (signal.aborted === true) {
-			abortAlgorithm();
-		}
-		else {
-			signal.addEventListener("abort", abortAlgorithm);
 		}
 	}
 
