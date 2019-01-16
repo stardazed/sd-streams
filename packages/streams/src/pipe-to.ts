@@ -195,10 +195,7 @@ export function pipeTo<ChunkType>(source: rs.SDReadableStream<ChunkType>, dest: 
 		});
 	}
 
-	// an already aborted signal may have triggered shutdown before we got here
-	if (! shuttingDown) {
-		next();
-	}
+	next();
 
 	return promise.promise;
 }
