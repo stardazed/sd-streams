@@ -44,7 +44,7 @@ importers:
       tslib: registry.npmjs.org/tslib/1.9.3
       typescript: registry.npmjs.org/typescript/3.2.2
     specifiers:
-      '@stardazed/streams': ^2.0.0
+      '@stardazed/streams': ^3.0.0
       '@stardazed/streams-fetch-adapter': ^2.0.0
       '@stardazed/streams-text-encoding': ^1.0.2
       rollup: ^1.1.0
