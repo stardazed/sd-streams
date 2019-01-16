@@ -1,5 +1,13 @@
 # @stardazed/streams changelog
 
+## 3.0.0
+_2019-01-16_
+* BREAKING: now uses the built-in TypeScript types and no longer exports own types. Now requires TS 3.2 or newer or your
+  own set of types, but using new TS is highly recommended.
+* Supports the AbortSignal `signal` field in the PipeOptions for ReadableStream's pipeTo and pipeThrough methods to manually
+  abort pipe operations.
+* Incorporate changes to streams spec up to 2019-01-16
+
 ## 2.0.0
 _2018-10-15_
 * BREAKING: the TypeScript interfaces to the streams and associated types are now parameterized by the incoming/outgoing chunk types.
