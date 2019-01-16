@@ -16,6 +16,13 @@ import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 import { ReadableByteStreamController, setUpReadableByteStreamControllerFromUnderlyingSource } from "./readable-byte-stream-controller";
 import { SDReadableStreamBYOBReader } from "./readable-stream-byob-reader";
 
+// extend PipeOptions interface with signal
+declare global {
+	interface PipeOptions {
+		signal?: AbortSignal;
+	}
+}
+
 export class SDReadableStream<OutputType> implements rs.SDReadableStream<OutputType> {
 	[shared.state_]: rs.ReadableStreamState;
 	[shared.storedError_]: shared.ErrorResult;
@@ -85,17 +92,30 @@ export class SDReadableStream<OutputType> implements rs.SDReadableStream<OutputT
 		return readableStreamTee(this, false);
 	}
 
-	pipeThrough<ResultType>(transform: rs.GenericTransformStream<OutputType, ResultType>, options?: PipeOptions): rs.SDReadableStream<ResultType> {
+	pipeThrough<ResultType>(transform: rs.GenericTransformStream<OutputType, ResultType>, options: PipeOptions = {}): rs.SDReadableStream<ResultType> {
 		const { readable, writable } = transform;
-		if (readable === undefined || writable === undefined) {
-			throw new TypeError("Both a readable and writable stream must be provided");
+		if (! rs.isReadableStream(this)) {
+			throw new TypeError();
 		}
-		const pipeResult = this.pipeTo(writable, options);
+		if (! ws.isWritableStream(writable)) {
+			throw new TypeError("writable must be a WritableStream");
+		}
+		if (! rs.isReadableStream(readable)) {
+			throw new TypeError("readable must be a ReadableStream");
+		}
+		if (options.signal !== undefined && !shared.isAbortSignal(options.signal)) {
+			throw new TypeError("options.signal must be an AbortSignal instance");
+		}
+		if (rs.isReadableStreamLocked(this)) {
+			throw new TypeError("Cannot pipeThrough on a locked stream");
+		}
+		if (ws.isWritableStreamLocked(writable)) {
+			throw new TypeError("Cannot pipeThrough to a locked stream");
+		}
 
-		// not sure why the spec is so pedantic about the authenticity of only this particular promise, but hey
-		try {
-			Promise.prototype.then.call(pipeResult, undefined, () => ({}));
-		} catch (_e) {}
+		const pipeResult = pipeTo(this, writable, options);
+		pipeResult.catch(() => {});
+
 		return readable;
 	}
 
@@ -104,7 +124,7 @@ export class SDReadableStream<OutputType> implements rs.SDReadableStream<OutputT
 			return Promise.reject(new TypeError());
 		}
 		if (! ws.isWritableStream(dest)) {
-			return Promise.reject(new TypeError());
+			return Promise.reject(new TypeError("destination must be a WritableStream"));
 		}
 		if (options.signal !== undefined && !shared.isAbortSignal(options.signal)) {
 			return Promise.reject(new TypeError("options.signal must be an AbortSignal instance"));

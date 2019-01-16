@@ -17,13 +17,6 @@ interface ErrorWrapper {
 	actualError: shared.ErrorResult;
 }
 
-// extend PipeOptions interface with signal
-declare global {
-	interface PipeOptions {
-		signal?: AbortSignal;
-	}
-}
-
 export function pipeTo<ChunkType>(source: rs.SDReadableStream<ChunkType>, dest: ws.WritableStream<ChunkType>, options: PipeOptions) {
 	const preventClose = !!options.preventClose;
 	const preventAbort = !!options.preventAbort;
