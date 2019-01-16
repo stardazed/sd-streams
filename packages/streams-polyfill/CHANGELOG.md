@@ -1,11 +1,18 @@
 # @stardazed/streams-polyfill changelog
 
+## 2.0.0
+_2019-01-16_
+* BREAKING: no longer provides full types for stream types, now requires TS 3.2 or newer.
+* Supports the AbortSignal `signal` field in the PipeOptions for ReadableStream's pipeTo and pipeThrough methods to manually
+  abort pipe operations.
+* Incorporate changes to streams spec up to 2019-01-16
+
 ## 1.0.7
 _2018-10-01_
 * Fetched Response bodies now correctly clone values when the Response is cloned ([#2](https://github.com/stardazed/sd-streams/issues/2))
 
 ## 1.0.6
-_2018_09_19_
+_2018-09-19_
 * Add combined TypeScript types to this package so they will be accessible when using polyfill only
 
 ## 1.0.5
