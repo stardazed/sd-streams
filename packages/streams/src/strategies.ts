@@ -1,7 +1,7 @@
 /**
  * streams/strategies - implementation of the built-in stream strategies
  * Part of Stardazed
- * (c) 2018 by Arthur Langereis - @zenmumbler
+ * (c) 2018-Present by Arthur Langereis - @zenmumbler
  * https://github.com/stardazed/sd-streams
  */
 

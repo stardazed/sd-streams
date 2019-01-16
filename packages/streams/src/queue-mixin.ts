@@ -1,7 +1,7 @@
 /**
  * streams/queue-mixin - internal queue operations for stream controllers
  * Part of Stardazed
- * (c) 2018 by Arthur Langereis - @zenmumbler
+ * (c) 2018-Present by Arthur Langereis - @zenmumbler
  * https://github.com/stardazed/sd-streams
  */
 
