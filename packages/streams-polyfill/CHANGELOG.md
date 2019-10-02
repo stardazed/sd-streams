@@ -1,5 +1,10 @@
 # @stardazed/streams-polyfill changelog
 
+## 2.0.1
+_2019-10-02_
+* Always override built-in TextDecoderStream and TextEncoderStream if the main streams were polyfilled ([#4](https://github.com/stardazed/sd-streams/issues/4))
+* Remove custom type annotation for signal, which is now in the default lib.
+
 ## 2.0.0
 _2019-01-16_
 * BREAKING: no longer provides full types for stream types, now requires TS 3.2 or newer.
