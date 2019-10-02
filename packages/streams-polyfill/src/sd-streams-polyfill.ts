@@ -87,7 +87,7 @@ function installStardazedStreams() {
 	}
 
 	// also try contextual values for fetch types to support polyfilled values in Node
-	const nativeFetch = getGlobalOrContextualValue<GlobalFetch["fetch"]>("fetch");
+	const nativeFetch = getGlobalOrContextualValue<WindowOrWorkerGlobalScope["fetch"]>("fetch");
 	const nativeResponse = getGlobalOrContextualValue<ResponseConstructor>("Response");
 
 	const nativeReadableStream = getGlobalValue<ReadableStreamConstructor>("ReadableStream");
