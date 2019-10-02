@@ -32,7 +32,7 @@ export interface AdaptedRequestInit {
     signal?: AbortSignal;
     window?: any;
 }
-export type AdaptedFetch = (input: Request | string, init?: AdaptedRequestInit) => Promise<Response>;
+export type AdaptedFetch = (input: RequestInfo, init?: AdaptedRequestInit) => Promise<Response>;
 
 /**
  * Create and return a fetch function that will add or patch the body property

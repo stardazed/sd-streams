@@ -15,7 +15,7 @@ interface ReadableStreamConstructor {
 type ReadableStreamTeeFunction = (stream: ReadableStream, cloneForBranch2: boolean) => ReadableStream[];
 
 type FetchBody = Blob | BufferSource | FormData | ReadableStream | string | null;
-type AdaptedFetch = (input: Request | string, init?: RequestInit) => Promise<Response>;
+type AdaptedFetch = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 
 interface ResponseConstructor {
 	new(body?: FetchBody, init?: ResponseInit): Response;
@@ -136,7 +136,7 @@ export function createAdaptedFetch(
 	customReadableStream: ReadableStreamConstructor,
 	customReadableStreamTee: ReadableStreamTeeFunction
 ): AdaptedFetch {
-	return function fetch(input: Request | string, init?: RequestInit) {
+	return function fetch(input: RequestInfo, init?: RequestInit) {
 		// if the body passed into the request init is a ReadableStream (either native or custom)
 		// then first read it out completely before we pass it onto the native fetch as a Blob
 		return resolveRequestInitStream(init, nativeReadableStream, customReadableStream).then(
