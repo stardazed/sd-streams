@@ -28,7 +28,13 @@ export default [
 				typescript,
 				include: ["src/**/*.ts"],
 			}),
-			terser({ mangle: true, safari10: true, output: { comments: /streams\-polyfill/ } })
+			terser({
+				keep_classnames: true,
+				keep_fnames: true,
+				mangle: true,
+				safari10: true,
+				output: { comments: /streams\-polyfill/ }
+			})
 		]
 	}
 ];
