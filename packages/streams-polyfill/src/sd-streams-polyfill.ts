@@ -78,12 +78,12 @@ function installStardazedStreams() {
 	const globalObject = getGlobal();
 	if (! globalObject) {
 		// this would be very unusual
-		return;
+		return false;
 	}
 
 	if (hasCompleteStreamsImplementation()) {
 		// this polyfill is all or nothing, if the full spec as we know it is available then bail
-		return;
+		return false;
 	}
 
 	// also try contextual values for fetch types to support polyfilled values in Node
@@ -106,26 +106,30 @@ function installStardazedStreams() {
 	globalObject["TransformStream"] = sds.TransformStream;
 	globalObject["ByteLengthQueuingStrategy"] = sds.ByteLengthQueuingStrategy;
 	globalObject["CountQueuingStrategy"] = sds.CountQueuingStrategy;
+
+	return true;
 }
 
-function installEncodingStreams() {
-	// this step occurs separately from the streams install as we may need to
+function installEncodingStreams(forceInstall: boolean) {
+	// This step occurs separately from the streams install as we may need to
 	// supplement a full streams implementation that does not have these types
+	// In addition, if we've installed the base streams, these types MUST be
+	// overwritten as well to avoid incompatibilities.
 	const globalObject = getGlobal();
 	if (! globalObject) {
 		// this would be very unusual
 		return;
 	}
 	const nativeTDS = getGlobalValue<TextDecoderStream>("TextDecoderStream");
-	if (typeof nativeTDS !== "function") {
+	if (forceInstall || typeof nativeTDS !== "function") {
 		globalObject["TextDecoderStream"] = TextDecoderStream;
 	}
 
 	const nativeTES = getGlobalValue<TextEncoderStream>("TextEncoderStream");	
-	if (typeof nativeTES !== "function") {
+	if (forceInstall || typeof nativeTES !== "function") {
 		globalObject["TextEncoderStream"] = TextEncoderStream;
 	}
 }
 
-installStardazedStreams();
-installEncodingStreams();
+const overwritten = installStardazedStreams();
+installEncodingStreams(overwritten);
