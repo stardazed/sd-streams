@@ -5,13 +5,6 @@
  * https://github.com/stardazed/sd-streams
  */
 
- // extend global PipeOptions interface with signal
-declare global {
-	interface PipeOptions {
-		signal?: AbortSignal;
-	}
-}
-
 // ---- Stream Types
 
 export declare const ReadableStream: {

@@ -16,13 +16,6 @@ import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 import { ReadableByteStreamController, setUpReadableByteStreamControllerFromUnderlyingSource } from "./readable-byte-stream-controller";
 import { SDReadableStreamBYOBReader } from "./readable-stream-byob-reader";
 
-// extend PipeOptions interface with signal
-declare global {
-	interface PipeOptions {
-		signal?: AbortSignal;
-	}
-}
-
 export class SDReadableStream<OutputType> implements rs.SDReadableStream<OutputType> {
 	[shared.state_]: rs.ReadableStreamState;
 	[shared.storedError_]: shared.ErrorResult;
