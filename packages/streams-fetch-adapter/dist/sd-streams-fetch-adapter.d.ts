@@ -44,7 +44,7 @@ export type AdaptedFetch = (input: Request | string, init?: AdaptedRequestInit) 
  * @param customReadableStreamTee The `ReadableStreamTee` method implementation for the custom ReadableStream
  */
 export declare function createAdaptedFetch(
-	nativeFetch: GlobalFetch["fetch"],
+	nativeFetch: WindowOrWorkerGlobalScope["fetch"],
 	nativeResponse: ResponseConstructor,
 	nativeReadableStream: ReadableStreamConstructor | undefined,
 	customReadableStream: ReadableStreamConstructor,
