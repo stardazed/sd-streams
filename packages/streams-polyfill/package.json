@@ -22,7 +22,7 @@
 	],
 	"devDependencies": {
 		"@stardazed/streams": "^3.0.0",
-		"@stardazed/streams-fetch-adapter": "^2.0.0",
+		"@stardazed/streams-fetch-adapter": "^3.0.0",
 		"@stardazed/streams-text-encoding": "^1.0.2",
 		"rollup": "^1.22.0",
 		"rollup-plugin-node-resolve": "^5.2.0",

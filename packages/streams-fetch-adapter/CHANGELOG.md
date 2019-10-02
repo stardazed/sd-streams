@@ -1,8 +1,8 @@
 # @stardazed/streams-fetch-adapter changelog
 
 ## 3.0.0
-_Unreleased_
-* BREAKING: Now uses built-in parameterised types, requiring TypeScript 3.2 or newer.
+_2019-10-02_
+* BREAKING: Types updated for latest TS lib, requiring TypeScript 3.6 or newer.
 
 ## 2.0.0
 _2018-10-01_
