@@ -20,14 +20,14 @@
 		"dist/*.js"
 	],
 	"devDependencies": {
-		"@stardazed/streams": "^3.0.0",
-		"@stardazed/streams-fetch-adapter": "^3.0.0",
-		"@stardazed/streams-text-encoding": "^1.0.2",
-		"rollup": "^1.22.0",
-		"rollup-plugin-node-resolve": "^5.2.0",
-		"rollup-plugin-terser": "^5.1.2",
-		"rollup-plugin-typescript": "^1.0.1",
+		"@rollup/plugin-node-resolve": "^6.0.0",
+		"@rollup/plugin-typescript": "^2.0.1",
+		"@stardazed/streams": "workspace:^3.0.0",
+		"@stardazed/streams-fetch-adapter": "workspace:^3.0.0",
+		"@stardazed/streams-text-encoding": "workspace:^1.0.2",
+		"rollup": "^1.27.13",
+		"rollup-plugin-terser": "^5.1.3",
 		"tslib": "^1.10.0",
-		"typescript": "^3.6.3"
+		"typescript": "^3.7.3"
 	}
 }
