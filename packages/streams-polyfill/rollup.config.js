@@ -4,12 +4,12 @@ import typescript from "typescript";
 import tsc from "@rollup/plugin-typescript";
 import { terser } from "rollup-plugin-terser";
 
-const banner = `/**
- * @stardazed/streams-polyfill - drop-in polyfill for Web Streams with fetch and encoding integration
- * Part of Stardazed
- * (c) 2018-Present by Arthur Langereis - @zenmumbler
- * https://github.com/stardazed/sd-streams
- */`;
+const banner = `/*
+@stardazed/streams-polyfill - drop-in polyfill for Web Streams with fetch and encoding integration
+Part of Stardazed
+(c) 2018-Present by Arthur Langereis - @zenmumbler
+https://github.com/stardazed/sd-streams
+*/`;
 
 export default [
 	{

@@ -1,6 +1,7 @@
 import * as sds from "@stardazed/streams";
 import { ReadableStreamConstructor, ResponseConstructor, createAdaptedFetch, createAdaptedResponse } from "@stardazed/streams-fetch-adapter";
 import { TextDecoderStream, TextEncoderStream } from "@stardazed/streams-text-encoding";
+import { CompressionStream, DecompressionStream } from "@stardazed/streams-compression";
 
 function getGlobal(): Record<string, unknown> | undefined {
 	let self;
@@ -125,11 +126,33 @@ function installEncodingStreams(forceInstall: boolean) {
 		globalObject["TextDecoderStream"] = TextDecoderStream;
 	}
 
-	const nativeTES = getGlobalValue<TextEncoderStream>("TextEncoderStream");	
+	const nativeTES = getGlobalValue<TextEncoderStream>("TextEncoderStream");
 	if (forceInstall || typeof nativeTES !== "function") {
 		globalObject["TextEncoderStream"] = TextEncoderStream;
 	}
 }
 
+function installCompressionStreams(forceInstall: boolean) {
+	// This step occurs separately from the streams install as we may need to
+	// supplement a full streams implementation that does not have these types
+	// In addition, if we've installed the base streams, these types MUST be
+	// overwritten as well to avoid incompatibilities.
+	const globalObject = getGlobal();
+	if (!globalObject) {
+		// this would be very unusual
+		return;
+	}
+	const nativeCS = getGlobalValue<CompressionStream>("CompressionStream");
+	if (forceInstall || typeof nativeCS !== "function") {
+		globalObject["CompressionStream"] = CompressionStream;
+	}
+
+	const nativeDS = getGlobalValue<DecompressionStream>("DecompressionStream");
+	if (forceInstall || typeof nativeDS !== "function") {
+		globalObject["DecompressionStream"] = DecompressionStream;
+	}
+}
+
 const overwritten = installStardazedStreams();
 installEncodingStreams(overwritten);
+installCompressionStreams(overwritten);

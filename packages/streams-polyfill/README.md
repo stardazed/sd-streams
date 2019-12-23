@@ -4,9 +4,10 @@ This package provides a full polyfill for the [Web Streams Standard](https://str
 for use in browsers, including patching the built-in `fetch` and `Response` types
 to support the `body` field for both downloading and uploading. It also provides the
 `TextEncoderStream` and `TextDecoderStream` from the [Encoding Standard](https://encoding.spec.whatwg.org/)
-where necessary.
+and the `CompressionStream` and `DecompressionStream` from the
+[Draft Compression Standard](https://wicg.github.io/compression/) where necessary.
 
-Download size: 12KiB gzipped, 65KiB uncompressed.
+Download size: 27KiB gzipped, 122KiB uncompressed.
 
 Usage
 -----
@@ -90,8 +91,9 @@ Node versions >= 7 should be sufficient.
 
 Implementation
 --------------
-This polyfill uses the fully compliant [Stardazed streams](https://www.npmjs.com/package/@stardazed/streams)
-and [text encoding streams](https://www.npmjs.com/package/@stardazed/streams-text-encoding)
+This polyfill uses the fully compliant [Stardazed streams](https://www.npmjs.com/package/@stardazed/streams),
+[text encoding streams](https://www.npmjs.com/package/@stardazed/streams-text-encoding)
+and [compression streams](https://www.npmjs.com/package/@stardazed/streams-compression)
 implementations, and the [streams fetch adapter](https://www.npmjs.com/package/@stardazed/streams-fetch-adapter)
 to connect the implementations to the current environment.
 

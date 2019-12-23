@@ -1,5 +1,9 @@
 # @stardazed/streams-polyfill changelog
 
+## 2.1.0
+_2019-12-22_
+* Add CompressionStream and DecompressionStream polyfills
+
 ## 2.0.1
 _2019-10-02_
 * Always override built-in TextDecoderStream and TextEncoderStream if the main streams were polyfilled ([#4](https://github.com/stardazed/sd-streams/issues/4))

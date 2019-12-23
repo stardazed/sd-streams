@@ -55,6 +55,7 @@ importers:
       '@rollup/plugin-node-resolve': 6.0.0_rollup@1.27.14
       '@rollup/plugin-typescript': 2.0.1_c43d6d1c92f803cc012688f27ea7270a
       '@stardazed/streams': 'link:../streams'
+      '@stardazed/streams-compression': 'link:../streams-compression'
       '@stardazed/streams-fetch-adapter': 'link:../streams-fetch-adapter'
       '@stardazed/streams-text-encoding': 'link:../stream-text-encoding'
       rollup: 1.27.14
@@ -65,6 +66,7 @@ importers:
       '@rollup/plugin-node-resolve': ^6.0.0
       '@rollup/plugin-typescript': ^2.0.1
       '@stardazed/streams': 'workspace:^3.0.0'
+      '@stardazed/streams-compression': 'workspace:^1.0.0'
       '@stardazed/streams-fetch-adapter': 'workspace:^3.0.0'
       '@stardazed/streams-text-encoding': 'workspace:^1.0.2'
       rollup: ^1.27.14
