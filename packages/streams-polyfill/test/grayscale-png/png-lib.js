@@ -128,7 +128,7 @@ class GrayscalePNGTransformer {
           let result = chunk.subarray(position + 8, position + 8 + dataSize);
 
           // Decompress the data
-          result = pako.inflate(result);
+          result = sdZlib.inflate(result);
 
           // Remove PNG filters from each scanline
           result = this.removeFilters(result, bytesPerCol, bytesPerRow);
@@ -137,7 +137,7 @@ class GrayscalePNGTransformer {
           result = this.grayscale(result, bytesPerCol, bytesPerRow);
 
           // Compress with Deflate
-          result = pako.deflate(result);
+          result = sdZlib.deflate(result);
 
           // Write data to target
           target.setUint32(position, result.byteLength);
