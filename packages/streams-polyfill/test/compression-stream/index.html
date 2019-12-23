@@ -1,0 +1,76 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Compression Streams</title>
+  <script src="../../dist/sd-streams-polyfill.min.js"></script>
+  <style>
+    section { width: 40vw; display: inline-block; vertical-align: top; }
+    p { margin: 0 0 .1em 0; padding: 0; }
+  </style>
+</head>
+
+<body>
+  <section id="plain"></section>
+  <section id="proc"></section>
+  <script>
+    function append(t, id) {
+      const p = document.createElement('p');
+      p.textContent = t;
+      document.getElementById(id).appendChild(p)
+    }
+
+    async function main() {
+      // Create the transform streams, use gzip as intermediate format
+      const cs = new CompressionStream("gzip");
+      const ds = new DecompressionStream("gzip");
+      // Fetch the text file
+      const response = await fetch('paradiselost.txt');
+      // Get a ReadableStream on the text file's body
+      const rs = response.body;
+      const [left, right] = rs.tee();
+      // Compress and decompress the text
+      const roundtrip = right.pipeThrough(cs).pipeThrough(ds);
+      // Read the streams
+      const readerL = left.getReader();
+      const readerR = roundtrip.getReader();
+      let busyL = true, busyR = true;
+      let countL = 0, countR = 0;
+
+      while (busyL || busyR) {
+
+        if (busyL) {
+          const { done, value } = await readerL.read();
+          if (done) {
+            busyL = false;
+          }
+          else {
+            append(`Plain got ${value.byteLength} bytes`, "plain");
+            countL += value.byteLength;
+          }
+        }
+
+        if (busyR) {
+          const { done, value } = await readerR.read();
+          if (done) {
+            busyR = false;
+          }
+          else {
+            append(`Proc got ${value.byteLength} bytes`, "proc");
+            countR += value.byteLength;
+          }
+        }
+      }
+
+      append(`PLAIN TOTAL: ${countL} bytes`, "plain");
+      append(`PROC TOTAL: ${countR} bytes`, "proc");
+    }
+
+    main();
+  </script>
+</body>
+
+</html>
