@@ -27,7 +27,7 @@ it load as the first script.
 First add this package to your project with your package manager of choice.
 
 ```
-pnpm install @stardazed/streams-polyfill
+pnpm add @stardazed/streams-polyfill
 npm install @stardazed/streams-polyfill
 yarn add @stardazed/streams-polyfill
 ```

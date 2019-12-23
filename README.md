@@ -22,9 +22,13 @@ with `fetch`, including uploads using streams.
 an implementation of the `TextDecoderStream` and `TextEncoderStream` from the
 Encoding standard, linking the two standards for best compatibility and reusability.
 
+👉 [@stardazed/streams-compression](https://www.npmjs.com/package/@stardazed/streams-compression) —
+an implementation of the `CompressionStream` and `DecompressionStream` from the
+Draft Compression standard.
+
 👉 [@stardazed/streams-polyfill](https://www.npmjs.com/package/@stardazed/streams-polyfill) —
-a polyfill combining the above three packages for a seamless, drop-in integration
-of stardazed streams + fetch + encoding in modern browsers and Node.
+a polyfill combining the above four packages for a seamless, drop-in integration
+of stardazed streams + fetch + encoding + compression in modern browsers and Node.
 
 Usage with TypeScript
 ---------------------
