@@ -24,13 +24,18 @@ importers:
       tslib: ^1.10.0
       typescript: ^3.7.4
   packages/streams-compression:
+    dependencies:
+      '@stardazed/zlib': 1.0.0
     devDependencies:
+      '@rollup/plugin-node-resolve': 6.0.0_rollup@1.27.14
       '@rollup/plugin-typescript': 2.0.1_c43d6d1c92f803cc012688f27ea7270a
       rollup: 1.27.14
       tslib: 1.10.0
       typescript: 3.7.4
     specifiers:
+      '@rollup/plugin-node-resolve': ^6.0.0
       '@rollup/plugin-typescript': ^2.0.1
+      '@stardazed/zlib': ^1.0.0
       rollup: ^1.27.14
       tslib: ^1.10.0
       typescript: ^3.7.4
@@ -124,6 +129,10 @@ packages:
       rollup: ^1.20.0
     resolution:
       integrity: sha512-PmNurkecagFimv7ZdKCVOfQuqKDPkrcpLFxRBcQ00LYr4HAjJwhCFxBiY2Xoletll2htTIiXBg6g0Yg21h2M3w==
+  /@stardazed/zlib/1.0.0:
+    dev: false
+    resolution:
+      integrity: sha512-AQ0wFNEBvmUJTPz+SGlNL9LP1UPAlYZ+JFfqjlGUVUF2qkBm/CvY6yqLicYjiBlIFOkSmWyoqFdsOEhmQs0aFQ==
   /@types/estree/0.0.40:
     dev: true
     resolution:

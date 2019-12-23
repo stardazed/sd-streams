@@ -1,0 +1,35 @@
+{
+	"name": "@stardazed/streams-compression",
+	"description": "Implementation of compression streams",
+	"version": "1.0.0",
+	"author": {
+		"name": "Arthur Langereis"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/stardazed/sd-streams.git"
+	},
+	"main": "dist/sd-streams-compression.umd.js",
+	"browser": "dist/sd-streams-compression.esm.js",
+	"module": "dist/sd-streams-compression.esm.js",
+	"types": "dist/sd-streams-compression.d.ts",
+	"scripts": {
+		"build": "tsc --noEmit -p . && rollup -c",
+		"prepublishOnly": "npm run build"
+	},
+	"files": [
+		"dist/*.d.ts",
+		"dist/*.js"
+	],
+	"dependencies": {
+		"@stardazed/zlib": "^1.0.0"
+	},
+	"devDependencies": {
+		"@rollup/plugin-node-resolve": "^6.0.0",
+		"@rollup/plugin-typescript": "^2.0.1",
+		"rollup": "^1.27.14",
+		"tslib": "^1.10.0",
+		"typescript": "^3.7.4"
+	}
+}
