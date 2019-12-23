@@ -1,7 +1,7 @@
 // @ts-check
-import resolve from "rollup-plugin-node-resolve";
+import resolve from "@rollup/plugin-node-resolve";
 import typescript from "typescript";
-import tsc from "rollup-plugin-typescript";
+import tsc from "@rollup/plugin-typescript";
 import { terser } from "rollup-plugin-terser";
 
 const banner = `/**

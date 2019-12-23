@@ -1,6 +1,6 @@
 // @ts-check
 import typescript from "typescript";
-import tsc from "rollup-plugin-typescript";
+import tsc from "@rollup/plugin-typescript";
 
 const banner = `/**
  * @stardazed/streams-fetch-adapter - patch fetch and Response to work with custom stream implementations

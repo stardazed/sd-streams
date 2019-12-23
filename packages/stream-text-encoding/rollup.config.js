@@ -1,6 +1,6 @@
 // @ts-check
 import typescript from "typescript";
-import tsc from "rollup-plugin-typescript";
+import tsc from "@rollup/plugin-typescript";
 
 const banner = `/**
 * @stardazed/streams-text-encoding - implementation of text encoder and decoder streams
