@@ -4,16 +4,16 @@ import { TextDecoderStream, TextEncoderStream } from "@stardazed/streams-text-en
 import { CompressionStream, DecompressionStream } from "@stardazed/streams-compression";
 
 function getGlobal(): any | undefined {
-	if (typeof globalThis !== undefined) {
+	if (typeof globalThis !== 'undefined') {
 		return globalThis;
 	}
-	if (typeof self !== undefined) {
+	if (typeof self !== 'undefined') {
 		return self;
 	}
-	if (typeof window !== undefined) {
+	if (typeof window !== 'undefined') {
 		return window;
 	}
-	if (typeof global !== undefined) {
+	if (typeof global !== 'undefined') {
 		return global;
 	}
 	return undefined;
