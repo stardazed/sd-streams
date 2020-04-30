@@ -3,22 +3,20 @@ import { ReadableStreamConstructor, ResponseConstructor, createAdaptedFetch, cre
 import { TextDecoderStream, TextEncoderStream } from "@stardazed/streams-text-encoding";
 import { CompressionStream, DecompressionStream } from "@stardazed/streams-compression";
 
-function getGlobal(): Record<string, unknown> | undefined {
-	let self;
-	if (self === undefined) {
-		try {
-			self = window;
-		}
-		catch (e) {}
-		if (self === undefined) {
-			try {
-				// @ts-ignore
-				self = global;
-			}
-			catch (e) {}
-		}
+function getGlobal(): any | undefined {
+	if (typeof globalThis !== undefined) {
+		return globalThis;
 	}
-	return self;
+	if (typeof self !== undefined) {
+		return self;
+	}
+	if (typeof window !== undefined) {
+		return window;
+	}
+	if (typeof global !== undefined) {
+		return global;
+	}
+	return undefined;
 }
 
 function getGlobalValue<T>(name: string): T | undefined {
