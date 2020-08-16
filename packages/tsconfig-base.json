@@ -3,7 +3,6 @@
 		"module": "es2015",
 		"target": "es2015",
 		"moduleResolution": "node",
-		"outDir": "build",
 
 		"declaration": false,
 		"sourceMap": false,
