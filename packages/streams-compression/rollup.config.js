@@ -6,7 +6,7 @@ import tsc from "@rollup/plugin-typescript";
 const banner = `/*
 @stardazed/streams-compression - implementation of compression streams
 Part of Stardazed
-(c) 2019-Present by Arthur Langereis - @zenmumbler
+(c) 2019-Present by @zenmumbler
 https://github.com/stardazed/sd-streams
 */`;
 

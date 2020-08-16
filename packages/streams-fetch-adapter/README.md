@@ -60,7 +60,7 @@ const blob = new myResponse(new MyReadableStream(...)).blob(); // works
 
 Copyright
 ---------
-© 2018-Present by Arthur Langereis - [@zenmumbler](https://twitter.com/zenmumbler)
+© 2018-Present by [@zenmumbler](https://twitter.com/zenmumbler)
 
 License
 -------

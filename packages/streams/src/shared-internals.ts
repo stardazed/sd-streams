@@ -1,7 +1,7 @@
 /**
  * streams/shared-internals - common types and methods for streams
  * Part of Stardazed
- * (c) 2018-Present by Arthur Langereis - @zenmumbler
+ * (c) 2018-Present by @zenmumbler
  * https://github.com/stardazed/sd-streams
  */
 

@@ -42,7 +42,7 @@ byteReadable
 
 Copyright
 ---------
-© 2019-Present by Arthur Langereis - [@zenmumbler](https://twitter.com/zenmumbler)
+© 2019-Present by [@zenmumbler](https://twitter.com/zenmumbler)
 
 License
 -------

@@ -1,7 +1,7 @@
 /**
  * streams/queue - simple queue type with chunked array backing
  * Part of Stardazed
- * (c) 2018-Present by Arthur Langereis - @zenmumbler
+ * (c) 2018-Present by @zenmumbler
  * https://github.com/stardazed/sd-streams
  */
 

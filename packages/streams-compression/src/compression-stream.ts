@@ -1,7 +1,7 @@
 /*
 streams-compression/compression-stream - transform stream compressing arbitrary data
 Part of Stardazed
-(c) 2019-Present by Arthur Langereis - @zenmumbler
+(c) 2019-Present by @zenmumbler
 https://github.com/stardazed/sd-streams
 */
 

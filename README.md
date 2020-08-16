@@ -58,7 +58,7 @@ readable.pipeThrough(transform).pipeTo(writable);
 
 Copyright
 ---------
-© 2018-Present by Arthur Langereis - [@zenmumbler](https://twitter.com/zenmumbler)
+© 2018-Present by [@zenmumbler](https://twitter.com/zenmumbler)
 
 License
 -------

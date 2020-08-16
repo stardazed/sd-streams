@@ -3,7 +3,7 @@
 	"description": "Patch fetch and Response to work with custom stream implementations",
 	"version": "3.0.0",
 	"author": {
-		"name": "Arthur Langereis"
+		"name": "@zenmumbler"
 	},
 	"license": "MIT",
 	"repository": {

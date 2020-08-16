@@ -2,7 +2,7 @@
 	"private": true,
 	"description": "Stardazed Web Streams Implementation Monorepo",
 	"author": {
-		"name": "Arthur Langereis"
+		"name": "@zenmumbler"
 	},
 	"license": "MIT",
 	"repository": {

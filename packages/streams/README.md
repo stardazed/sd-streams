@@ -72,7 +72,7 @@ them to client-level code.
 
 Copyright
 ---------
-© 2018-Present by Arthur Langereis - [@zenmumbler](https://twitter.com/zenmumbler)
+© 2018-Present by [@zenmumbler](https://twitter.com/zenmumbler)
 
 License
 -------

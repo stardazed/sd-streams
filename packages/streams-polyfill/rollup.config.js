@@ -7,7 +7,7 @@ import { terser } from "rollup-plugin-terser";
 const banner = `/*
 @stardazed/streams-polyfill - drop-in polyfill for Web Streams with fetch and encoding integration
 Part of Stardazed
-(c) 2018-Present by Arthur Langereis - @zenmumbler
+(c) 2018-Present by @zenmumbler
 https://github.com/stardazed/sd-streams
 */`;
 
