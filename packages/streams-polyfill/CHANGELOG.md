@@ -1,5 +1,9 @@
 # @stardazed/streams-polyfill changelog
 
+## 2.2.0
+_2020-08-16_
+* Fix getGlobal() so it works in Workers, thanks @manucorporat! ([#6](https://github.com/stardazed/sd-streams/pull/6))
+
 ## 2.1.0
 _2019-12-22_
 * Add CompressionStream and DecompressionStream polyfills
