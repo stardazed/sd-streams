@@ -5,9 +5,9 @@ for use in browsers, including patching the built-in `fetch` and `Response` type
 to support the `body` field for both downloading and uploading. It also provides the
 `TextEncoderStream` and `TextDecoderStream` from the [Encoding Standard](https://encoding.spec.whatwg.org/)
 and the `CompressionStream` and `DecompressionStream` from the
-[Draft Compression Standard](https://wicg.github.io/compression/) where necessary.
+[Draft Compression Standard](https://wicg.github.io/compression/).
 
-Download size: 27KiB gzipped, 122KiB uncompressed.
+Download size: 26KiB gzipped, 114KiB uncompressed.
 
 Usage
 -----
