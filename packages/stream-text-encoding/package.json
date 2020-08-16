@@ -23,9 +23,9 @@
 		"dist/*.js"
 	],
 	"devDependencies": {
-		"@rollup/plugin-typescript": "^2.0.1",
-		"rollup": "^1.27.14",
-		"tslib": "^1.10.0",
-		"typescript": "^3.7.4"
+		"@rollup/plugin-typescript": "^5.0.2",
+		"rollup": "^2.26.2",
+		"tslib": "^2.0.1",
+		"typescript": "^3.9.7"
 	}
 }
