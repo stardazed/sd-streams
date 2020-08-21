@@ -189,6 +189,46 @@ class tIMEChunk extends PNGChunk {
   }
 }
 
+class acTLChunk extends PNGChunk {
+  constructor({ data }) {
+    super({ name: 'acTL', data });
+    const dv = new DataView(data);
+    defineDataViewProperty(this, 'numFrames', dv, 32, 0);
+    defineDataViewProperty(this, 'loopCount', dv, 32, 4);
+  }
+}
+
+
+class fcTLChunk extends PNGChunk {
+  constructor({ data }) {
+    super({ name: 'fcTL', data });
+    const dv = new DataView(data);
+    defineDataViewProperty(this, 'sequenceNumber', dv, 32, 0);
+    defineDataViewProperty(this, 'width', dv, 32, 4);
+    defineDataViewProperty(this, 'height', dv, 32, 8);
+    defineDataViewProperty(this, 'xOffset', dv, 32, 12);
+    defineDataViewProperty(this, 'yOffset', dv, 32, 16);
+    defineDataViewProperty(this, 'delayNum', dv, 16, 20);
+    defineDataViewProperty(this, 'delayDenom', dv, 16, 22);
+    defineDataViewProperty(this, 'disposeOp', dv, 8, 24);
+    defineDataViewProperty(this, 'blendOp', dv, 8, 25);
+  }
+}
+
+
+class fdATChunk extends PNGChunk {
+  constructor({ data }) {
+    super({ name: 'fdAT', data });
+    const dv = new DataView(data);
+    defineDataViewProperty(this, 'sequenceNumber', dv, 32, 0);
+    Object.defineProperty(this, 'frame', {
+      enumerable: false,
+      writable: true,
+      value: new Uint8Array(data, 4)
+    });
+  }
+}
+
 /**
  * Function to create a PNG chunk from its name and data.
  *
@@ -214,6 +254,12 @@ function createChunk({ name, data }) {
       return new pHYsChunk({ data });
     case 'tIME':
       return new tIMEChunk({ data });
+    case 'acTL':
+      return new acTLChunk({ data });
+    case 'fcTL':
+      return new fcTLChunk({ data });
+    case 'fdAT':
+      return new fdATChunk({ data });
     default:
       return new PNGChunk({ name, data });
   }
