@@ -1,5 +1,9 @@
 # @stardazed/streams-polyfill changelog
 
+## 2.3.0
+_2021-02-09_
+* Settle reader.closed promise before closing/erroring read requests (spec update)
+
 ## 2.2.0
 _2020-08-16_
 * Fix getGlobal() so it works in Workers, thanks @manucorporat! ([#6](https://github.com/stardazed/sd-streams/pull/6))

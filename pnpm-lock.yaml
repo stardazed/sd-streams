@@ -65,7 +65,7 @@ importers:
     specifiers:
       '@rollup/plugin-node-resolve': ^11.1.1
       '@rollup/plugin-typescript': ^8.1.1
-      '@stardazed/streams': workspace:^3.0.0
+      '@stardazed/streams': workspace:^3.1.0
       '@stardazed/streams-compression': workspace:^1.0.0
       '@stardazed/streams-fetch-adapter': workspace:^3.0.0
       '@stardazed/streams-text-encoding': workspace:^1.0.2

@@ -1,5 +1,9 @@
 # @stardazed/streams changelog
 
+## 3.1.0
+_2021-02-09_
+* Settle reader.closed promise before closing/erroring read requests (spec update)
+
 ## 3.0.0
 _2019-01-16_
 * BREAKING: now uses the built-in TypeScript types and no longer exports own types. Now requires TS 3.2 or newer or your
