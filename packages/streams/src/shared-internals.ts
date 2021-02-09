@@ -232,7 +232,7 @@ export const enum ControlledPromiseState {
 }
 
 export interface ControlledPromise<V> {
-	resolve(value?: V): void;
+	resolve(value: V): void;
 	reject(error: ErrorResult): void;
 	promise: Promise<V>;
 	state: ControlledPromiseState;
@@ -243,7 +243,7 @@ export function createControlledPromise<V>(): ControlledPromise<V> {
 		state: ControlledPromiseState.Pending
 	} as ControlledPromise<V>;
 	conProm.promise = new Promise<V>(function(resolve, reject) {
-		conProm.resolve = function(v?: V) { conProm.state = ControlledPromiseState.Resolved; resolve(v); };
+		conProm.resolve = function(v: V) { conProm.state = ControlledPromiseState.Resolved; resolve(v); };
 		conProm.reject = function(e?: ErrorResult) { conProm.state = ControlledPromiseState.Rejected; reject(e); };
 	});
 	return conProm;
