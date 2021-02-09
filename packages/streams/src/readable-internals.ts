@@ -280,14 +280,15 @@ export function readableStreamClose<OutputType>(stream: SDReadableStream<OutputT
 		return;
 	}
 
+	reader[closedPromise_].resolve();
+	reader[closedPromise_].promise.catch(() => {});
+
 	if (isReadableStreamDefaultReader(reader)) {
 		for (const readRequest of reader[readRequests_]) {
 			readRequest.resolve(readableStreamCreateReadResult(undefined, true, readRequest.forAuthorCode));
 		}
 		reader[readRequests_] = [];
 	}
-	reader[closedPromise_].resolve();
-	reader[closedPromise_].promise.catch(() => {});
 }
 
 export function readableStreamError<OutputType>(stream: SDReadableStream<OutputType>, error: shared.ErrorResult) {
@@ -301,6 +302,9 @@ export function readableStreamError<OutputType>(stream: SDReadableStream<OutputT
 	if (reader === undefined) {
 		return;
 	}
+
+	reader[closedPromise_].reject(error);
+
 	if (isReadableStreamDefaultReader(reader)) {
 		for (const readRequest of reader[readRequests_]) {
 			readRequest.reject(error);
@@ -315,8 +319,6 @@ export function readableStreamError<OutputType>(stream: SDReadableStream<OutputT
 		}
 		(reader as SDReadableStreamBYOBReader)[readIntoRequests_] = [];
 	}
-
-	reader[closedPromise_].reject(error);
 }
 
 
