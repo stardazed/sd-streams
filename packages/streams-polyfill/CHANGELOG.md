@@ -1,5 +1,9 @@
 # @stardazed/streams-polyfill changelog
 
+## 2.4.0
+_2021-02-09_
+* Add type definitions for compression streams as they are not yet in the standard ([#7](https://github.com/stardazed/sd-streams/issues/7))
+
 ## 2.3.0
 _2021-02-09_
 * Settle reader.closed promise before closing/erroring read requests (spec update)
