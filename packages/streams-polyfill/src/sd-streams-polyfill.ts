@@ -3,6 +3,22 @@ import { ReadableStreamConstructor, ResponseConstructor, createAdaptedFetch, cre
 import { TextDecoderStream, TextEncoderStream } from "@stardazed/streams-text-encoding";
 import { CompressionStream, DecompressionStream } from "@stardazed/streams-compression";
 
+declare global {
+	interface ReadableStreamBYOBReadValueResult {
+		done: false;
+		value: Uint8Array;
+	}
+
+	interface ReadableStreamBYOBReader<R = any> extends ReadableStreamGenericReader {
+		read(view: ArrayBufferView): Promise<ReadableStreamBYOBReadValueResult | ReadableStreamDefaultReadDoneResult>;
+		releaseLock(): void;
+	}
+
+	interface ReadableStream {
+		getReader(options: { mode?: "byob" }): ReadableStreamBYOBReader;
+	}
+}
+
 function getGlobal(): any | undefined {
 	if (typeof globalThis !== "undefined") {
 		return globalThis;

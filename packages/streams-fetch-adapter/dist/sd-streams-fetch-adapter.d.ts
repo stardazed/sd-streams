@@ -5,9 +5,22 @@
  * https://github.com/stardazed/sd-streams-fetch-adapter
  */
 
+interface UnderlyingByteSource {
+    cancel?: UnderlyingSourceCancelCallback;
+    pull?: UnderlyingSourcePullCallback<ArrayBufferView>;
+    start?: UnderlyingSourceStartCallback<ArrayBufferView>;
+    type: "bytes";
+	autoAllocateChunkSize?: number;
+}
+
+interface ByteStreamQueuingStrategy {
+	highWaterMark?: number;
+	size?: undefined;
+}
+
 interface ReadableStreamConstructor {
 	prototype: ReadableStream;
-	new(underlyingSource: UnderlyingByteSource, strategy?: { highWaterMark?: number, size?: undefined }): ReadableStream<Uint8Array>;
+	new(underlyingSource: UnderlyingByteSource, strategy?: ByteStreamQueuingStrategy): ReadableStream<Uint8Array>;
 	new<R = any>(underlyingSource?: UnderlyingSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
 }
 

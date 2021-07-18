@@ -5,11 +5,25 @@
  * https://github.com/stardazed/sd-streams
  */
 
-// ---- Stream Types
+// Amend TS global types with missing properties
+
+// Stream Types
+
+export interface UnderlyingByteSource {
+    cancel?: UnderlyingSourceCancelCallback;
+    pull?: UnderlyingSourcePullCallback<Uint8Array>;
+    start?: UnderlyingSourceStartCallback<Uint8Array>;
+    type: "bytes";
+	autoAllocateChunkSize?: number;
+}
+
+export interface ByteStreamQueuingStrategy {
+	highWaterMark?: number;
+}
 
 export declare const ReadableStream: {
 	prototype: ReadableStream;
-	new(underlyingSource: UnderlyingByteSource, strategy?: { highWaterMark?: number, size?: undefined }): ReadableStream<Uint8Array>;
+	new(underlyingSource: UnderlyingByteSource, strategy?: ByteStreamQueuingStrategy): ReadableStream<Uint8Array>;
 	new<R = any>(underlyingSource?: UnderlyingSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
 };
 
@@ -23,7 +37,7 @@ export declare const TransformStream: {
 	new<I = any, O = any>(transformer?: Transformer<I, O>, writableStrategy?: QueuingStrategy<I>, readableStrategy?: QueuingStrategy<O>): TransformStream<I, O>;
 };
 
-// ---- Built-in Strategies
+// Built-in Strategies
 
 export declare class ByteLengthQueuingStrategy {
 	constructor(options: { highWaterMark: number });
@@ -37,7 +51,7 @@ export declare class CountQueuingStrategy {
 	highWaterMark: number;
 }
 
-// ---- Internal helpers for other standards
+// Internal helpers for other standards
 
 /**
  * Internal function for use in other web standard implementations.

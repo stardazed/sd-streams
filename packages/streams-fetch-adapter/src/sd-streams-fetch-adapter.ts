@@ -6,9 +6,21 @@
  */
 
 // Minimal declarations needed to have things compile
+interface UnderlyingByteSource {
+    cancel?: UnderlyingSourceCancelCallback;
+    pull?: UnderlyingSourcePullCallback<Uint8Array>;
+    start?: UnderlyingSourceStartCallback<Uint8Array>;
+    type: "bytes";
+	autoAllocateChunkSize?: number;
+}
+
+interface ByteStreamQueuingStrategy {
+	highWaterMark?: number;
+}
+
 interface ReadableStreamConstructor {
 	prototype: ReadableStream;
-	new(underlyingSource: UnderlyingByteSource, strategy?: { highWaterMark?: number, size?: undefined }): ReadableStream<Uint8Array>;
+	new(underlyingSource: UnderlyingByteSource, strategy?: ByteStreamQueuingStrategy): ReadableStream<Uint8Array>;
 	new<R = any>(underlyingSource?: UnderlyingSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
 }
 

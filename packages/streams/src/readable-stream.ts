@@ -16,15 +16,28 @@ import { ReadableStreamDefaultReader } from "./readable-stream-default-reader";
 import { ReadableByteStreamController, setUpReadableByteStreamControllerFromUnderlyingSource } from "./readable-byte-stream-controller";
 import { SDReadableStreamBYOBReader } from "./readable-stream-byob-reader";
 
+export interface UnderlyingByteSource {
+    cancel?: UnderlyingSourceCancelCallback;
+    pull?: UnderlyingSourcePullCallback<ArrayBufferView>;
+    start?: UnderlyingSourceStartCallback<ArrayBufferView>;
+    type: "bytes";
+	autoAllocateChunkSize?: number;
+}
+
+export interface ByteStreamQueuingStrategy {
+	highWaterMark?: number;
+	size?: undefined;
+}
+
 export class SDReadableStream<OutputType> implements rs.SDReadableStream<OutputType> {
 	[shared.state_]: rs.ReadableStreamState;
 	[shared.storedError_]: shared.ErrorResult;
 	[rs.reader_]: rs.SDReadableStreamReader<OutputType> | undefined;
 	[rs.readableStreamController_]: rs.SDReadableStreamControllerBase<OutputType>;
 
-	constructor(underlyingSource: UnderlyingByteSource, strategy?: { highWaterMark?: number, size?: undefined });
+	constructor(underlyingSource: UnderlyingByteSource, strategy?: ByteStreamQueuingStrategy);
 	constructor(underlyingSource?: UnderlyingSource<OutputType>, strategy?: QueuingStrategy<OutputType>);
-	constructor(underlyingSource: UnderlyingSource<OutputType> | UnderlyingByteSource = {}, strategy: QueuingStrategy<OutputType> | { highWaterMark?: number, size?: undefined } = {}) {
+	constructor(underlyingSource: UnderlyingSource<OutputType> | UnderlyingByteSource = {}, strategy: QueuingStrategy<OutputType> | ByteStreamQueuingStrategy = {}) {
 		rs.initializeReadableStream(this);
 
 		const sizeFunc = strategy.size;
@@ -85,7 +98,7 @@ export class SDReadableStream<OutputType> implements rs.SDReadableStream<OutputT
 		return readableStreamTee(this, false);
 	}
 
-	pipeThrough<ResultType>(transform: rs.GenericTransformStream<OutputType, ResultType>, options: PipeOptions = {}): rs.SDReadableStream<ResultType> {
+	pipeThrough<ResultType>(transform: rs.GenericTransformStream<OutputType, ResultType>, options: StreamPipeOptions = {}): rs.SDReadableStream<ResultType> {
 		const { readable, writable } = transform;
 		if (! rs.isReadableStream(this)) {
 			throw new TypeError();
@@ -112,7 +125,7 @@ export class SDReadableStream<OutputType> implements rs.SDReadableStream<OutputT
 		return readable;
 	}
 
-	pipeTo(dest: ws.WritableStream<OutputType>, options: PipeOptions = {}): Promise<void> {
+	pipeTo(dest: ws.WritableStream<OutputType>, options: StreamPipeOptions = {}): Promise<void> {
 		if (! rs.isReadableStream(this)) {
 			return Promise.reject(new TypeError());
 		}
@@ -133,7 +146,7 @@ export class SDReadableStream<OutputType> implements rs.SDReadableStream<OutputT
 	}
 }
 
-export function createReadableStream<OutputType>(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm<OutputType>, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, sizeAlgorithm?: QueuingStrategySizeCallback<OutputType>) {
+export function createReadableStream<OutputType>(startAlgorithm: rs.StartAlgorithm, pullAlgorithm: rs.PullAlgorithm<OutputType>, cancelAlgorithm: rs.CancelAlgorithm, highWaterMark?: number, sizeAlgorithm?: QueuingStrategySize<OutputType>) {
 	if (highWaterMark === undefined) {
 		highWaterMark = 1;
 	}

@@ -10,6 +10,7 @@ import * as q from "./queue-mixin";
 import * as shared from "./shared-internals";
 import { ReadableStreamBYOBRequest } from "./readable-stream-byob-request";
 import { Queue } from "./queue";
+import { UnderlyingByteSource } from "./readable-stream";
 
 export class ReadableByteStreamController implements rs.SDReadableByteStreamController {
 	[rs.autoAllocateChunkSize_]: number | undefined;
