@@ -14,7 +14,7 @@
 	"types": "dist/sd-streams-polyfill.d.ts",
 	"scripts": {
 		"build": "tsc --noEmit -p . && rollup -c",
-		"prepublishOnly": "npm run build"
+		"prepublishOnly": "pnpm build"
 	},
 	"files": [
 		"dist/*.d.ts",
