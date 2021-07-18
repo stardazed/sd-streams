@@ -1,5 +1,12 @@
 # @stardazed/streams changelog
 
+## 3.2.0
+_2021-07-18_
+* Fix compilation on recent TS where byte stream definitions were removed
+* Resolve cancel promise when teed stream closes unless already resolved (spec update)
+* Various fixes to ReadableByteStream by Mattias Buelens (spec update)
+* Define WritableStreamDefaultController's signal and abortReason (spec update)
+
 ## 3.1.0
 _2021-02-09_
 * Settle reader.closed promise before closing/erroring read requests (spec update)
