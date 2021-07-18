@@ -194,6 +194,9 @@ export function readableStreamTee<OutputType>(stream: SDReadableStream<OutputTyp
 					if (! canceled2) {
 						rs.readableStreamDefaultControllerClose(branch2![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>);
 					}
+					if (canceled1 === false || canceled2 === false) {
+						cancelResolve(undefined);
+					}		
 					closedOrErrored = true;
 				}
 				if (closedOrErrored) {
@@ -241,6 +244,9 @@ export function readableStreamTee<OutputType>(stream: SDReadableStream<OutputTyp
 		if (! closedOrErrored) {
 			rs.readableStreamDefaultControllerError(branch1![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>, error);
 			rs.readableStreamDefaultControllerError(branch2![rs.readableStreamController_] as ReadableStreamDefaultController<OutputType>, error);
+			if (canceled1 === false || canceled2 === false) {
+				cancelResolve(undefined);
+			}
 			closedOrErrored = true;
 		}
 	});
