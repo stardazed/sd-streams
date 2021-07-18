@@ -17,7 +17,7 @@ interface ErrorWrapper {
 	actualError: shared.ErrorResult;
 }
 
-export function pipeTo<ChunkType>(source: rs.SDReadableStream<ChunkType>, dest: ws.WritableStream<ChunkType>, options: PipeOptions) {
+export function pipeTo<ChunkType>(source: rs.SDReadableStream<ChunkType>, dest: ws.WritableStream<ChunkType>, options: StreamPipeOptions) {
 	const preventClose = !!options.preventClose;
 	const preventAbort = !!options.preventAbort;
 	const preventCancel = !!options.preventCancel;

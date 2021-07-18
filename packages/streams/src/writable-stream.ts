@@ -61,7 +61,7 @@ export class WritableStream<InputType> {
 	}
 }
 
-export function createWritableStream<InputType>(startAlgorithm: ws.StartAlgorithm, writeAlgorithm: ws.WriteAlgorithm<InputType>, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark?: number, sizeAlgorithm?: QueuingStrategySizeCallback<InputType>) {
+export function createWritableStream<InputType>(startAlgorithm: ws.StartAlgorithm, writeAlgorithm: ws.WriteAlgorithm<InputType>, closeAlgorithm: ws.CloseAlgorithm, abortAlgorithm: ws.AbortAlgorithm, highWaterMark?: number, sizeAlgorithm?: QueuingStrategySize<InputType>) {
 	if (highWaterMark === undefined) {
 		highWaterMark = 1;
 	}

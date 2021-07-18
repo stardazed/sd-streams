@@ -58,7 +58,7 @@ export interface WritableStreamDefaultController<InputType> extends WritableStre
 	[controlledWritableStream_]: WritableStream<InputType>; // The WritableStream instance controlled
 	[started_]: boolean; // A boolean flag indicating whether the underlying sink has finished starting
 	[strategyHWM_]: number; // A number supplied by the creator of the stream as part of the stream’s queuing strategy, indicating the point at which the stream will apply backpressure to its underlying sink
-	[strategySizeAlgorithm_]: QueuingStrategySizeCallback<InputType>; // An algorithm to calculate the size of enqueued chunks, as part of the stream’s queuing strategy
+	[strategySizeAlgorithm_]: QueuingStrategySize<InputType>; // An algorithm to calculate the size of enqueued chunks, as part of the stream’s queuing strategy
 	[writeAlgorithm_]: WriteAlgorithm<InputType>; // A promise-returning algorithm, taking one argument (the chunk to write), which writes data to the underlying sink
 }
 
@@ -472,7 +472,7 @@ export function writableStreamDefaultWriterWrite<InputType>(writer: WritableStre
 
 // ---- Controller
 
-export function setUpWritableStreamDefaultController<InputType>(stream: WritableStream<InputType>, controller: WritableStreamDefaultController<InputType>, startAlgorithm: StartAlgorithm, writeAlgorithm: WriteAlgorithm<InputType>, closeAlgorithm: CloseAlgorithm, abortAlgorithm: AbortAlgorithm, highWaterMark: number, sizeAlgorithm: QueuingStrategySizeCallback<InputType>) {
+export function setUpWritableStreamDefaultController<InputType>(stream: WritableStream<InputType>, controller: WritableStreamDefaultController<InputType>, startAlgorithm: StartAlgorithm, writeAlgorithm: WriteAlgorithm<InputType>, closeAlgorithm: CloseAlgorithm, abortAlgorithm: AbortAlgorithm, highWaterMark: number, sizeAlgorithm: QueuingStrategySize<InputType>) {
 	if (! isWritableStream(stream)) {
 		throw new TypeError();
 	}

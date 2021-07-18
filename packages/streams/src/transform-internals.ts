@@ -74,7 +74,7 @@ export function isTransformStream(value: unknown): value is TransformStream<any,
 	return transformStreamController_ in value;
 }
 
-export function initializeTransformStream<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, startPromise: Promise<void>, writableHighWaterMark: number, writableSizeAlgorithm: QueuingStrategySizeCallback<InputType>, readableHighWaterMark: number, readableSizeAlgorithm: QueuingStrategySizeCallback<OutputType>) {
+export function initializeTransformStream<InputType, OutputType>(stream: TransformStream<InputType, OutputType>, startPromise: Promise<void>, writableHighWaterMark: number, writableSizeAlgorithm: QueuingStrategySize<InputType>, readableHighWaterMark: number, readableSizeAlgorithm: QueuingStrategySize<OutputType>) {
 	const startAlgorithm = function() {
 		return startPromise;
 	};

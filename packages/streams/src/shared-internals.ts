@@ -211,7 +211,7 @@ export function validateAndNormalizeHighWaterMark(hwm: unknown) {
 	return highWaterMark;
 }
 
-export function makeSizeAlgorithmFromSizeFunction<T>(sizeFn: undefined | ((chunk: T) => number)): QueuingStrategySizeCallback<T> {
+export function makeSizeAlgorithmFromSizeFunction<T>(sizeFn: undefined | ((chunk: T) => number)): QueuingStrategySize<T> {
 	if (typeof sizeFn !== "function" && typeof sizeFn !== "undefined") {
 		throw new TypeError("size function must be undefined or a function");
 	}

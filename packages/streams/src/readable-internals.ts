@@ -107,7 +107,7 @@ export interface SDReadableStreamDefaultController<OutputType> extends SDReadabl
 	[controlledReadableStream_]: SDReadableStream<OutputType>;
 	[pullAlgorithm_]: PullAlgorithm<OutputType>;
 	[cancelAlgorithm_]: CancelAlgorithm;
-	[strategySizeAlgorithm_]: QueuingStrategySizeCallback<OutputType>;
+	[strategySizeAlgorithm_]: QueuingStrategySize<OutputType>;
 	[strategyHWM_]: number;
 
 	[started_]: boolean;
@@ -167,7 +167,6 @@ export interface GenericTransformStream<InputType, OutputType> {
 export type ReadableStreamState = "readable" | "closed" | "errored";
 
 export declare class SDReadableStream<OutputType> {
-	constructor(underlyingSource: UnderlyingByteSource, strategy?: { highWaterMark?: number, size?: undefined });
 	constructor(underlyingSource?: UnderlyingSource<OutputType>, strategy?: QueuingStrategy<OutputType>);
 
 	readonly locked: boolean;
@@ -176,8 +175,8 @@ export declare class SDReadableStream<OutputType> {
 	getReader(options: { mode: "byob" }): SDReadableStreamBYOBReader;
 	tee(): SDReadableStream<OutputType>[];
 
-	pipeThrough<ResultType>(transform: GenericTransformStream<OutputType, ResultType>, options?: PipeOptions): SDReadableStream<ResultType>;
-	pipeTo(dest: ws.WritableStream<OutputType>, options?: PipeOptions): Promise<void>;
+	pipeThrough<ResultType>(transform: GenericTransformStream<OutputType, ResultType>, options?: StreamPipeOptions): SDReadableStream<ResultType>;
+	pipeTo(dest: ws.WritableStream<OutputType>, options?: StreamPipeOptions): Promise<void>;
 
 	[shared.state_]: ReadableStreamState;
 	[shared.storedError_]: shared.ErrorResult;
@@ -415,7 +414,7 @@ export function readableStreamFulfillReadRequest<OutputType>(stream: SDReadableS
 
 // ---- DefaultController
 
-export function setUpReadableStreamDefaultController<OutputType>(stream: SDReadableStream<OutputType>, controller: SDReadableStreamDefaultController<OutputType>, startAlgorithm: StartAlgorithm, pullAlgorithm: PullAlgorithm<OutputType>, cancelAlgorithm: CancelAlgorithm, highWaterMark: number, sizeAlgorithm: QueuingStrategySizeCallback<OutputType>) {
+export function setUpReadableStreamDefaultController<OutputType>(stream: SDReadableStream<OutputType>, controller: SDReadableStreamDefaultController<OutputType>, startAlgorithm: StartAlgorithm, pullAlgorithm: PullAlgorithm<OutputType>, cancelAlgorithm: CancelAlgorithm, highWaterMark: number, sizeAlgorithm: QueuingStrategySize<OutputType>) {
 	// Assert: stream.[[readableStreamController]] is undefined.
 	controller[controlledReadableStream_] = stream;
 	q.resetQueue(controller);
