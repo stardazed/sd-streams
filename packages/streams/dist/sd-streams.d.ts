@@ -7,7 +7,12 @@
 
 // Amend TS global types with missing properties
 
-// Stream Types
+declare global {
+	interface WritableStreamDefaultController {
+		readonly abortReason: any;
+		readonly signal: AbortSignal;
+	}
+}
 
 export interface UnderlyingByteSource {
     cancel?: UnderlyingSourceCancelCallback;
@@ -20,6 +25,8 @@ export interface UnderlyingByteSource {
 export interface ByteStreamQueuingStrategy {
 	highWaterMark?: number;
 }
+
+// Stream Types
 
 export declare const ReadableStream: {
 	prototype: ReadableStream;

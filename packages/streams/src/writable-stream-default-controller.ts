@@ -15,6 +15,8 @@ export class WritableStreamDefaultController<InputType> implements ws.WritableSt
 	[ws.closeAlgorithm_]: ws.CloseAlgorithm;
 	[ws.controlledWritableStream_]: ws.WritableStream<InputType>;
 	[ws.started_]: boolean;
+	[ws.abortReason_]: shared.ErrorResult;
+	[ws.abortController_]: AbortController;
 	[ws.strategyHWM_]: number;
 	[ws.strategySizeAlgorithm_]: QueuingStrategySize<InputType>;
 	[ws.writeAlgorithm_]: ws.WriteAlgorithm<InputType>;
@@ -24,6 +26,14 @@ export class WritableStreamDefaultController<InputType> implements ws.WritableSt
 
 	constructor() {
 		throw new TypeError();
+	}
+
+	get abortReason() {
+		return this[ws.abortReason_];
+	}
+
+	get signal() {
+		return this[ws.abortController_].signal;
 	}
 
 	error(e?: shared.ErrorResult) {

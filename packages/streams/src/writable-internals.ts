@@ -21,6 +21,8 @@ export const abortAlgorithm_ = Symbol("abortAlgorithm_");
 export const closeAlgorithm_ = Symbol("closeAlgorithm_");
 export const controlledWritableStream_ = Symbol("controlledWritableStream_");
 export const started_ = Symbol("started_");
+export const abortReason_ = Symbol("abortReason_");
+export const abortController_ = Symbol("abortController_");
 export const strategyHWM_ = Symbol("strategyHWM_");
 export const strategySizeAlgorithm_ = Symbol("strategySizeAlgorithm_");
 export const writeAlgorithm_ = Symbol("writeAlgorithm_");
@@ -57,6 +59,8 @@ export interface WritableStreamDefaultController<InputType> extends WritableStre
 	[closeAlgorithm_]: CloseAlgorithm; // A promise - returning algorithm which communicates a requested close to the underlying sink
 	[controlledWritableStream_]: WritableStream<InputType>; // The WritableStream instance controlled
 	[started_]: boolean; // A boolean flag indicating whether the underlying sink has finished starting
+	[abortReason_]: shared.ErrorResult; // The reason why the stream was aborted
+	[abortController_]: AbortController; // An AbortController that mirrors abort calls on the stream and that can be signalled by the underlying sink
 	[strategyHWM_]: number; // A number supplied by the creator of the stream as part of the stream’s queuing strategy, indicating the point at which the stream will apply backpressure to its underlying sink
 	[strategySizeAlgorithm_]: QueuingStrategySize<InputType>; // An algorithm to calculate the size of enqueued chunks, as part of the stream’s queuing strategy
 	[writeAlgorithm_]: WriteAlgorithm<InputType>; // A promise-returning algorithm, taking one argument (the chunk to write), which writes data to the underlying sink
@@ -148,6 +152,11 @@ export function isWritableStreamLocked<InputType>(stream: WritableStream<InputTy
 }
 
 export function writableStreamAbort<InputType>(stream: WritableStream<InputType>, reason: shared.ErrorResult) {
+	if (stream[shared.state_] === "closed" || stream[shared.state_] === "errored") {
+		return Promise.resolve(undefined);
+	}
+	stream[writableStreamController_]![abortReason_] = reason;
+	stream[writableStreamController_]![abortController_].abort();
 	const state = stream[shared.state_];
 	if (state === "closed" || state === "errored") {
 		return Promise.resolve(undefined);
@@ -483,6 +492,8 @@ export function setUpWritableStreamDefaultController<InputType>(stream: Writable
 	controller[controlledWritableStream_] = stream;
 	stream[writableStreamController_] = controller;
 	q.resetQueue(controller);
+	controller[abortReason_] = undefined;
+	controller[abortController_] = new AbortController();
 	controller[started_] = false;
 	controller[strategySizeAlgorithm_] = sizeAlgorithm;
 	controller[strategyHWM_] = highWaterMark;
