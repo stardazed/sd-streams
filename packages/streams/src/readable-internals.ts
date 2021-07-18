@@ -78,6 +78,7 @@ export interface PullIntoDescriptor {
 	readerType: "default" | "byob";
 	ctor: ArrayBufferViewCtor;
 	buffer: ArrayBufferLike;
+	bufferByteLength: number;
 	byteOffset: number;
 	byteLength: number;
 	bytesFilled: number;
@@ -702,7 +703,8 @@ export function readableByteStreamControllerConvertPullIntoDescriptor(pullIntoDe
 	const { bytesFilled, elementSize } = pullIntoDescriptor;
 	// Assert: bytesFilled <= pullIntoDescriptor.byteLength
 	// Assert: bytesFilled mod elementSize is 0
-	return new pullIntoDescriptor.ctor(pullIntoDescriptor.buffer, pullIntoDescriptor.byteOffset, bytesFilled / elementSize);
+	const buffer = shared.transferArrayBuffer(pullIntoDescriptor.buffer);
+	return new pullIntoDescriptor.ctor(buffer, pullIntoDescriptor.byteOffset, bytesFilled / elementSize);
 }
 
 export function readableByteStreamControllerEnqueue(controller: SDReadableByteStreamController, chunk: ArrayBufferView) {
@@ -711,7 +713,18 @@ export function readableByteStreamControllerEnqueue(controller: SDReadableByteSt
 	// Assert: stream.[[state]] is "readable".
 	const { buffer, byteOffset, byteLength } = chunk;
 	
+	// If buffer is detached, throw a TypeError
+
 	const transferredBuffer = shared.transferArrayBuffer(buffer);
+
+	if (controller[pendingPullIntos_].length > 0) {
+		const firstPendingPullInto = controller[pendingPullIntos_][0];
+
+		// If firstPendingPullInto.buffer is detached throw a TypeError
+
+		firstPendingPullInto.buffer = shared.transferArrayBuffer(firstPendingPullInto.buffer);
+	}
+	readableByteStreamControllerInvalidateBYOBRequest(controller);
 
 	if (readableStreamHasDefaultReader(stream)) {
 		if (readableStreamGetNumReadRequests(stream) === 0) {
@@ -750,9 +763,9 @@ export function readableByteStreamControllerError(controller: SDReadableByteStre
 	readableStreamError(stream, error);
 }
 
-export function readableByteStreamControllerFillHeadPullIntoDescriptor(controller: SDReadableByteStreamController, size: number, pullIntoDescriptor: PullIntoDescriptor) {
+export function readableByteStreamControllerFillHeadPullIntoDescriptor(_controller: SDReadableByteStreamController, size: number, pullIntoDescriptor: PullIntoDescriptor) {
 	// Assert: either controller.[[pendingPullIntos]] is empty, or the first element of controller.[[pendingPullIntos]] is pullIntoDescriptor.
-	readableByteStreamControllerInvalidateBYOBRequest(controller);
+	// Assert: controller.[[byobRequest]] is null
 	pullIntoDescriptor.bytesFilled += size;
 }
 
@@ -851,8 +864,11 @@ export function readableByteStreamControllerPullInto(controller: SDReadableByteS
 
 	const byteOffset = view.byteOffset;
 	const byteLength = view.byteLength;
-	const buffer = shared.transferArrayBuffer(view.buffer);
-	const pullIntoDescriptor: PullIntoDescriptor = { buffer, byteOffset, byteLength, bytesFilled: 0, elementSize, ctor, readerType: "byob" };
+
+	// In Ref Impl: this can fail (detached) and needs to result in byobReader.read failure
+	let buffer = shared.transferArrayBuffer(view.buffer);
+
+	const pullIntoDescriptor: PullIntoDescriptor = { buffer, bufferByteLength: buffer.byteLength, byteOffset, byteLength, bytesFilled: 0, elementSize, ctor, readerType: "byob" };
 
 	if (controller[pendingPullIntos_].length > 0) {
 		controller[pendingPullIntos_].push(pullIntoDescriptor);
@@ -888,11 +904,27 @@ export function readableByteStreamControllerRespond(controller: SDReadableByteSt
 		throw new RangeError("bytesWritten must be a finite, non-negative number");
 	}
 	// Assert: controller.[[pendingPullIntos]] is not empty.
+
+	const firstDescriptor = controller[pendingPullIntos_][0];
+	const state = controller[controlledReadableByteStream_][shared.state_];
+	if (state === "closed") {
+		if (bytesWritten !== 0) {
+			throw new TypeError('bytesWritten must be 0 when calling respond() on a closed stream');
+		}
+	}
+	else {
+		// Assert: state === "readable"
+		if (firstDescriptor.bytesFilled + bytesWritten > firstDescriptor.byteLength) {
+			throw new RangeError("bytesWritten out of range");
+		}	 
+	}
+
+	firstDescriptor.buffer = shared.transferArrayBuffer(firstDescriptor.buffer);
+
 	readableByteStreamControllerRespondInternal(controller, bytesWritten);
 }
 
-export function readableByteStreamControllerRespondInClosedState(controller: SDReadableByteStreamController, firstDescriptor: PullIntoDescriptor) {
-	firstDescriptor.buffer = shared.transferArrayBuffer(firstDescriptor.buffer);
+export function readableByteStreamControllerRespondInClosedState(controller: SDReadableByteStreamController, _firstDescriptor: PullIntoDescriptor) {
 	// Assert: firstDescriptor.[[bytesFilled]] is 0.
 	const stream = controller[controlledReadableByteStream_];
 	if (readableStreamHasBYOBReader(stream)) {
@@ -904,9 +936,7 @@ export function readableByteStreamControllerRespondInClosedState(controller: SDR
 }
 
 export function readableByteStreamControllerRespondInReadableState(controller: SDReadableByteStreamController, bytesWritten: number, pullIntoDescriptor: PullIntoDescriptor) {
-	if (pullIntoDescriptor.bytesFilled + bytesWritten > pullIntoDescriptor.byteLength) {
-		throw new RangeError();
-	}
+	// Assert: pullIntoDescriptor.[[bytesFilled]] + bytesWritten <= pullIntoDescriptor.[[byteLength]]
 	readableByteStreamControllerFillHeadPullIntoDescriptor(controller, bytesWritten, pullIntoDescriptor);
 	if (pullIntoDescriptor.bytesFilled < pullIntoDescriptor.elementSize) {
 		return;
@@ -918,23 +948,24 @@ export function readableByteStreamControllerRespondInReadableState(controller: S
 		const remainder = shared.cloneArrayBuffer(pullIntoDescriptor.buffer, end - remainderSize, remainderSize, ArrayBuffer);
 		readableByteStreamControllerEnqueueChunkToQueue(controller, remainder, 0, remainder.byteLength);
 	}
-	pullIntoDescriptor.buffer = shared.transferArrayBuffer(pullIntoDescriptor.buffer);
-	pullIntoDescriptor.bytesFilled = pullIntoDescriptor.bytesFilled - remainderSize;
+	pullIntoDescriptor.bytesFilled -= remainderSize;
 	readableByteStreamControllerCommitPullIntoDescriptor(controller[controlledReadableByteStream_], pullIntoDescriptor);
 	readableByteStreamControllerProcessPullIntoDescriptorsUsingQueue(controller);
 }
 
 export function readableByteStreamControllerRespondInternal(controller: SDReadableByteStreamController, bytesWritten: number) {
 	const firstDescriptor = controller[pendingPullIntos_][0];
+	// Assert: canTransferArrayBuffer(firstDescriptor.buffer)
+
+	readableByteStreamControllerInvalidateBYOBRequest(controller);
 	const stream = controller[controlledReadableByteStream_];
 	if (stream[shared.state_] === "closed") {
-		if (bytesWritten !== 0) {
-			throw new TypeError();
-		}
+		// Assert: bytesWritten === 0
 		readableByteStreamControllerRespondInClosedState(controller, firstDescriptor);
 	}
 	else {
 		// Assert: stream.[[state]] is "readable".
+		// Assert: bytesWritten > 0
 		readableByteStreamControllerRespondInReadableState(controller, bytesWritten, firstDescriptor);
 	}
 	readableByteStreamControllerCallPullIfNeeded(controller);
@@ -942,20 +973,34 @@ export function readableByteStreamControllerRespondInternal(controller: SDReadab
 
 export function readableByteStreamControllerRespondWithNewView(controller: SDReadableByteStreamController, view: ArrayBufferView) {
 	// Assert: controller.[[pendingPullIntos]] is not empty.
+	// Assert: view.buffer is not detached
 	const firstDescriptor = controller[pendingPullIntos_][0];
-	if (firstDescriptor.byteOffset + firstDescriptor.bytesFilled !== view.byteOffset) {
-		throw new RangeError();
-	} 
-	if (firstDescriptor.byteLength !== view.byteLength) {
-		throw new RangeError();
+	const state = controller[controlledReadableByteStream_][shared.state_];
+	if (state === "closed") {
+		if (view.byteLength !== 0) {
+			throw new TypeError("The view's length must be 0 when calling respondWithNewView() on a closed stream");
+		}
 	}
-	firstDescriptor.buffer = view.buffer;
+	else {
+		// Assert: state === "readable"
+		if (view.byteLength === 0) {
+			throw new RangeError("The view's length must be greater than 0 when calling respondWithNewView() on a readable stream");
+		}	 
+	}
+
+	if (firstDescriptor.byteOffset + firstDescriptor.bytesFilled !== view.byteOffset) {
+		throw new RangeError("The region specified by view does not match byobRequest");
+	} 
+	if (firstDescriptor.bufferByteLength !== view.buffer.byteLength) {
+		throw new RangeError("The buffer of view has different capacity than byobRequest");
+	}
+	firstDescriptor.buffer = shared.transferArrayBuffer(view.buffer);
 	readableByteStreamControllerRespondInternal(controller, view.byteLength);
 }
 
 export function readableByteStreamControllerShiftPendingPullInto(controller: SDReadableByteStreamController) {
+	// Assert: controller.[[byobRequest]] is null
 	const descriptor = controller[pendingPullIntos_].shift();
-	readableByteStreamControllerInvalidateBYOBRequest(controller);
 	return descriptor;
 }
 

@@ -123,6 +123,7 @@ export class ReadableByteStreamController implements rs.SDReadableByteStreamCont
 			}
 			const pullIntoDescriptor: rs.PullIntoDescriptor = {
 				buffer,
+				bufferByteLength: autoAllocateChunkSize,
 				byteOffset: 0,
 				byteLength: autoAllocateChunkSize,
 				bytesFilled: 0,
