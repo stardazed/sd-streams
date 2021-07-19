@@ -86,8 +86,10 @@ export declare function createAdaptedResponse(
  * Wrap the Blob constructor to add or patch handling of Blob's stream function.
  * @param nativeBlob The constructor function of the browser's built in Blob class
  * @param customReadableStream The constructor function of your custom ReadableStream
+ * @param override Whether to install a custom stream() method regardless of support
  */
  export function createAdaptedBlob(
 	nativeBlob: BlobConstructor,
-	customReadableStream: ReadableStreamConstructor
+	customReadableStream: ReadableStreamConstructor,
+	override: boolean
 ): BlobConstructor;

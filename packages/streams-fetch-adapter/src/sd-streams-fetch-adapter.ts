@@ -406,19 +406,21 @@ function createBlobReaderStream(blob: Blob, streamCtor: ReadableStreamConstructo
  * Wrap the Blob constructor to add or patch handling of Blob's stream function.
  * @param nativeBlob The constructor function of the browser's built in Blob class
  * @param customReadableStream The constructor function of your custom ReadableStream
+ * @param override Whether to install a custom stream() method regardless of support
  */
 export function createAdaptedBlob(
 	nativeBlob: BlobConstructor,
-	customReadableStream: ReadableStreamConstructor
+	customReadableStream: ReadableStreamConstructor,
+	override: boolean
 ): BlobConstructor {
 	const wrappedBlob = function(blobParts?: BlobPart[], options?: BlobPropertyBag) {
 		const blob = new nativeBlob(blobParts, options);
-		if ("stream" in blob) {
-			const origStreamFunc = blob.stream;
-			blob.stream = () => wrapReadableStream(origStreamFunc.call(blob), customReadableStream);
+		if (override || !("stream" in blob)) {
+			blob.stream = () => createBlobReaderStream(blob, customReadableStream);
 		}
 		else {
-			blob.stream = () => createBlobReaderStream(blob, customReadableStream);
+			const origStreamFunc = blob.stream;
+			blob.stream = () => wrapReadableStream(origStreamFunc.call(blob), customReadableStream);
 		}
 		return blob;
 	};
