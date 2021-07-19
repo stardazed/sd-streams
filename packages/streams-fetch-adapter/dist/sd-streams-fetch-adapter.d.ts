@@ -30,6 +30,10 @@ interface ResponseConstructor {
 	new(body?: Blob | BufferSource | FormData | ReadableStream<Uint8Array> | string | null, init?: ResponseInit): Response;
 }
 
+interface BlobConstructor {
+	new(blobParts?: BlobPart[], options?: BlobPropertyBag): Blob;
+}
+
 export interface AdaptedRequestInit {
 	body?: Blob | BufferSource | FormData | ReadableStream<Uint8Array> | string | null;
     cache?: RequestCache;
@@ -77,3 +81,13 @@ export declare function createAdaptedResponse(
 	customReadableStream: ReadableStreamConstructor,
 	customReadableStreamTee: ReadableStreamTeeFunction
 ): ResponseConstructor;
+
+/**
+ * Wrap the Blob constructor to add or patch handling of Blob's stream function.
+ * @param nativeBlob The constructor function of the browser's built in Blob class
+ * @param customReadableStream The constructor function of your custom ReadableStream
+ */
+ export function createAdaptedBlob(
+	nativeBlob: BlobConstructor,
+	customReadableStream: ReadableStreamConstructor
+): BlobConstructor;

@@ -33,6 +33,10 @@ interface ResponseConstructor {
 	new(body?: FetchBody, init?: ResponseInit): Response;
 }
 
+interface BlobConstructor {
+	new(blobParts?: BlobPart[], options?: BlobPropertyBag): Blob;
+}
+
 /**
  * Create a ReadableStream whose underlying source is another ReadableStream.
  * This is used to convert browser-native ReadableStream objects to custom ones
@@ -359,4 +363,65 @@ export function createAdaptedResponse(
 	};
 	wrappedResponse.prototype = nativeResponse.prototype;
 	return wrappedResponse as any;
+}
+
+/**
+ * Create a reader for a Blob using FileReader. Given that FileReader has to use the Blob's
+ * stream() to read it, only use this for Blob implementations without a stream function to
+ * avoid likely endless recursion or other weirndess.
+ * @param blob The blob to read the data from
+ * @param streamCtor A constructor for the ReadableStream to create
+ * @returns A readable stream for the blob
+ */
+function createBlobReaderStream(blob: Blob, streamCtor: ReadableStreamConstructor) {
+	const reader = new FileReader();
+	let reading = false;
+
+	return new streamCtor({
+		start(controller: ReadableStreamDefaultController) {
+			reader.onerror = () => {
+				reading = false;
+				controller.error(reader.error);
+			};
+			reader.onload = () => {
+				reading = false;
+				const res = reader.result as ArrayBuffer;
+				controller.enqueue(new Uint8Array(res));
+				controller.close();
+			};
+			reading = true;
+			reader.readAsArrayBuffer(blob);
+		},
+
+		cancel(_reason: any) {
+			if (reading) {
+				reading = false;
+				reader.abort();
+			}
+		}
+	});
+}
+
+/**
+ * Wrap the Blob constructor to add or patch handling of Blob's stream function.
+ * @param nativeBlob The constructor function of the browser's built in Blob class
+ * @param customReadableStream The constructor function of your custom ReadableStream
+ */
+export function createAdaptedBlob(
+	nativeBlob: BlobConstructor,
+	customReadableStream: ReadableStreamConstructor
+): BlobConstructor {
+	const wrappedBlob = function(blobParts?: BlobPart[], options?: BlobPropertyBag) {
+		const blob = new nativeBlob(blobParts, options);
+		if ("stream" in blob) {
+			const origStreamFunc = blob.stream;
+			blob.stream = () => wrapReadableStream(origStreamFunc.call(blob), customReadableStream);
+		}
+		else {
+			blob.stream = () => createBlobReaderStream(blob, customReadableStream);
+		}
+		return blob;
+	};
+	wrappedBlob.prototype = nativeBlob.prototype;
+	return wrappedBlob as any;
 }
