@@ -1,5 +1,5 @@
 import * as sds from "@stardazed/streams";
-import { ReadableStreamConstructor, ResponseConstructor, createAdaptedFetch, createAdaptedResponse } from "@stardazed/streams-fetch-adapter";
+import { ReadableStreamConstructor, ResponseConstructor, createAdaptedFetch, createAdaptedResponse, createAdaptedBlob, BlobConstructor } from "@stardazed/streams-fetch-adapter";
 import { TextDecoderStream, TextEncoderStream } from "@stardazed/streams-text-encoding";
 import { CompressionStream, DecompressionStream } from "@stardazed/streams-compression";
 
@@ -89,6 +89,14 @@ function hasCompleteStreamsImplementation() {
 	return true;
 }
 
+function tryCreateAdaptedBlob(blobCtor: BlobConstructor, streamCtor: ReadableStreamConstructor, override: boolean): BlobConstructor | undefined {
+	const test = new blobCtor(["string"]);
+	if (override || !("stream" in test)) {
+		return createAdaptedBlob(blobCtor, streamCtor, override);
+	}
+	return undefined;
+}
+
 function installStardazedStreams() {
 	const globalObject = getGlobal();
 	if (! globalObject) {
@@ -96,7 +104,19 @@ function installStardazedStreams() {
 		return false;
 	}
 
+	// fetch some core constructors
+	const nativeBlob = getGlobalValue<BlobConstructor>("Blob");
+	const nativeReadableStream = getGlobalValue<ReadableStreamConstructor>("ReadableStream");
+
 	if (hasCompleteStreamsImplementation()) {
+		// see if Blob needs to be patched using built-in stream (probably not)
+		if (nativeBlob) {
+			const adaptedBlob = tryCreateAdaptedBlob(nativeBlob, nativeReadableStream!, false);
+			if (adaptedBlob) {
+				globalObject["Blob"] = adaptedBlob;
+			}
+		}
+
 		// this polyfill is all or nothing, if the full spec as we know it is available then bail
 		return false;
 	}
@@ -105,8 +125,6 @@ function installStardazedStreams() {
 	const nativeFetch = getGlobalOrContextualValue<WindowOrWorkerGlobalScope["fetch"]>("fetch");
 	const nativeResponse = getGlobalOrContextualValue<ResponseConstructor>("Response");
 
-	const nativeReadableStream = getGlobalValue<ReadableStreamConstructor>("ReadableStream");
-
 	// only patch fetch types when they are available
 	if (nativeFetch && nativeResponse) {
 		const adaptedFetch = createAdaptedFetch(nativeFetch, nativeResponse, nativeReadableStream, sds.ReadableStream, sds.internal_readableStreamTee);
@@ -114,6 +132,12 @@ function installStardazedStreams() {
 
 		globalObject["fetch"] = adaptedFetch;
 		globalObject["Response"] = adaptedResponse;
+	}
+	if (nativeBlob) {
+		const adaptedBlob = tryCreateAdaptedBlob(nativeBlob, sds.ReadableStream, true);
+		if (adaptedBlob) {
+			globalObject["Blob"] = adaptedBlob;
+		}
 	}
 
 	globalObject["ReadableStream"] = sds.ReadableStream;
