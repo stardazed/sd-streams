@@ -373,7 +373,7 @@ export function createAdaptedResponse(
  * @param streamCtor A constructor for the ReadableStream to create
  * @returns A readable stream for the blob
  */
-function createBlobReaderStream(blob: Blob, streamCtor: ReadableStreamConstructor) {
+export function createBlobReaderStream(blob: Blob, streamCtor: ReadableStreamConstructor) {
 	const reader = new FileReader();
 	let reading = false;
 

@@ -83,6 +83,16 @@ export declare function createAdaptedResponse(
 ): ResponseConstructor;
 
 /**
+ * Create a reader for a Blob using FileReader. Given that FileReader has to use the Blob's
+ * stream() to read it, only use this for Blob implementations without a stream function to
+ * avoid likely endless recursion or other weirndess.
+ * @param blob The blob to read the data from
+ * @param streamCtor A constructor for the ReadableStream to create
+ * @returns A readable stream for the blob
+ */
+ export function createBlobReaderStream(blob: Blob, streamCtor: ReadableStreamConstructor): ReadableStream;
+
+/**
  * Wrap the Blob constructor to add or patch handling of Blob's stream function.
  * @param nativeBlob The constructor function of the browser's built in Blob class
  * @param customReadableStream The constructor function of your custom ReadableStream
